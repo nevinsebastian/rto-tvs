@@ -4,6 +4,8 @@ import SalesExecutiveHome from './pages/SalesExecutiveHome';
 import NewCustomer from './pages/NewCustomer';
 import Dashboard from './pages/SalesDashboard';
 import CustomerInfo from './pages/CustomerInfo';
+import PdfEditor from './pages/PdfEditor';
+
 
 const App = () => {
   return (
@@ -15,6 +17,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         {/* Update this path to match URLs with query strings */}
         <Route path="/customer-form" element={<CustomerInfo />} />
+        <Route path='/pdf-editor' element={<PdfEditor/>} />
       </Routes>
     </Router>
   );
