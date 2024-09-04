@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
+import { Modal, Button } from 'react-bootstrap'; // Ensure react-bootstrap is installed
 
 const CustomerInfo = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +22,15 @@ const CustomerInfo = () => {
   const [models, setModels] = useState({});
   const [variants, setVariants] = useState({});
   const [colors, setColors] = useState([]);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [signatureImage, setSignatureImage] = useState(null);
+
+  const webcamRef = useRef(null);
 
   useEffect(() => {
     fetch('/tvsModels.json')
       .then(response => response.json())
-      .then(data => {
-        setModels(data.models);
-      })
+      .then(data => setModels(data.models))
       .catch(error => console.error('Error fetching TVS models:', error));
   }, []);
 
@@ -54,7 +57,7 @@ const CustomerInfo = () => {
     setFormData(prevData => ({
       ...prevData,
       modelName,
-      modelVariant: '',  // Reset variant and color when model changes
+      modelVariant: '',
       color: ''
     }));
   };
@@ -64,15 +67,28 @@ const CustomerInfo = () => {
     setFormData(prevData => ({
       ...prevData,
       modelVariant: variant,
-      color: ''  // Reset color when variant changes
+      color: ''
     }));
     setColors(variants[variant] || []);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here (e.g., sending data to a server)
     console.log('Form Data Submitted:', formData);
+  };
+
+  const handleCaptureSignature = () => {
+    setShowSignatureModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowSignatureModal(false);
+  };
+
+  const handleCaptureImage = () => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setSignatureImage(imageSrc);
+    handleCloseModal();
   };
 
   return (
@@ -86,7 +102,7 @@ const CustomerInfo = () => {
         {renderInput('Mobile Number 1', 'mobile1', 'text', formData.mobile1, handleChange)}
         {renderInput('Mobile Number 2', 'mobile2', 'text', formData.mobile2, handleChange)}
         {renderInput('Email', 'email', 'email', formData.email, handleChange)}
-
+        
         <label style={styles.label}>Model Name:</label>
         <select
           name="modelName"
@@ -128,24 +144,46 @@ const CustomerInfo = () => {
             <option key={color} value={color}>{color}</option>
           ))}
         </select>
-
+        
         {renderInput('Nominee Name', 'nomineeName', 'text', formData.nomineeName, handleChange)}
         {renderInput('Relation with Nominee', 'nomineeRelation', 'text', formData.nomineeRelation, handleChange)}
         {renderInput('Nominee Age', 'nomineeAge', 'number', formData.nomineeAge, handleChange)}
 
-        <button type="submit" style={styles.button}>Submit</button>
+        <button type="button" onClick={handleCaptureSignature} style={styles.button}>
+          Scan Signature
+        </button>
+        
+        {signatureImage && (
+          <div style={styles.signaturePreview}>
+            <h2>Captured Signature:</h2>
+            <img src={signatureImage} alt="Signature" style={styles.signatureImage} />
+          </div>
+        )}
 
-        <div style={styles.signatureContainer}>
-          <h2 style={styles.signatureHeader}>Capture Customer Signature</h2>
-          <Webcam
-            audio={false}
-            screenshotFormat="image/png"
-            width="100%"
-            videoConstraints={{ facingMode: "user" }}
-          />
-          {/* Implement a mechanism to capture and display the signature */}
-        </div>
+        <button type="submit" style={styles.button}>Submit</button>
       </form>
+      
+      <Modal show={showSignatureModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Capture Signature</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={styles.cameraContainer}>
+            <Webcam
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/png"
+              width="100%"
+              videoConstraints={{ facingMode: 'user' }}
+            />
+            <div style={styles.signatureBox}></div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+          <Button variant="primary" onClick={handleCaptureImage}>Capture</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
@@ -215,16 +253,27 @@ const styles = {
     marginTop: '20px',
     transition: 'background-color 0.3s ease',
   },
-  buttonHover: {
-    backgroundColor: '#0056b3',
-  },
-  signatureContainer: {
+  signaturePreview: {
     marginTop: '20px',
     textAlign: 'center',
   },
-  signatureHeader: {
-    marginBottom: '10px',
-    color: '#333',
+  signatureImage: {
+    maxWidth: '100%',
+    maxHeight: '200px',
+  },
+  cameraContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '400px',
+  },
+  signatureBox: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    border: '2px dashed #000',
+    width: '80%',
+    height: '40%',
   },
 };
 
