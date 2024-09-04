@@ -1,19 +1,13 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const CustomerInfo = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const name = queryParams.get('name');
+  const { name } = useParams();
 
   return (
     <div style={styles.container}>
       <h1>Customer Data Collection Page</h1>
-      {name ? (
-        <p>Welcome, {decodeURIComponent(name)}! Please fill in your details below.</p>
-      ) : (
-        <p>Customer name is not available.</p>
-      )}
+      <p>Welcome, {decodeURIComponent(name)}! Please fill in your details below.</p>
       {/* Add your customer data collection form here */}
     </div>
   );
