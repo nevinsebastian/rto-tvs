@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import Webcam from 'react-webcam';
 
 const CustomerInfo = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const name = queryParams.get('name');
-
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -27,7 +23,6 @@ const CustomerInfo = () => {
   const [colors, setColors] = useState([]);
 
   useEffect(() => {
-    // Fetch the JSON data from the public directory
     fetch('/tvsModels.json')
       .then(response => response.json())
       .then(data => {
@@ -82,188 +77,132 @@ const CustomerInfo = () => {
 
   return (
     <div style={styles.container}>
-      <h1>Customer Data Collection Page</h1>
-      {name && <p>Welcome, {decodeURIComponent(name)}! Please fill in your details below.</p>}
+      <h1 style={styles.header}>Customer Data Collection</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Date of Birth:
-          <input
-            type="text"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Permanent Address:
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          PIN Code:
-          <input
-            type="text"
-            name="pin"
-            value={formData.pin}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Mobile Number 1:
-          <input
-            type="text"
-            name="mobile1"
-            value={formData.mobile1}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Mobile Number 2:
-          <input
-            type="text"
-            name="mobile2"
-            value={formData.mobile2}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Model Name:
-          <select
-            name="modelName"
-            value={formData.modelName}
-            onChange={handleModelChange}
-            required
-            style={styles.input}
-          >
-            <option value="">Select Model</option>
-            {Object.keys(models).map(model => (
-              <option key={model} value={model}>{model}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Model Variant:
-          <select
-            name="modelVariant"
-            value={formData.modelVariant}
-            onChange={handleVariantChange}
-            required
-            style={styles.input}
-          >
-            <option value="">Select Variant</option>
-            {Object.keys(variants).map(variant => (
-              <option key={variant} value={variant}>{variant}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Color:
-          <select
-            name="color"
-            value={formData.color}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          >
-            <option value="">Select Color</option>
-            {colors.map(color => (
-              <option key={color} value={color}>{color}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Nominee Name:
-          <input
-            type="text"
-            name="nomineeName"
-            value={formData.nomineeName}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Relation with Nominee:
-          <input
-            type="text"
-            name="nomineeRelation"
-            value={formData.nomineeRelation}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
-        <label>
-          Nominee Age:
-          <input
-            type="text"
-            name="nomineeAge"
-            value={formData.nomineeAge}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </label>
+        {renderInput('Name', 'name', 'text', formData.name, handleChange)}
+        {renderInput('Date of Birth', 'dob', 'date', formData.dob, handleChange)}
+        {renderInput('Permanent Address', 'address', 'text', formData.address, handleChange)}
+        {renderInput('PIN Code', 'pin', 'text', formData.pin, handleChange)}
+        {renderInput('Mobile Number 1', 'mobile1', 'text', formData.mobile1, handleChange)}
+        {renderInput('Mobile Number 2', 'mobile2', 'text', formData.mobile2, handleChange)}
+        {renderInput('Email', 'email', 'email', formData.email, handleChange)}
+
+        <label style={styles.label}>Model Name:</label>
+        <select
+          name="modelName"
+          value={formData.modelName}
+          onChange={handleModelChange}
+          required
+          style={styles.select}
+        >
+          <option value="">Select Model</option>
+          {Object.keys(models).map(model => (
+            <option key={model} value={model}>{model}</option>
+          ))}
+        </select>
+
+        <label style={styles.label}>Model Variant:</label>
+        <select
+          name="modelVariant"
+          value={formData.modelVariant}
+          onChange={handleVariantChange}
+          required
+          style={styles.select}
+        >
+          <option value="">Select Variant</option>
+          {Object.keys(variants).map(variant => (
+            <option key={variant} value={variant}>{variant}</option>
+          ))}
+        </select>
+
+        <label style={styles.label}>Color:</label>
+        <select
+          name="color"
+          value={formData.color}
+          onChange={handleChange}
+          required
+          style={styles.select}
+        >
+          <option value="">Select Color</option>
+          {colors.map(color => (
+            <option key={color} value={color}>{color}</option>
+          ))}
+        </select>
+
+        {renderInput('Nominee Name', 'nomineeName', 'text', formData.nomineeName, handleChange)}
+        {renderInput('Relation with Nominee', 'nomineeRelation', 'text', formData.nomineeRelation, handleChange)}
+        {renderInput('Nominee Age', 'nomineeAge', 'number', formData.nomineeAge, handleChange)}
+
         <button type="submit" style={styles.button}>Submit</button>
+
+        <div style={styles.signatureContainer}>
+          <h2 style={styles.signatureHeader}>Capture Customer Signature</h2>
+          <Webcam
+            audio={false}
+            screenshotFormat="image/png"
+            width="100%"
+            videoConstraints={{ facingMode: "user" }}
+          />
+          {/* Implement a mechanism to capture and display the signature */}
+        </div>
       </form>
     </div>
   );
 };
 
+const renderInput = (label, name, type, value, onChange) => (
+  <label style={styles.label}>
+    {label}:
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required
+      style={styles.input}
+    />
+  </label>
+);
+
 const styles = {
   container: {
     padding: '20px',
-    background: '#f0f0f0',
+    background: '#ffffff',
     minHeight: '100vh',
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    margin: '20px auto',
+    maxWidth: '800px',
+  },
+  header: {
+    textAlign: 'center',
+    color: '#333',
+    marginBottom: '20px',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '600px',
-    margin: '0 auto',
+  },
+  label: {
+    fontSize: '16px',
+    marginBottom: '5px',
+    color: '#333',
   },
   input: {
     padding: '10px',
     fontSize: '16px',
-    marginBottom: '10px',
+    marginBottom: '15px',
     borderRadius: '5px',
-    border: '1px solid #ccc',
+    border: '1px solid #ddd',
+    boxShadow: 'inset 0px 1px 3px rgba(0, 0, 0, 0.1)',
+  },
+  select: {
+    padding: '10px',
+    fontSize: '16px',
+    marginBottom: '15px',
+    borderRadius: '5px',
+    border: '1px solid #ddd',
+    boxShadow: 'inset 0px 1px 3px rgba(0, 0, 0, 0.1)',
   },
   button: {
     padding: '10px 20px',
@@ -273,7 +212,19 @@ const styles = {
     cursor: 'pointer',
     backgroundColor: '#007BFF',
     color: '#fff',
-    marginTop: '10px',
+    marginTop: '20px',
+    transition: 'background-color 0.3s ease',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
+  },
+  signatureContainer: {
+    marginTop: '20px',
+    textAlign: 'center',
+  },
+  signatureHeader: {
+    marginBottom: '10px',
+    color: '#333',
   },
 };
 
