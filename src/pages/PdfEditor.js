@@ -1,116 +1,86 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const PdfEditor = () => {
-  const [pdfFile, setPdfFile] = useState(null);
-  const [downloadUrl, setDownloadUrl] = useState('');
+const PDFEditor = () => {
+    const [form21Pdf, setForm21Pdf] = useState(null);
+    const [form20Pdf, setForm20Pdf] = useState(null);
+    const [signature, setSignature] = useState(null);
+    const [financeCompany, setFinanceCompany] = useState('idfc');
+    const [processedForm21, setProcessedForm21] = useState(null);
+    const [processedForm20, setProcessedForm20] = useState(null);
 
-  const handleFileChange = (event) => {
-    setPdfFile(event.target.files[0]);
-  };
+    const handleForm21Change = (e) => {
+        setForm21Pdf(e.target.files[0]);
+    };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+    const handleForm20Change = (e) => {
+        setForm20Pdf(e.target.files[0]);
+    };
 
-    if (!pdfFile) {
-      alert('Please select a PDF file to upload.');
-      return;
-    }
+    const handleSignatureChange = (e) => {
+        setSignature(e.target.files[0]);
+    };
 
-    const formData = new FormData();
-    formData.append('pdf', pdfFile);
+    const handleFinanceCompanyChange = (e) => {
+        setFinanceCompany(e.target.value);
+    };
 
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/process_pdf/form21', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        responseType: 'blob' // Important for handling file responses
-      });
+    const handleForm21Submit = async () => {
+        if (!form21Pdf) return;
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      setDownloadUrl(url);
-    } catch (error) {
-      console.error('Error uploading PDF:', error);
-    }
-  };
+        const formData = new FormData();
+        formData.append('pdf', form21Pdf);
 
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>PDF Editor</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>
-          Upload PDF:
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            style={styles.input}
-          />
-        </label>
-        <button type="submit" style={styles.button}>Submit</button>
-      </form>
-      {downloadUrl && (
-        <div style={styles.downloadSection}>
-          <a href={downloadUrl} download="processed_pdf.pdf" style={styles.downloadLink}>Download Processed PDF</a>
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/process_pdf/form21', formData, {
+                responseType: 'blob',
+            });
+            setProcessedForm21(URL.createObjectURL(response.data));
+        } catch (error) {
+            console.error('Error processing form21:', error);
+        }
+    };
+
+    const handleForm20Submit = async () => {
+        if (!form20Pdf || !signature) return;
+
+        const formData = new FormData();
+        formData.append('pdf', form20Pdf);
+        formData.append('signature', signature);
+        formData.append('finance_company', financeCompany);
+
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/process_pdf/form20', formData, {
+                responseType: 'blob',
+            });
+            setProcessedForm20(URL.createObjectURL(response.data));
+        } catch (error) {
+            console.error('Error processing form20:', error);
+        }
+    };
+
+    return (
+        <div>
+            <h2>Form 21</h2>
+            <input type="file" accept="application/pdf" onChange={handleForm21Change} />
+            <button onClick={handleForm21Submit}>Submit Form 21</button>
+            {processedForm21 && (
+                <a href={processedForm21} download="processed_form21.pdf">Download Processed Form 21</a>
+            )}
+
+            <h2>Form 20</h2>
+            <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+            <input type="file" accept="image/png" onChange={handleSignatureChange} />
+            <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+                <option value="idfc">IDFC</option>
+                <option value="tvscredit">TVS Credit</option>
+            </select>
+            <button onClick={handleForm20Submit}>Submit Form 20</button>
+            {processedForm20 && (
+                <a href={processedForm20} download="processed_form20.pdf">Download Processed Form 20</a>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
-const styles = {
-  container: {
-    padding: '20px',
-    background: '#ffffff',
-    minHeight: '100vh',
-    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
-    margin: '20px auto',
-    maxWidth: '800px',
-  },
-  header: {
-    textAlign: 'center',
-    color: '#333',
-    marginBottom: '20px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    fontSize: '16px',
-    marginBottom: '5px',
-    color: '#333',
-  },
-  input: {
-    padding: '10px',
-    fontSize: '16px',
-    marginBottom: '15px',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
-    boxShadow: 'inset 0px 1px 3px rgba(0, 0, 0, 0.1)',
-  },
-  button: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    borderRadius: '5px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007BFF',
-    color: '#fff',
-    marginTop: '20px',
-    transition: 'background-color 0.3s ease',
-  },
-  downloadSection: {
-    marginTop: '20px',
-    textAlign: 'center',
-  },
-  downloadLink: {
-    fontSize: '16px',
-    color: '#007BFF',
-    textDecoration: 'none',
-  },
-};
-
-export default PdfEditor;
+export default PDFEditor;
