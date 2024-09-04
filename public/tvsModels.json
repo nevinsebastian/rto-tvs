@@ -1,0 +1,61 @@
+{
+  "models": {
+    "Apache RTR 160": {
+      "variants": {
+        "Standard": ["Black", "Red", "Blue"],
+        "Racing Edition": ["White", "Silver"]
+      }
+    },
+    "TVS Jupiter": {
+      "variants": {
+        "Standard": ["Black", "Red", "Blue"],
+        "ZX": ["Silver", "White"]
+      }
+    },
+    "TVS Ntorq": {
+      "variants": {
+        "Standard": ["Black", "Grey"],
+        "Race Edition": ["Green", "Yellow"]
+      }
+    },
+    "TVS iQube": {
+      "variants": {
+        "Standard": ["White", "Black"],
+        "S": ["Red", "Blue"]
+      }
+    },
+    "TVS Star City+": {
+      "variants": {
+        "Standard": ["Black", "Red"],
+        "Special Edition": ["Blue", "Silver"]
+      }
+    },
+   
+    "TVS Radeon": {
+      "variants": {
+        "Standard": ["Black", "Red", "Blue"],
+        "Drum Brake": ["Black", "Red"],
+        "Disc Brake": ["Black", "Blue"]
+      }
+    },
+    "TVS Apache RR 310": {
+      "variants": {
+        "Standard": ["Black", "Red"],
+        "ABS": ["Black", "Red"]
+      }
+    },
+    "TVS Scooty Pep Plus": {
+      "variants": {
+        "Standard": ["Black", "Red", "Blue"],
+        "Alloy Wheel": ["Black", "Red"]
+      }
+    },
+    "TVS Raider": {
+      "variants": {
+        "Standard": ["Black", "Red", "Blue"],
+        "Smart Connect": ["Black", "Red"]
+      }
+    }
+   
+  }
+}

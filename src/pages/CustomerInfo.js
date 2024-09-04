@@ -32,17 +32,17 @@ const CustomerInfo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here (e.g., sending data to a server)
+    // Handle form submission logic here
     console.log('Form Data Submitted:', formData);
   };
 
   return (
     <div style={styles.container}>
-      <h1>Customer Data Collection Page</h1>
-      {name && <p>Welcome, {decodeURIComponent(name)}! Please fill in your details below.</p>}
+      <h1 style={styles.heading}>Customer Data Collection Page</h1>
+      {name && <p style={styles.welcomeText}>Welcome, {decodeURIComponent(name)}! Please fill in your details below.</p>}
       <form onSubmit={handleSubmit} style={styles.form}>
-        <label>
-          Name:
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Name:</label>
           <input
             type="text"
             name="name"
@@ -51,20 +51,20 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Date of Birth:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Date of Birth:</label>
           <input
-            type="text"
+            type="date"
             name="dob"
             value={formData.dob}
             onChange={handleChange}
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Permanent Address:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Permanent Address:</label>
           <input
             type="text"
             name="address"
@@ -73,9 +73,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          PIN Code:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>PIN Code:</label>
           <input
             type="text"
             name="pin"
@@ -84,9 +84,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Mobile Number 1:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Mobile Number 1:</label>
           <input
             type="text"
             name="mobile1"
@@ -95,9 +95,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Mobile Number 2:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Mobile Number 2:</label>
           <input
             type="text"
             name="mobile2"
@@ -106,9 +106,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Email:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Email:</label>
           <input
             type="email"
             name="email"
@@ -117,9 +117,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Model Name:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Model Name:</label>
           <input
             type="text"
             name="modelName"
@@ -128,9 +128,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Model Variant:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Model Variant:</label>
           <input
             type="text"
             name="modelVariant"
@@ -139,9 +139,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Color:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Color:</label>
           <input
             type="text"
             name="color"
@@ -150,9 +150,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Nominee Name:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Nominee Name:</label>
           <input
             type="text"
             name="nomineeName"
@@ -161,9 +161,9 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Relation with Nominee:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Relation with Nominee:</label>
           <input
             type="text"
             name="nomineeRelation"
@@ -172,18 +172,18 @@ const CustomerInfo = () => {
             required
             style={styles.input}
           />
-        </label>
-        <label>
-          Nominee Age:
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Nominee Age:</label>
           <input
-            type="text"
+            type="number"
             name="nomineeAge"
             value={formData.nomineeAge}
             onChange={handleChange}
             required
             style={styles.input}
           />
-        </label>
+        </div>
         <button type="submit" style={styles.button}>Submit</button>
       </form>
     </div>
@@ -193,31 +193,58 @@ const CustomerInfo = () => {
 const styles = {
   container: {
     padding: '20px',
-    background: '#f0f0f0',
+    background: '#f9f9f9',
     minHeight: '100vh',
-  },
-  form: {
     display: 'flex',
     flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heading: {
+    fontSize: '2rem',
+    marginBottom: '20px',
+  },
+  welcomeText: {
+    fontSize: '1.2rem',
+    marginBottom: '20px',
+    color: '#555',
+  },
+  form: {
+    width: '100%',
     maxWidth: '600px',
-    margin: '0 auto',
+    background: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+  },
+  inputGroup: {
+    marginBottom: '15px',
+  },
+  label: {
+    display: 'block',
+    fontSize: '1rem',
+    marginBottom: '5px',
+    color: '#333',
   },
   input: {
+    width: '100%',
     padding: '10px',
     fontSize: '16px',
-    marginBottom: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
   },
   button: {
     padding: '10px 20px',
     fontSize: '16px',
-    borderRadius: '5px',
+    borderRadius: '4px',
     border: 'none',
     cursor: 'pointer',
     backgroundColor: '#007BFF',
     color: '#fff',
-    marginTop: '10px',
+    transition: 'background-color 0.3s',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
   },
 };
 
