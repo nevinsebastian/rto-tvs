@@ -13,7 +13,8 @@ const App = () => {
         <Route path="/" element={<SalesExecutiveHome />} />
         <Route path="/new-customer" element={<NewCustomer />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/customer-info/:name" element={<CustomerInfo />} />
+        {/* Update this path to match URLs with query strings */}
+        <Route path="/customer-form" element={<CustomerInfo />} />
       </Routes>
     </Router>
   );
