@@ -6,8 +6,11 @@ const PDFEditor = () => {
     const [form20Pdf, setForm20Pdf] = useState(null);
     const [signature, setSignature] = useState(null);
     const [financeCompany, setFinanceCompany] = useState('idfc');
+    const [invoicePdf, setInvoicePdf] = useState(null);
+    const [buyerSignature, setBuyerSignature] = useState(null);
     const [processedForm21, setProcessedForm21] = useState(null);
     const [processedForm20, setProcessedForm20] = useState(null);
+    const [processedInvoice, setProcessedInvoice] = useState(null);
 
     const handleForm21Change = (e) => {
         setForm21Pdf(e.target.files[0]);
@@ -23,6 +26,14 @@ const PDFEditor = () => {
 
     const handleFinanceCompanyChange = (e) => {
         setFinanceCompany(e.target.value);
+    };
+
+    const handleInvoiceChange = (e) => {
+        setInvoicePdf(e.target.files[0]);
+    };
+
+    const handleBuyerSignatureChange = (e) => {
+        setBuyerSignature(e.target.files[0]);
     };
 
     const handleForm21Submit = async () => {
@@ -59,6 +70,23 @@ const PDFEditor = () => {
         }
     };
 
+    const handleInvoiceSubmit = async () => {
+        if (!invoicePdf || !buyerSignature) return;
+
+        const formData = new FormData();
+        formData.append('pdf', invoicePdf);
+        formData.append('signature', buyerSignature);
+
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/process_pdf/invoice', formData, {
+                responseType: 'blob',
+            });
+            setProcessedInvoice(URL.createObjectURL(response.data));
+        } catch (error) {
+            console.error('Error processing invoice:', error);
+        }
+    };
+
     return (
         <div>
             <h2>Form 21</h2>
@@ -78,6 +106,14 @@ const PDFEditor = () => {
             <button onClick={handleForm20Submit}>Submit Form 20</button>
             {processedForm20 && (
                 <a href={processedForm20} download="processed_form20.pdf">Download Processed Form 20</a>
+            )}
+
+            <h2>Invoice</h2>
+            <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
+            <input type="file" accept="image/png" onChange={handleBuyerSignatureChange} />
+            <button onClick={handleInvoiceSubmit}>Submit Invoice</button>
+            {processedInvoice && (
+                <a href={processedInvoice} download="processed_invoice.pdf">Download Processed Invoice</a>
             )}
         </div>
     );
