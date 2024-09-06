@@ -4,7 +4,7 @@ import { Modal, Button } from 'react-bootstrap'; // Ensure react-bootstrap is in
 
 
 //should remove bike name verient and color
-
+// need styling
 
 const CustomerInfo = () => {
   const [formData, setFormData] = useState({
