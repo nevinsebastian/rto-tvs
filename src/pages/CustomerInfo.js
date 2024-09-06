@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { Modal, Button } from 'react-bootstrap'; // Ensure react-bootstrap is installed
 
+
+//should remove bike name verient and color
+
+
 const CustomerInfo = () => {
   const [formData, setFormData] = useState({
     name: '',
