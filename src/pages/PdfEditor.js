@@ -117,6 +117,6 @@ const PDFEditor = () => {
             )}
         </div>
     );
-};
+};// need to style
 
 export default PDFEditor;
