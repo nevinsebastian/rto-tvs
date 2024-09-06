@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 
 
 // should include buke name verient color 
-
+// should  include price and price break down
 const NewCustomer = () => {
   const [customerName, setCustomerName] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
