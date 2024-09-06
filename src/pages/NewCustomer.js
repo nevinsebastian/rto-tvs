@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
-
+// need styling
 // should include bike name verient color 
 // should  include price and price break down
 const NewCustomer = () => {
