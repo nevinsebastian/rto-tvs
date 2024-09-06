@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
+
+// should include buke name verient color 
+
 const NewCustomer = () => {
   const [customerName, setCustomerName] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
