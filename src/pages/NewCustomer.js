@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
 
-// should include buke name verient color 
+// should include bike name verient color 
 // should  include price and price break down
 const NewCustomer = () => {
   const [customerName, setCustomerName] = useState('');
