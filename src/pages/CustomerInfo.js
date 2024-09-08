@@ -343,4 +343,4 @@ const styles = {
   },
 };
 
-export default CustomerInfo;
+export default CustomerInfo; 
