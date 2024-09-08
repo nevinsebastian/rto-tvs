@@ -24,6 +24,7 @@ const CustomerInfo = () => {
   const [colors, setColors] = useState([]);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
+  const [isSignatureCaptured, setIsSignatureCaptured] = useState(false);
 
   const webcamRef = useRef(null);
 
@@ -79,6 +80,7 @@ const CustomerInfo = () => {
 
   const handleCaptureSignature = () => {
     setShowSignatureModal(true);
+    setIsSignatureCaptured(false); // Reset the state when opening the modal
   };
 
   const handleCloseModal = () => {
@@ -88,7 +90,13 @@ const CustomerInfo = () => {
   const handleCaptureImage = () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setSignatureImage(imageSrc);
-    handleCloseModal();
+    setIsSignatureCaptured(true); // Set the state to true once the signature is captured
+  };
+
+  const handleRecapture = () => {
+    setSignatureImage(null);
+    setIsSignatureCaptured(false); // Reset the state to allow re-capturing
+    setShowSignatureModal(true); // Open the modal again
   };
 
   return (
@@ -149,7 +157,12 @@ const CustomerInfo = () => {
         {renderInput('Relation with Nominee', 'nomineeRelation', 'text', formData.nomineeRelation, handleChange)}
         {renderInput('Nominee Age', 'nomineeAge', 'number', formData.nomineeAge, handleChange)}
 
-        <button type="button" onClick={handleCaptureSignature} style={styles.button}>
+        <button
+          type="button"
+          onClick={handleCaptureSignature}
+          style={isSignatureCaptured ? styles.buttonDisabled : styles.button}
+          disabled={isSignatureCaptured} // Disable the button if the signature is captured
+        >
           Scan Signature
         </button>
         
@@ -157,6 +170,13 @@ const CustomerInfo = () => {
           <div style={styles.signaturePreview}>
             <h2>Captured Signature:</h2>
             <img src={signatureImage} alt="Signature" style={styles.signatureImage} />
+            <button
+              type="button"
+              onClick={handleRecapture}
+              style={styles.button}
+            >
+              Recapture
+            </button>
           </div>
         )}
 
@@ -168,19 +188,26 @@ const CustomerInfo = () => {
           <Modal.Title>Capture Signature</Modal.Title>
         </Modal.Header>
         <Modal.Body style={styles.modalBody}>
-          <Button variant="primary" onClick={handleCaptureImage} style={styles.captureButton}>
-            Capture
-          </Button>
-          <div style={styles.cameraContainer}>
-            <Webcam
-              audio={false}
-              ref={webcamRef}
-              screenshotFormat="image/png"
-              width="100%"
-              videoConstraints={{ facingMode: 'environment' }} // Set to rear camera
-            />
-            <div style={styles.signatureBox}></div>
-          </div>
+          {!isSignatureCaptured && (
+            <>
+              <Button
+                variant="primary"
+                onClick={handleCaptureImage}
+                style={styles.captureButton}
+              >
+                Capture
+              </Button>
+              <div style={styles.cameraContainer}>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/png"
+                  width="100%"
+                  videoConstraints={{ facingMode: 'environment' }} // Set to rear camera
+                />
+              </div>
+            </>
+          )}
           {signatureImage && (
             <div style={styles.signaturePreview}>
               <h2>Captured Signature:</h2>
@@ -246,6 +273,8 @@ const styles = {
     padding: '10px',
     fontSize: '16px',
     marginBottom: '15px',
+
+
     borderRadius: '5px',
     border: '1px solid #ddd',
     boxShadow: 'inset 0px 1px 3px rgba(0, 0, 0, 0.1)',
@@ -253,16 +282,22 @@ const styles = {
   button: {
     padding: '10px 20px',
     fontSize: '16px',
-    borderRadius: '5px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007BFF',
     color: '#fff',
-    marginTop: '20px',
-    transition: 'background-color0.3s ease',
+    backgroundColor: '#007bff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   },
-  buttonHover: {
-    backgroundColor: '#0056b3',
+  buttonDisabled: {
+    padding: '10px 20px',
+    fontSize: '16px',
+    color: '#fff',
+    backgroundColor: '#6c757d',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'not-allowed',
+    transition: 'background-color 0.3s ease',
   },
   cameraContainer: {
     position: 'relative',
@@ -292,10 +327,12 @@ const styles = {
   },
   signaturePreview: {
     marginTop: '20px',
+    textAlign: 'center',
   },
   signatureImage: {
     maxWidth: '100%',
     height: 'auto',
+    maxHeight: '200px',
   },
   modalFooter: {
     display: 'flex',
