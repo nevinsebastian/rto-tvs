@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { Modal, Button } from 'react-bootstrap'; // Ensure react-bootstrap is installed
 
-
-//should remove bike name verient and color
-// need styling
-
 const CustomerInfo = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -171,21 +167,29 @@ const CustomerInfo = () => {
         <Modal.Header closeButton>
           <Modal.Title>Capture Signature</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={styles.modalBody}>
+          <Button variant="primary" onClick={handleCaptureImage} style={styles.captureButton}>
+            Capture
+          </Button>
           <div style={styles.cameraContainer}>
             <Webcam
               audio={false}
               ref={webcamRef}
               screenshotFormat="image/png"
               width="100%"
-              videoConstraints={{ facingMode: 'user' }}
+              videoConstraints={{ facingMode: 'environment' }} // Set to rear camera
             />
             <div style={styles.signatureBox}></div>
           </div>
+          {signatureImage && (
+            <div style={styles.signaturePreview}>
+              <h2>Captured Signature:</h2>
+              <img src={signatureImage} alt="Signature" style={styles.signatureImage} />
+            </div>
+          )}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer style={styles.modalFooter}>
           <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-          <Button variant="primary" onClick={handleCaptureImage}>Capture</Button>
         </Modal.Footer>
       </Modal>
     </div>
@@ -255,20 +259,16 @@ const styles = {
     backgroundColor: '#007BFF',
     color: '#fff',
     marginTop: '20px',
-    transition: 'background-color 0.3s ease',
+    transition: 'background-color0.3s ease',
   },
-  signaturePreview: {
-    marginTop: '20px',
-    textAlign: 'center',
-  },
-  signatureImage: {
-    maxWidth: '100%',
-    maxHeight: '200px',
+  buttonHover: {
+    backgroundColor: '#0056b3',
   },
   cameraContainer: {
     position: 'relative',
     width: '100%',
     height: '400px',
+    marginTop: '10px',
   },
   signatureBox: {
     position: 'absolute',
@@ -277,7 +277,32 @@ const styles = {
     transform: 'translate(-50%, -50%)',
     border: '2px dashed #000',
     width: '80%',
-    height: '40%',
+    height: '80%',
+  },
+  modalBody: {
+    position: 'relative',
+    padding: '20px',
+  },
+  captureButton: {
+    position: 'absolute',
+    top: '10px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: '1',
+  },
+  signaturePreview: {
+    marginTop: '20px',
+  },
+  signatureImage: {
+    maxWidth: '100%',
+    height: 'auto',
+  },
+  modalFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '10px 15px',
+    backgroundColor: '#f8f9fa',
+    borderTop: '1px solid #dee2e6',
   },
 };
 
