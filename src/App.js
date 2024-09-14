@@ -5,6 +5,8 @@ import NewCustomer from './pages/NewCustomer';
 import Dashboard from './pages/SalesDashboard';
 import CustomerInfo from './pages/CustomerInfo';
 import PdfEditor from './pages/PdfEditor';
+import Login from './pages/Login';
+import Admin from './pages/Admin';
 
 
 const App = () => {
@@ -12,7 +14,8 @@ const App = () => {
     <Router>
       {/* Ensure Navbar is rendered */}
       <Routes>
-        <Route path="/" element={<SalesExecutiveHome />} />
+        <Route path="/" element={<Login />} />
+        <Route path='/admin' element={<Admin/>}/>
         <Route path="/new-customer" element={<NewCustomer />} />
         <Route path="/dashboard" element={<Dashboard />} />
         {/* Update this path to match URLs with query strings */}

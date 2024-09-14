@@ -1,86 +1,94 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import jwt_decode from 'jwt-decode'; // Correct import
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/login', {
-                username: username,
-                password: password,
-                grant_type: '',
-                scope: '',
-                client_id: '',
-                client_secret: ''
-            }, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
+  // Function to decode token and get user role
+  const getUserRoleFromToken = (token) => {
+    try {
+      const decodedToken = jwt_decode(token); // Correct usage of jwt_decode
+      return decodedToken.role; // Extract the 'role' field from the token payload
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  };
 
-            const { access_token } = response.data;
-            // Store the token in local storage or context
-            localStorage.setItem('token', access_token);
+  // Handle login form submission
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
 
-            // Fetch user role using the token (you can adjust this according to your backend)
-            const userResponse = await axios.get('http://127.0.0.1:8000/user', {
-                headers: {
-                    Authorization: `Bearer ${access_token}`
-                }
-            });
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username: email,
+          password: password,
+        }),
+      });
 
-            const userRole = userResponse.data.role;
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
 
-            // Navigate based on role
-            switch (userRole) {
-                case 'admin':
-                    navigate('/admin');
-                    break;
-                case 'sales_executive':
-                    navigate('/sales-dashboard');
-                    break;
-                case 'accounts':
-                    navigate('/accounts-dashboard');
-                    break;
-                case 'rto':
-                    navigate('/rto-dashboard');
-                    break;
-                default:
-                    setError('Invalid role');
-            }
-        } catch (err) {
-            setError('Login failed');
-        }
-    };
+      const loginData = await response.json();
 
-    return (
+      // Extract role from the token
+      const role = getUserRoleFromToken(loginData.access_token);
+
+      console.log('User role:', role);
+
+      // Redirect or handle role-based logic
+      if (role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (role === 'sales') {
+        navigate('/sales-dashboard');
+      } else if (role === 'accounts') {
+        navigate('/accounts-dashboard');
+      } else {
+        throw new Error('Unknown role');
+      }
+    } catch (error) {
+      setError('Login failed: ' + error.message);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <form onSubmit={handleLogin}>
         <div>
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                />
-                <button type="submit">Login</button>
-                {error && <p>{error}</p>}
-            </form>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  );
 };
 
 export default Login;
