@@ -1,78 +1,68 @@
 import React, { useState } from 'react';
-import jwt_decode from 'jwt-decode'; // Correct import
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Function to decode token and get user role
-  const getUserRoleFromToken = (token) => {
-    try {
-      const decodedToken = jwt_decode(token); // Correct usage of jwt_decode
-      return decodedToken.role; // Extract the 'role' field from the token payload
-    } catch (error) {
-      console.error('Error decoding token:', error);
-      return null;
-    }
-  };
-
-  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
-
     try {
-      const response = await fetch('http://127.0.0.1:8000/login', {
-        method: 'POST',
+      const response = await axios.post('http://127.0.0.1:8000/login', {
+        grant_type: '',
+        username,
+        password,
+        scope: '',
+        client_id: '',
+        client_secret: ''
+      }, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: email,
-          password: password,
-        }),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
+      const { access_token, user } = response.data;
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      const loginData = await response.json();
-
-      // Extract role from the token
-      const role = getUserRoleFromToken(loginData.access_token);
-
-      console.log('User role:', role);
-
-      // Redirect or handle role-based logic
-      if (role === 'admin') {
-        navigate('/admin-dashboard');
-      } else if (role === 'sales') {
-        navigate('/sales-dashboard');
-      } else if (role === 'accounts') {
-        navigate('/accounts-dashboard');
-      } else {
-        throw new Error('Unknown role');
+      // Redirect based on the user role
+      switch (user.role_name) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'sales_exicutive':
+          navigate('/sales-executive');
+          break;
+        case 'accounts':
+          navigate('/accounts');
+          break;
+        case 'rto':
+          navigate('/rto');
+          break;
+        case 'manager':
+          navigate('/manager');
+          break;
+        default:
+          setError('Unknown role.');
       }
     } catch (error) {
-      setError('Login failed: ' + error.message);
+      setError('Login failed. Please check your credentials.');
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <div>
           <label>Email:</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
@@ -87,6 +77,7 @@ const Login = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
