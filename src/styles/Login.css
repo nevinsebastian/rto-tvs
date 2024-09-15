@@ -2,11 +2,28 @@
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
+  padding: 0;
+}
+
+/* Top Bar */
+.top-bar {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 1000; /* Ensure it stays on top of other content */
+}
+
+/* Logo */
+.logo {
+  height: 40px; /* Adjust size as needed */
+  margin-right: 20px; /* Space between logo and other content */
 }
 
 /* Login Container */
@@ -14,9 +31,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: calc(100vh - 50px); /* Adjust for the height of the top bar */
   width: 100%;
-  padding: 20px; /* Added padding to prevent edges touching */
+  padding: 20px;
+  box-sizing: border-box;
+  margin-top: 50px; /* Push down the content to make space for the top bar */
 }
 
 /* Login Box */
@@ -25,22 +44,22 @@ body {
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-  max-width: 500px; /* Increased max-width for larger screens */
+  max-width: 500px;
   width: 100%;
   text-align: center;
-  box-sizing: border-box; /* Ensures padding is included in width calculation */
+  box-sizing: border-box;
 }
 
 /* Title and Subtitle */
 .login-title {
-  font-size: 2.5rem; /* Increased font size */
+  font-size: 2.5rem;
   color: #333;
   margin-bottom: 10px;
   font-weight: 600;
 }
 
 .login-subtitle {
-  font-size: 1.2rem; /* Increased font size */
+  font-size: 1.2rem;
   color: #888;
   margin-bottom: 30px;
 }
@@ -53,19 +72,19 @@ body {
 
 label {
   display: block;
-  font-size: 1rem; /* Slightly larger font size */
+  font-size: 1rem;
   margin-bottom: 5px;
   color: #666;
 }
 
 .input-field {
   width: 100%;
-  padding: 14px; /* Increased padding for better touch targets */
+  padding: 14px;
   border-radius: 8px;
   border: 1px solid #ddd;
   background-color: #f9f9f9;
   transition: border 0.3s ease;
-  box-sizing: border-box; /* Ensures padding is included in width calculation */
+  box-sizing: border-box;
 }
 
 .input-field:focus {
@@ -76,12 +95,12 @@ label {
 /* Button */
 .login-button {
   width: 100%;
-  padding: 14px; /* Increased padding for better touch targets */
+  padding: 14px;
   background-color: #1dbf73;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1.2rem; /* Increased font size */
+  font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -95,30 +114,47 @@ label {
 .error-message {
   margin-top: 15px;
   color: red;
-  font-size: 1rem; /* Slightly larger font size */
+  font-size: 1rem;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
+  .top-bar {
+    display: none; /* Hide the top bar on mobile */
+  }
+
+  .login-container {
+    height: 100vh; /* Full height on mobile */
+    margin-top: 0; /* Remove margin on mobile */
+  }
+
   .login-box {
     padding: 20px;
-    max-width: 90%; /* Ensure the card scales well on small screens */
+    max-width: 100%; /* Full width on mobile */
+    border-radius: 0; /* Remove border radius for full-screen effect */
+    height: calc(100vh - 60px); /* Full height minus some margin from top */
+    margin-top: 30px; /* Margin to push down the box */
+    box-shadow: none; /* Remove shadow for a cleaner look */
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust position */
   }
 
   .login-title {
-    font-size: 1.8rem; /* Adjust font size for smaller screens */
+    font-size: 2rem; /* Adjust font size for mobile */
   }
 
   .login-subtitle {
-    font-size: 1rem; /* Adjust font size for smaller screens */
+    font-size: 1rem; /* Adjust font size for mobile */
   }
 
   .input-field {
-    padding: 12px; /* Adjust padding for smaller screens */
+    padding: 12px; /* Adjust padding for mobile */
   }
 
   .login-button {
-    padding: 12px; /* Adjust padding for smaller screens */
-    font-size: 1rem; /* Adjust font size for smaller screens */
+    padding: 12px; /* Adjust padding for mobile */
+    font-size: 1rem; /* Adjust font size for mobile */
   }
 }

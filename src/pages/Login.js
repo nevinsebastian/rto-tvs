@@ -54,36 +54,41 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h1 className="login-title">Welcome Back</h1>
-        <p className="login-subtitle">Log in to your account</p>
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-container">
-            <label>Email</label>
-            <input
-              type="email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-          <div className="input-container">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-          <button type="submit" className="login-button">Login</button>
-        </form>
-        {error && <p className="error-message">{error}</p>}
+    <>
+      <div className="top-bar">
+        <img src="/logo.png" alt="Logo" className="logo" />
       </div>
-    </div>
+      <div className="login-container">
+        <div className="login-box">
+          <h1 className="login-title">TVS Top Heaven</h1>
+          <p className="login-subtitle">Welcome back</p>
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="input-container">
+              <label>Email</label>
+              <input
+                type="email"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="input-field"
+              />
+            </div>
+            <div className="input-container">
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="input-field"
+              />
+            </div>
+            <button type="submit" className="login-button">Login</button>
+          </form>
+          {error && <p className="error-message">{error}</p>}
+        </div>
+      </div>
+    </>
   );
 };
 
