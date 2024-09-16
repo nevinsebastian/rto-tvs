@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 0 20px;
+  padding: 0 10px; /* Reduce padding */
   box-sizing: border-box;
 }
 
@@ -14,16 +14,15 @@
   align-items: center;
   background-color: #1dbf73;
   color: white;
-  padding: 10px 20px;
+  padding: 8px 16px; /* Reduce padding */
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
 }
 
 /* User Info */
 .user-info {
-  margin-right: 20px;
-  font-weight: bold;
+  margin-right: 10px; /* Reduce margin */
+  font-size: 14px; /* Adjust font size */
 }
 
 /* Logout Button */
@@ -31,10 +30,10 @@
   background-color: #ff4d4d;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 8px 16px; /* Reduce padding */
   border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 14px; /* Adjust font size */
   transition: background-color 0.3s ease;
 }
 
@@ -46,11 +45,12 @@
 .insights-container {
   display: flex;
   justify-content: space-between; /* For desktop */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
   margin: 20px 0;
   gap: 20px;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
 }
 
+/* Insight Box */
 .insight-box {
   background-color: #f7f7f7;
   padding: 20px;
@@ -59,7 +59,7 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   flex: 1;
   min-width: 200px;
-  margin: 10px; /* For desktop spacing */
+  margin: 10px;
 }
 
 .insight-box h2 {
@@ -74,45 +74,21 @@
   color: #1dbf73;
 }
 
-/* Content */
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 /* Media Query for Mobile Devices */
 @media (max-width: 768px) {
-  /* Navigation Bar Adjustments */
-  .nav-bar {
-    padding: 10px;
-  }
-
-  .user-info {
-    margin-right: 10px;
-    font-size: 14px;
-  }
-
-  .logout-button {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-
-  /* Insights Section */
   .insights-container {
-    flex-wrap: nowrap;  /* Prevent wrapping on mobile */
-    overflow-x: hidden; /* No scrolling */
-    justify-content: space-between;
-    width: 100%;
+    flex-direction: row; /* Arrange items horizontally */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    padding: 0 10px; /* Add padding to ensure visibility */
+    gap: 10px; /* Adjust gap */
+    justify-content: flex-start; /* Align items to the start */
   }
 
   .insight-box {
-    flex: 1 1 0;  /* Allow all boxes to fit in one row */
-    padding: 10px;  /* Reduce padding for smaller screens */
-    margin: 0 5px;  /* Adjust margin to fit all boxes on one line */
+    flex: 0 0 auto; /* Prevent growing or shrinking */
+    min-width: 120px; /* Adjust width */
+    margin: 5px; /* Adjust margin */
+    padding: 10px; /* Adjust padding */
     text-align: center;
   }
 
@@ -125,10 +101,10 @@
   }
 
   .content h1 {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .content p {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
