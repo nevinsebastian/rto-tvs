@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Login.css';  // Importing CSS
+import '../styles/Login.css';  // Import the CSS
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +12,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:8000/login', {
+      const response = await axios.post('http://192.168.29.198:8000/login', {
         grant_type: '',
         username,
         password,
@@ -54,41 +54,42 @@ const Login = () => {
   };
 
   return (
-    <>
-      <div className="top-bar">
-        <img src="/logo.png" alt="Logo" className="logo" />
+    <div className="main-container">
+      {/* Form Section */}
+      <div className="form-section">
+        <h1 className="login-title">TVS Top Heaven</h1>
+        <p className="login-subtitle">Welcome back</p>
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="input-container">
+            <label>Email</label>
+            <input
+              type="email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
+          <div className="input-container">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
+          <button type="submit" className="login-button">Login</button>
+        </form>
+        {error && <p className="error-message">{error}</p>}
       </div>
-      <div className="login-container">
-        <div className="login-box">
-          <h1 className="login-title">TVS Top Heaven</h1>
-          <p className="login-subtitle">Welcome back</p>
-          <form onSubmit={handleLogin} className="login-form">
-            <div className="input-container">
-              <label>Email</label>
-              <input
-                type="email"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="input-field"
-              />
-            </div>
-            <div className="input-container">
-              <label>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="input-field"
-              />
-            </div>
-            <button type="submit" className="login-button">Login</button>
-          </form>
-          {error && <p className="error-message">{error}</p>}
-        </div>
+
+      {/* Image Section */}
+      <div className="image-section">
+        <img src="/login.svg" alt="Illustration" />
       </div>
-    </>
+    </div>
   );
 };
 
