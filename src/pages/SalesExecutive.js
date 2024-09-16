@@ -9,16 +9,15 @@ const SalesExecutive = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/');
+      navigate('/login');
     }
 
-    // Manipulate history to prevent back navigation
+    // Prevent back navigation
     const handleBackButton = (e) => {
       e.preventDefault();
       window.history.pushState(null, null, window.location.pathname);
     };
 
-    // Replace the history state to prevent back navigation
     window.history.pushState(null, null, window.location.pathname);
     window.addEventListener('popstate', handleBackButton);
 
@@ -30,7 +29,7 @@ const SalesExecutive = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/');
+    navigate('/login');  // Ensure that you navigate to '/login'
   };
 
   return (
@@ -67,7 +66,6 @@ const SalesExecutive = () => {
           <p>Role: Sales Executive</p>
         </div>
         <div className="login-image">
-          {/* Add your SVG image */}
           <img src="your-image.svg" alt="Login Visual" />
         </div>
       </div>

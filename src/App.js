@@ -13,12 +13,16 @@ const App = () => {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={token ? <Navigate to="/sales-executive" /> : <Login />} />
-      <Route path='/admin' element={<Admin />} />
-        <Route path='/sales-executive' element={<SalesExecutive />} />
-        <Route path='/accounts' element={<Accounts />} />
-        <Route path='/rto' element={<RTO />} />
-        <Route path='/manager' element={<Manager />} />
+        {/* If there's a token, navigate to the Sales Executive page, else Login */}
+        <Route path="/" element={token ? <Navigate to="/sales-executive" /> : <Login />} />
+        
+        {/* Protect the routes by checking token availability */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={token ? <Admin /> : <Navigate to="/login" />} />
+        <Route path="/sales-executive" element={token ? <SalesExecutive /> : <Navigate to="/login" />} />
+        <Route path="/accounts" element={token ? <Accounts /> : <Navigate to="/login" />} />
+        <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
+        <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );
