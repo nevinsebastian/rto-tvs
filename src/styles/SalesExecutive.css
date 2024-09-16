@@ -1,9 +1,11 @@
+/* SalesExecutive.css */
+
 /* Main Container */
 .sales-executive-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 0 10px; /* Reduce padding */
+  padding: 0 10px;
   box-sizing: border-box;
 }
 
@@ -14,26 +16,24 @@
   align-items: center;
   background-color: #1dbf73;
   color: white;
-  padding: 8px 16px; /* Reduce padding */
+  padding: 8px 16px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* User Info */
 .user-info {
-  margin-right: 10px; /* Reduce margin */
-  font-size: 14px; /* Adjust font size */
+  margin-right: 10px;
+  font-size: 14px;
 }
 
-/* Logout Button */
 .logout-button {
   background-color: #ff4d4d;
   border: none;
   color: white;
-  padding: 8px 16px; /* Reduce padding */
+  padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px; /* Adjust font size */
+  font-size: 14px;
   transition: background-color 0.3s ease;
 }
 
@@ -44,13 +44,12 @@
 /* Insights Section */
 .insights-container {
   display: flex;
-  justify-content: space-between; /* For desktop */
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  justify-content: space-between;
+  flex-wrap: wrap;
   margin: 20px 0;
   gap: 20px;
 }
 
-/* Insight Box */
 .insight-box {
   background-color: #f7f7f7;
   padding: 20px;
@@ -74,30 +73,57 @@
   color: #1dbf73;
 }
 
+/* Status Buttons Section */
+.status-buttons-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.status-button {
+  background-color: #f7f7f7;
+  border: 2px solid #1dbf73;
+  color: #1dbf73;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.status-button:hover {
+  background-color: #1dbf73;
+  color: white;
+}
+
+.status-button.active {
+  background-color: #1dbf73;
+  color: white;
+}
+
 /* Media Query for Mobile Devices */
 @media (max-width: 768px) {
   .insights-container {
-    flex-direction: row; /* Arrange items horizontally */
-    overflow-x: auto; /* Allow horizontal scrolling */
-    padding: 0 10px; /* Add padding to ensure visibility */
-    gap: 10px; /* Adjust gap */
-    justify-content: flex-start; /* Align items to the start */
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0 10px;
+    gap: 10px;
+    justify-content: flex-start;
   }
 
   .insight-box {
-    flex: 0 0 auto; /* Prevent growing or shrinking */
-    min-width: 120px; /* Adjust width */
-    margin: 5px; /* Adjust margin */
-    padding: 10px; /* Adjust padding */
+    flex: 0 0 auto;
+    min-width: 120px;
+    margin: 5px;
+    padding: 10px;
     text-align: center;
   }
 
   .insight-box h2 {
-    font-size: 12px; /* Smaller text for mobile */
+    font-size: 12px;
   }
 
   .insight-box p {
-    font-size: 16px; /* Smaller text for mobile */
+    font-size: 16px;
   }
 
   .content h1 {
@@ -106,5 +132,85 @@
 
   .content p {
     font-size: 14px;
+  }
+
+  .status-buttons-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-button {
+    width: 100%; /* Full width on mobile */
+    text-align: center;
+  }
+}
+/* Existing styles */
+
+/* Form container */
+.form-container {
+  background-color: #f7f7f7;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #1dbf73;
+  border-radius: 5px;
+}
+
+.submit-button {
+  background-color: #1dbf73;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #17a863;
+}
+
+/* Generated link section */
+.generated-link-container {
+  margin-top: 20px;
+}
+
+.copy-button, .whatsapp-button {
+  background-color: #1dbf73;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.copy-button:hover, .whatsapp-button:hover {
+  background-color: #17a863;
+}
+
+.whatsapp-button {
+  background-color: #25D366;
+}
+
+@media (max-width: 768px) {
+  .form-container input {
+    font-size: 14px;
+  }
+
+  .submit-button, .copy-button, .whatsapp-button {
+    font-size: 14px;
+    padding: 8px;
   }
 }
