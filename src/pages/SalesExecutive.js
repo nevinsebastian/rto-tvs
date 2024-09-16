@@ -82,11 +82,23 @@ const SalesExecutive = () => {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedLink);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(generatedLink)
+        .then(() => {
+          alert('Link copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+    } else {
+      console.warn('Clipboard API not supported');
+      alert('Your browser does not support the Clipboard API. Please copy the link manually.');
+    }
   };
-
+  
   const shareToWhatsApp = () => {
-    const message = `Here's the customer link: ${generatedLink}`;
+    const message = `Fill the data for RTO procedure 
+    : ${generatedLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
   };
 
