@@ -98,7 +98,7 @@ const SalesExecutive = () => {
   
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure 
-    : ${generatedLink}`;
+: ${generatedLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
   };
 
