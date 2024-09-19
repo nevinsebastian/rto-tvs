@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import '../styles/CustomerForm.css';  // Assuming you're using a CSS file for styling
 
 const CustomerForm = () => {
   const { link_token } = useParams();
@@ -91,13 +92,13 @@ const CustomerForm = () => {
   return (
     <div className="customer-form-container">
       {isLoading ? (
-        <p>Loading...</p>
+        <p className="loading-text">Loading...</p>
       ) : error ? (
-        <p>Error: {error}</p>
+        <p className="error-text">Error: {error}</p>
       ) : (
         <>
-          <h2>Customer Data</h2>
-          <div>
+          <h2 className="customer-title">Customer Data</h2>
+          <div className="customer-details">
             <p><strong>Name:</strong> {customerData.name}</p>
             <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
             <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
@@ -108,52 +109,69 @@ const CustomerForm = () => {
             <p><strong>On-Road Price:</strong> {customerData.onroad_price}</p>
           </div>
 
-          <h2>Update Customer Information</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="first_name"
-              value={formData.first_name || ''}
-              placeholder="First Name"
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="last_name"
-              value={formData.last_name || ''}
-              placeholder="Last Name"
-              onChange={handleInputChange}
-            />
-            <input
-              type="email"
-              name="email"
-              value={formData.email || ''}
-              placeholder="Email"
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="address"
-              value={formData.address || ''}
-              placeholder="Address"
-              onChange={handleInputChange}
-            />
-            <input
-              type="file"
-              name="aadhaar_front_photo"
-              onChange={handleFileChange}
-            />
-            <input
-              type="file"
-              name="aadhaar_back_photo"
-              onChange={handleFileChange}
-            />
-            <input
-              type="file"
-              name="passport_photo"
-              onChange={handleFileChange}
-            />
-            <button type="submit">Submit</button>
+          <h2 className="form-title">Update Customer Information</h2>
+          <form className="customer-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="text"
+                name="first_name"
+                value={formData.first_name || ''}
+                placeholder="First Name"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                name="last_name"
+                value={formData.last_name || ''}
+                placeholder="Last Name"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="email"
+                name="email"
+                value={formData.email || ''}
+                placeholder="Email"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                name="address"
+                value={formData.address || ''}
+                placeholder="Address"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Aadhaar Front Photo</label>
+              <input
+                type="file"
+                name="aadhaar_front_photo"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Aadhaar Back Photo</label>
+              <input
+                type="file"
+                name="aadhaar_back_photo"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Passport Photo</label>
+              <input
+                type="file"
+                name="passport_photo"
+                onChange={handleFileChange}
+              />
+            </div>
+            <button className="submit-btn" type="submit">Submit</button>
           </form>
         </>
       )}
