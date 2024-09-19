@@ -95,7 +95,7 @@ const SalesExecutive = () => {
       alert('Your browser does not support the Clipboard API. Please copy the link manually.');
     }
   };
-  
+     
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure 
 : ${generatedLink}`;
