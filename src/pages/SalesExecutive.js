@@ -82,6 +82,29 @@ const SalesExecutive = () => {
   };
 
   const copyToClipboard = () => {
+    const fallbackCopyTextToClipboard = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Avoid scrolling to the bottom of the page
+      textArea.style.position = "fixed";
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        alert('Unable to copy. Please copy the link manually.');
+      }
+      
+      document.body.removeChild(textArea);
+    };
+  
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(generatedLink)
         .then(() => {
@@ -89,12 +112,13 @@ const SalesExecutive = () => {
         })
         .catch(err => {
           console.error('Failed to copy text: ', err);
+          fallbackCopyTextToClipboard(generatedLink);
         });
     } else {
-      console.warn('Clipboard API not supported');
-      alert('Your browser does not support the Clipboard API. Please copy the link manually.');
+      fallbackCopyTextToClipboard(generatedLink);
     }
   };
+  
      
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure 
