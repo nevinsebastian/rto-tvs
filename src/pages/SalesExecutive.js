@@ -15,6 +15,7 @@ const SalesExecutive = () => {
     ex_showroom_price: '',
     tax: '',
     onroad_price: '',
+    finance_id: '' // Added finance_id field
   });
   const [generatedLink, setGeneratedLink] = useState('');
 
@@ -67,7 +68,7 @@ const SalesExecutive = () => {
     e.preventDefault();
 
     // Post data to API
-    const response = await fetch('http://192.168.29.198:8000/sales/create-customer', {
+    const response = await fetch('http://192.168.29.198:8000/sales/sales/create-customer', {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -119,7 +120,6 @@ const SalesExecutive = () => {
     }
   };
   
-     
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure 
 : ${generatedLink}`;
@@ -219,6 +219,13 @@ const SalesExecutive = () => {
               name="onroad_price"
               value={formData.onroad_price}
               placeholder="On-road Price"
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="finance_id"
+              value={formData.finance_id}
+              placeholder="Finance ID" // Added new input field for finance_id
               onChange={handleInputChange}
             />
             <button type="submit" className="submit-button">Submit</button>

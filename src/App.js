@@ -6,6 +6,7 @@ import Admin from './pages/Admin';
 import Accounts from './pages/Accounts';
 import RTO from './pages/RTO';
 import Manager from './pages/Manager';
+import CustomerForm from './pages/CustomerForm';
 
 const App = () => {
   const token = localStorage.getItem('token');
@@ -23,6 +24,8 @@ const App = () => {
         <Route path="/accounts" element={token ? <Accounts /> : <Navigate to="/login" />} />
         <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
         <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
+        <Route path="/customer-form/:link_token" element={<CustomerForm />} /> {/* New route */}
+
       </Routes>
     </Router>
   );
