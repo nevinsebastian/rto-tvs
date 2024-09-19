@@ -32,7 +32,10 @@ const CustomerForm = () => {
         setCustomerData(data);
         setFormData(prev => ({
           ...prev,
-          ...data,
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          email: data.email || '',
+          address: data.address || '',
         }));
         setIsLoading(false);
       } catch (err) {
@@ -87,53 +90,72 @@ const CustomerForm = () => {
 
   return (
     <div className="customer-form-container">
-      {isLoading ? <p>Loading...</p> : error ? <p>Error: {error}</p> : (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name || ''}
-            placeholder="First Name"
-            onChange={handleInputChange}
-          />
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name || ''}
-            placeholder="Last Name"
-            onChange={handleInputChange}
-          />
-          <input
-            type="email"
-            name="email"
-            value={formData.email || ''}
-            placeholder="Email"
-            onChange={handleInputChange}
-          />
-          <input
-            type="text"
-            name="address"
-            value={formData.address || ''}
-            placeholder="Address"
-            onChange={handleInputChange}
-          />
-          <input
-            type="file"
-            name="aadhaar_front_photo"
-            onChange={handleFileChange}
-          />
-          <input
-            type="file"
-            name="aadhaar_back_photo"
-            onChange={handleFileChange}
-          />
-          <input
-            type="file"
-            name="passport_photo"
-            onChange={handleFileChange}
-          />
-          <button type="submit">Submit</button>
-        </form>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <>
+          <h2>Customer Data</h2>
+          <div>
+            <p><strong>Name:</strong> {customerData.name}</p>
+            <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
+            <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
+            <p><strong>Vehicle Variant:</strong> {customerData.vehicle_variant}</p>
+            <p><strong>Vehicle Color:</strong> {customerData.vehicle_color}</p>
+            <p><strong>Ex-Showroom Price:</strong> {customerData.ex_showroom_price}</p>
+            <p><strong>Tax:</strong> {customerData.tax}</p>
+            <p><strong>On-Road Price:</strong> {customerData.onroad_price}</p>
+          </div>
+
+          <h2>Update Customer Information</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name || ''}
+              placeholder="First Name"
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name || ''}
+              placeholder="Last Name"
+              onChange={handleInputChange}
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ''}
+              placeholder="Email"
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="address"
+              value={formData.address || ''}
+              placeholder="Address"
+              onChange={handleInputChange}
+            />
+            <input
+              type="file"
+              name="aadhaar_front_photo"
+              onChange={handleFileChange}
+            />
+            <input
+              type="file"
+              name="aadhaar_back_photo"
+              onChange={handleFileChange}
+            />
+            <input
+              type="file"
+              name="passport_photo"
+              onChange={handleFileChange}
+            />
+            <button type="submit">Submit</button>
+          </form>
+        </>
       )}
     </div>
   );
