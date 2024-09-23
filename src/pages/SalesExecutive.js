@@ -68,7 +68,7 @@ const SalesExecutive = () => {
     e.preventDefault();
 
     // Post data to API
-    const response = await fetch('http://192.168.29.198:8000/sales/sales/create-customer', {
+    const response = await fetch('https://192.168.29.198:8000/sales/sales/create-customer', {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -123,7 +123,7 @@ const SalesExecutive = () => {
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure 
 : ${generatedLink}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
+    window.open(`httpss://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
   };
 
   return (

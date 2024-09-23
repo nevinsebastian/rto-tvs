@@ -24,7 +24,7 @@ const CustomerForm = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`http://192.168.29.198:8000/customer/customer-form/${link_token}`);
+        const response = await fetch(`https://192.168.29.198:8000/customer/customer-form/${link_token}`);
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setCustomerData(data);
@@ -59,22 +59,33 @@ const CustomerForm = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-
+  
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+  
     // Draw bounding box based on currentField
     context.strokeStyle = 'red';
     context.lineWidth = 2;
-    if (currentField === 'aadhaar_front_photo') {
-      context.strokeRect(50, 100, 300, 150); // Adjust size and position as needed
-    } else if (currentField === 'aadhaar_back_photo') {
-      context.strokeRect(50, 100, 300, 150); // Adjust size and position
+  
+    // Define bounding box dimensions
+    let x, y, width, height;
+    if (currentField === 'aadhaar_front_photo' || currentField === 'aadhaar_back_photo') {
+      x = 50; // Adjust as needed
+      y = 100; // Adjust as needed
+      width = 300; // Adjust as needed
+      height = 150; // Adjust as needed
     } else if (currentField === 'passport_photo') {
-      context.strokeRect(50, 100, 200, 250); // Adjust size and position
+      x = 50; // Adjust as needed
+      y = 100; // Adjust as needed
+      width = 200; // Adjust as needed
+      height = 250; // Adjust as needed
     }
-
+  
+    // Draw the bounding box
+    context.strokeRect(x, y, width, height);
+  
+    // Create the blob for the form data
     canvas.toBlob((blob) => {
       setFormData(prev => ({
         ...prev,
@@ -83,6 +94,7 @@ const CustomerForm = () => {
       setIsCameraOpen(false);
     }, 'image/jpeg');
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,7 +104,7 @@ const CustomerForm = () => {
     }
 
     try {
-      const response = await fetch(`http://192.168.29.198:8000/customer/customer/${link_token}`, {
+      const response = await fetch(`https://192.168.29.198:8000/customer/customer/${link_token}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -102,7 +114,7 @@ const CustomerForm = () => {
 
       if (!response.ok) throw new Error('Failed to submit data');
 
-      const data = await response.json();
+      
       alert('Data submitted successfully!');
     } catch (err) {
       setError(err.message);

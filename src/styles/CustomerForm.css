@@ -58,3 +58,12 @@ button:hover {
   color: red;
   text-align: center;
 }
+.camera-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+canvas {
+  display: none; /* Hide the canvas since we are using it for processing */
+}
