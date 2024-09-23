@@ -1,51 +1,98 @@
-import React, { useState } from 'react';
-import WebcamCapture from './WebcamCapture';
-import './CustomerForm.css';  // Assuming you have a CSS file for styling
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import '../styles/CustomerForm.css'; // Make sure to create this CSS file for styling
 
 const CustomerForm = () => {
-  const [aadhaarFront, setAadhaarFront] = useState(null);
-  const [aadhaarBack, setAadhaarBack] = useState(null);
-  const [passportPhoto, setPassportPhoto] = useState(null);
+  const { link_token } = useParams();
+  const [customerData, setCustomerData] = useState({});
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     address: '',
+    aadhaar_front_photo: null,
+    aadhaar_back_photo: null,
+    passport_photo: null,
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [currentField, setCurrentField] = useState('');
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  // Handle form text input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+  useEffect(() => {
+    const fetchCustomerData = async () => {
+      try {
+        const response = await fetch(`http://192.168.29.198:8000/customer/customer-form/${link_token}`);
+        if (!response.ok) throw new Error('Failed to fetch data');
+        const data = await response.json();
+        setCustomerData(data);
+        setFormData(prev => ({
+          ...prev,
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          email: data.email || '',
+          address: data.address || '',
+        }));
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+    fetchCustomerData();
+  }, [link_token]);
+
+  const openCamera = (field) => {
+    setCurrentField(field);
+    setIsCameraOpen(true);
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      })
+      .catch((err) => console.error('Error accessing camera', err));
   };
 
-  // Handle form submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!aadhaarFront || !aadhaarBack || !passportPhoto) {
-      alert('Please capture all required photos.');
-      return;
+  const captureImage = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Draw bounding box based on currentField
+    context.strokeStyle = 'red';
+    context.lineWidth = 2;
+    if (currentField === 'aadhaar_front_photo') {
+      context.strokeRect(50, 100, 300, 150); // Adjust size and position as needed
+    } else if (currentField === 'aadhaar_back_photo') {
+      context.strokeRect(50, 100, 300, 150); // Adjust size and position
+    } else if (currentField === 'passport_photo') {
+      context.strokeRect(50, 100, 200, 250); // Adjust size and position
     }
 
-    setIsSubmitting(true);
-    setSubmitError('');
+    canvas.toBlob((blob) => {
+      setFormData(prev => ({
+        ...prev,
+        [currentField]: blob
+      }));
+      setIsCameraOpen(false);
+    }, 'image/jpeg');
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const formDataToSend = new FormData();
-    formDataToSend.append('first_name', formData.first_name);
-    formDataToSend.append('last_name', formData.last_name);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('address', formData.address);
-    formDataToSend.append('aadhaar_front_photo', aadhaarFront);
-    formDataToSend.append('aadhaar_back_photo', aadhaarBack);
-    formDataToSend.append('passport_photo', passportPhoto);
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
 
     try {
-      const response = await fetch(`http://192.168.29.198:8000/customer/customer-submit`, {
+      const response = await fetch(`http://192.168.29.198:8000/customer/customer/${link_token}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -54,84 +101,109 @@ const CustomerForm = () => {
       });
 
       if (!response.ok) throw new Error('Failed to submit data');
+
       const data = await response.json();
       alert('Data submitted successfully!');
     } catch (err) {
-      setSubmitError(err.message);
-    } finally {
-      setIsSubmitting(false);
+      setError(err.message);
     }
   };
 
   return (
     <div className="customer-form-container">
-      <h2>Customer Form</h2>
-      <form onSubmit={handleSubmit} className="customer-form">
-        {/* Form text fields */}
-        <div className="form-group">
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            placeholder="First Name"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            placeholder="Last Name"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            placeholder="Email"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            placeholder="Address"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="error-message">Error: {error}</p>
+      ) : (
+        <>
+          <h2>Customer Data</h2>
+          <div className="customer-data">
+            <p><strong>Name:</strong> {customerData.name}</p>
+            <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
+            <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
+            <p><strong>Vehicle Variant:</strong> {customerData.vehicle_variant}</p>
+            <p><strong>Vehicle Color:</strong> {customerData.vehicle_color}</p>
+            <p><strong>Ex-Showroom Price:</strong> {customerData.ex_showroom_price}</p>
+            <p><strong>Tax:</strong> {customerData.tax}</p>
+            <p><strong>On-Road Price:</strong> {customerData.onroad_price}</p>
+          </div>
 
-        {/* Aadhaar Front Capture */}
-        <h4>Capture Aadhaar Front</h4>
-        <WebcamCapture type="aadhaar-front" onCapture={(image) => setAadhaarFront(image)} />
-        {aadhaarFront && <img src={aadhaarFront} alt="Aadhaar Front Preview" className="preview-image" />}
+          <h2>Update Customer Information</h2>
+          <form onSubmit={handleSubmit} className="form">
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name}
+              placeholder="First Name"
+              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              placeholder="Last Name"
+              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              placeholder="Email"
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              placeholder="Address"
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              required
+            />
+            
+            <div className="file-inputs">
+              <div>
+                {isCameraOpen && currentField === 'aadhaar_front_photo' ? (
+                  <div className="camera-container">
+                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => openCamera('aadhaar_front_photo')}>Open Camera for Aadhaar Front</button>
+                )}
+              </div>
+              <div>
+                {isCameraOpen && currentField === 'aadhaar_back_photo' ? (
+                  <div className="camera-container">
+                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <button type="button" onClick={captureImage}>Capture Aadhaar Back</button>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => openCamera('aadhaar_back_photo')}>Open Camera for Aadhaar Back</button>
+                )}
+              </div>
+              <div>
+                {isCameraOpen && currentField === 'passport_photo' ? (
+                  <div className="camera-container">
+                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <button type="button" onClick={captureImage}>Capture Passport</button>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => openCamera('passport_photo')}>Open Camera for Passport</button>
+                )}
+              </div>
+            </div>
 
-        {/* Aadhaar Back Capture */}
-        <h4>Capture Aadhaar Back</h4>
-        <WebcamCapture type="aadhaar-back" onCapture={(image) => setAadhaarBack(image)} />
-        {aadhaarBack && <img src={aadhaarBack} alt="Aadhaar Back Preview" className="preview-image" />}
-
-        {/* Passport Photo Capture */}
-        <h4>Capture Passport Size Photo</h4>
-        <WebcamCapture type="passport" onCapture={(image) => setPassportPhoto(image)} />
-        {passportPhoto && <img src={passportPhoto} alt="Passport Photo Preview" className="preview-image" />}
-
-        {/* Submit Button */}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit'}
-        </button>
-
-        {/* Submission Error */}
-        {submitError && <p className="error-message">Error: {submitError}</p>}
-      </form>
+            <button type="submit">Submit</button>
+          </form>
+        </>
+      )}
     </div>
   );
 };
