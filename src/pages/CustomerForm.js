@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import '../styles/CustomerForm.css'; // Make sure to create this CSS file for styling
+import '../styles/CustomerForm.css'; // Ensure the CSS file is present
 
 const CustomerForm = () => {
   const { link_token } = useParams();
@@ -20,7 +20,7 @@ const CustomerForm = () => {
   const [currentField, setCurrentField] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  
+
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
@@ -44,6 +44,7 @@ const CustomerForm = () => {
     fetchCustomerData();
   }, [link_token]);
 
+  // Function to open the camera and show the bounding box
   const openCamera = (field) => {
     setCurrentField(field);
     setIsCameraOpen(true);
@@ -55,43 +56,42 @@ const CustomerForm = () => {
       .catch((err) => console.error('Error accessing camera', err));
   };
 
+  // Capture image and crop based on the bounding box
   const captureImage = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-    
-    // Set canvas size to video size
+
+    // Set canvas size to match video feed
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    
-    // Draw video frame onto the canvas
+
+    // Draw the video frame on the canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Get cropping box dimensions
-    const cropX = 50; // Adjust as needed
-    const cropY = 100; // Adjust as needed
-    const cropWidth = currentField === 'passport_photo' ? 200 : 300; // Adjust as needed
-    const cropHeight = currentField === 'passport_photo' ? 250 : 150; // Adjust as needed
-    
-    // Get cropped image data
+
+    // Define cropping area based on the bounding box
+    const cropX = (canvas.width - 300) / 2;
+    const cropY = (canvas.height - 200) / 2;
+    const cropWidth = 300;
+    const cropHeight = 200;
+
+    // Get the image data for the bounding box
     const imageData = context.getImageData(cropX, cropY, cropWidth, cropHeight);
-    
-    // Create new canvas for the cropped image
+
+    // Create a new canvas for the cropped image
     const croppedCanvas = document.createElement('canvas');
     croppedCanvas.width = cropWidth;
     croppedCanvas.height = cropHeight;
     const croppedContext = croppedCanvas.getContext('2d');
-    
-    // Put cropped image data on the new canvas
     croppedContext.putImageData(imageData, 0, 0);
-    
-    // Convert the cropped canvas to Blob
+
+    // Convert the cropped canvas to a Blob (JPEG format)
     croppedCanvas.toBlob((blob) => {
       setFormData(prev => ({
         ...prev,
         [currentField]: blob
       }));
-      setIsCameraOpen(false);
+      setIsCameraOpen(false); // Close the camera after capturing
     }, 'image/jpeg');
   };
 
@@ -131,16 +131,12 @@ const CustomerForm = () => {
           <div className="customer-data">
             <p><strong>Name:</strong> {customerData.name}</p>
             <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
-            <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
-            <p><strong>Vehicle Variant:</strong> {customerData.vehicle_variant}</p>
-            <p><strong>Vehicle Color:</strong> {customerData.vehicle_color}</p>
-            <p><strong>Ex-Showroom Price:</strong> {customerData.ex_showroom_price}</p>
-            <p><strong>Tax:</strong> {customerData.tax}</p>
-            <p><strong>On-Road Price:</strong> {customerData.onroad_price}</p>
+            {/* Additional customer details */}
           </div>
 
           <h2>Update Customer Information</h2>
           <form onSubmit={handleSubmit} className="form">
+            {/* Input fields for first name, last name, etc. */}
             <input
               type="text"
               name="first_name"
@@ -165,52 +161,35 @@ const CustomerForm = () => {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
             />
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              placeholder="Address"
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              required
-            />
-            
+
             <div className="file-inputs">
-              <div>
-                {isCameraOpen && currentField === 'aadhaar_front_photo' ? (
-                  <div className="camera-container">
-                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
-                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    <div className="crop-box aadhaar-box"></div> {/* Aadhaar cropping box */}
-                    <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
+              {/* Aadhaar Front Photo */}
+              {isCameraOpen && currentField === 'aadhaar_front_photo' ? (
+                <div className="camera-container">
+                  <video ref={videoRef} className="camera-view" />
+                  <canvas ref={canvasRef} style={{ display: 'none' }} />
+                  <div className="bounding-box">
+                    <p>Place Aadhaar Front inside this box</p>
                   </div>
-                ) : (
-                  <button type="button" onClick={() => openCamera('aadhaar_front_photo')}>Open Camera for Aadhaar Front</button>
-                )}
-              </div>
-              <div>
-                {isCameraOpen && currentField === 'aadhaar_back_photo' ? (
-                  <div className="camera-container">
-                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
-                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    <div className="crop-box aadhaar-box"></div> {/* Aadhaar back cropping box */}
-                    <button type="button" onClick={captureImage}>Capture Aadhaar Back</button>
+                  <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => openCamera('aadhaar_front_photo')}>Capture Aadhaar Front</button>
+              )}
+
+              {/* Aadhaar Back Photo */}
+              {isCameraOpen && currentField === 'aadhaar_back_photo' ? (
+                <div className="camera-container">
+                  <video ref={videoRef} className="camera-view" />
+                  <canvas ref={canvasRef} style={{ display: 'none' }} />
+                  <div className="bounding-box">
+                    <p>Place Aadhaar Back inside this box</p>
                   </div>
-                ) : (
-                  <button type="button" onClick={() => openCamera('aadhaar_back_photo')}>Open Camera for Aadhaar Back</button>
-                )}
-              </div>
-              <div>
-                {isCameraOpen && currentField === 'passport_photo' ? (
-                  <div className="camera-container">
-                    <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
-                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    <div className="crop-box passport-box"></div> {/* Passport cropping box */}
-                    <button type="button" onClick={captureImage}>Capture Passport</button>
-                  </div>
-                ) : (
-                  <button type="button" onClick={() => openCamera('passport_photo')}>Open Camera for Passport</button>
-                )}
-              </div>
+                  <button type="button" onClick={captureImage}>Capture Aadhaar Back</button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => openCamera('aadhaar_back_photo')}>Capture Aadhaar Back</button>
+              )}
             </div>
 
             <button type="submit">Submit</button>
