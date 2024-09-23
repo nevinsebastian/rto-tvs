@@ -67,3 +67,18 @@ button:hover {
 canvas {
   display: none; /* Hide the canvas since we are using it for processing */
 }
+.crop-box {
+  border: 2px solid red;
+  position: absolute;
+  width: 300px; /* Aadhaar width */
+  height: 150px; /* Aadhaar height */
+  top: 100px;
+  left: 50px;
+}
+
+.passport-box {
+  width: 200px;
+  height: 250px;
+  top: 100px;
+  left: 50px;
+}

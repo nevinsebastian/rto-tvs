@@ -20,7 +20,7 @@ const CustomerForm = () => {
   const [currentField, setCurrentField] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-
+  
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
@@ -59,34 +59,34 @@ const CustomerForm = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-  
+    
+    // Set canvas size to video size
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+    
+    // Draw video frame onto the canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-    // Draw bounding box based on currentField
-    context.strokeStyle = 'red';
-    context.lineWidth = 2;
-  
-    // Define bounding box dimensions
-    let x, y, width, height;
-    if (currentField === 'aadhaar_front_photo' || currentField === 'aadhaar_back_photo') {
-      x = 50; // Adjust as needed
-      y = 100; // Adjust as needed
-      width = 300; // Adjust as needed
-      height = 150; // Adjust as needed
-    } else if (currentField === 'passport_photo') {
-      x = 50; // Adjust as needed
-      y = 100; // Adjust as needed
-      width = 200; // Adjust as needed
-      height = 250; // Adjust as needed
-    }
-  
-    // Draw the bounding box
-    context.strokeRect(x, y, width, height);
-  
-    // Create the blob for the form data
-    canvas.toBlob((blob) => {
+    
+    // Get cropping box dimensions
+    const cropX = 50; // Adjust as needed
+    const cropY = 100; // Adjust as needed
+    const cropWidth = currentField === 'passport_photo' ? 200 : 300; // Adjust as needed
+    const cropHeight = currentField === 'passport_photo' ? 250 : 150; // Adjust as needed
+    
+    // Get cropped image data
+    const imageData = context.getImageData(cropX, cropY, cropWidth, cropHeight);
+    
+    // Create new canvas for the cropped image
+    const croppedCanvas = document.createElement('canvas');
+    croppedCanvas.width = cropWidth;
+    croppedCanvas.height = cropHeight;
+    const croppedContext = croppedCanvas.getContext('2d');
+    
+    // Put cropped image data on the new canvas
+    croppedContext.putImageData(imageData, 0, 0);
+    
+    // Convert the cropped canvas to Blob
+    croppedCanvas.toBlob((blob) => {
       setFormData(prev => ({
         ...prev,
         [currentField]: blob
@@ -94,7 +94,6 @@ const CustomerForm = () => {
       setIsCameraOpen(false);
     }, 'image/jpeg');
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,7 +113,6 @@ const CustomerForm = () => {
 
       if (!response.ok) throw new Error('Failed to submit data');
 
-      
       alert('Data submitted successfully!');
     } catch (err) {
       setError(err.message);
@@ -182,6 +180,7 @@ const CustomerForm = () => {
                   <div className="camera-container">
                     <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
                     <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <div className="crop-box aadhaar-box"></div> {/* Aadhaar cropping box */}
                     <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
                   </div>
                 ) : (
@@ -193,6 +192,7 @@ const CustomerForm = () => {
                   <div className="camera-container">
                     <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
                     <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <div className="crop-box aadhaar-box"></div> {/* Aadhaar back cropping box */}
                     <button type="button" onClick={captureImage}>Capture Aadhaar Back</button>
                   </div>
                 ) : (
@@ -204,6 +204,7 @@ const CustomerForm = () => {
                   <div className="camera-container">
                     <video ref={videoRef} style={{ width: '100%', height: 'auto' }} />
                     <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <div className="crop-box passport-box"></div> {/* Passport cropping box */}
                     <button type="button" onClick={captureImage}>Capture Passport</button>
                   </div>
                 ) : (
