@@ -1,20 +1,23 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 const DocumentScanner = ({ onCapture, onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [stream, setStream] = useState(null);
+  const streamRef = useRef(null);  // Store the stream in a ref to persist across renders
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     const startCamera = async () => {
       try {
-        // Request camera access
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }, // Use back camera
-        });
-        setStream(mediaStream);
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.play();
+        if (!streamRef.current) {
+          // Only start the camera if it's not already running
+          const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          });
+          streamRef.current = mediaStream;  // Store stream in ref
+          videoRef.current.srcObject = mediaStream;
+          videoRef.current.play();
+        }
       } catch (error) {
         console.error('Error accessing the camera:', error);
       }
@@ -23,40 +26,61 @@ const DocumentScanner = ({ onCapture, onClose }) => {
     startCamera();
 
     return () => {
-      // Stop the camera stream when the component unmounts to prevent memory leaks
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());  // Stop stream on unmount
       }
     };
   }, []);
 
-  const captureImage = () => {
+  const captureImage = useCallback(() => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
-    
-    // Set canvas dimensions equal to the video dimensions
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
 
-    // Draw the video frame onto the canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const boundingBoxWidth = 300;
+    const boundingBoxHeight = 200;
 
-    // Convert the canvas content to a Blob and pass it back
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    const offsetX = (videoWidth - boundingBoxWidth) / 2;
+    const offsetY = (videoHeight - boundingBoxHeight) / 2;
+
+    canvas.width = boundingBoxWidth;
+    canvas.height = boundingBoxHeight;
+
+    context.drawImage(
+      video,
+      offsetX, offsetY,
+      boundingBoxWidth, boundingBoxHeight,
+      0, 0,
+      boundingBoxWidth, boundingBoxHeight
+    );
+
     canvas.toBlob((blob) => {
       onCapture(blob);
+
+      const previewUrl = URL.createObjectURL(blob);
+      setPreview(previewUrl);
     }, 'image/jpeg');
-  };
+  }, [onCapture]);
 
   return (
     <div className="camera-container">
-      <video ref={videoRef} className="camera-view" autoPlay playsInline />
+      <video ref={videoRef} className="camera-view" playsInline muted />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <div className="bounding-box">
         <p>Align Aadhaar front in this box</p>
       </div>
       <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
       <button type="button" onClick={onClose}>Close Camera</button>
+
+      {preview && (
+        <div className="image-preview">
+          <h3>Captured Image Preview:</h3>
+          <img src={preview} alt="Preview" />
+        </div>
+      )}
     </div>
   );
 };
