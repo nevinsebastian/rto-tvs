@@ -8,11 +8,12 @@ const DocumentScanner = ({ onCapture, onClose }) => {
   useEffect(() => {
     const startCamera = async () => {
       try {
+        // Request camera access
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' }, // Use back camera
         });
-        videoRef.current.srcObject = mediaStream;
         setStream(mediaStream);
+        videoRef.current.srcObject = mediaStream;
         videoRef.current.play();
       } catch (error) {
         console.error('Error accessing the camera:', error);
@@ -22,26 +23,26 @@ const DocumentScanner = ({ onCapture, onClose }) => {
     startCamera();
 
     return () => {
-      // Stop the camera stream when the component unmounts to prevent flickering and memory leaks
+      // Stop the camera stream when the component unmounts to prevent memory leaks
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [stream]);
+  }, []);
 
   const captureImage = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
     
-    // Set canvas size to match the video dimensions
-    canvas.width = 300;
-    canvas.height = 200;
+    // Set canvas dimensions equal to the video dimensions
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
     // Draw the video frame onto the canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Convert the canvas image to a Blob (image format)
+    // Convert the canvas content to a Blob and pass it back
     canvas.toBlob((blob) => {
       onCapture(blob);
     }, 'image/jpeg');
