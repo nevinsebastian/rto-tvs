@@ -3,18 +3,18 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 const DocumentScanner = ({ onCapture, onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const streamRef = useRef(null);  // Store the stream in a ref to persist across renders
+  const streamRef = useRef(null);
   const [preview, setPreview] = useState(null);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   useEffect(() => {
     const startCamera = async () => {
       try {
         if (!streamRef.current) {
-          // Only start the camera if it's not already running
           const mediaStream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: 'environment' },
           });
-          streamRef.current = mediaStream;  // Store stream in ref
+          streamRef.current = mediaStream;
           videoRef.current.srcObject = mediaStream;
           videoRef.current.play();
         }
@@ -27,12 +27,14 @@ const DocumentScanner = ({ onCapture, onClose }) => {
 
     return () => {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());  // Stop stream on unmount
+        streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
 
   const captureImage = useCallback(() => {
+    setIsCapturing(true);
+
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
@@ -51,36 +53,58 @@ const DocumentScanner = ({ onCapture, onClose }) => {
 
     context.drawImage(
       video,
-      offsetX, offsetY,
-      boundingBoxWidth, boundingBoxHeight,
-      0, 0,
-      boundingBoxWidth, boundingBoxHeight
+      offsetX,
+      offsetY,
+      boundingBoxWidth,
+      boundingBoxHeight,
+      0,
+      0,
+      boundingBoxWidth,
+      boundingBoxHeight
     );
 
     canvas.toBlob((blob) => {
-      onCapture(blob);
+      onCapture(blob); // Trigger the parent callback
 
       const previewUrl = URL.createObjectURL(blob);
-      setPreview(previewUrl);
+      setPreview(previewUrl); // Set preview image
+      setIsCapturing(false);
     }, 'image/jpeg');
   }, [onCapture]);
 
-  return (
-    <div className="camera-container">
-      <video ref={videoRef} className="camera-view" playsInline muted />
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <div className="bounding-box">
-        <p>Align Aadhaar front in this box</p>
-      </div>
-      <button type="button" onClick={captureImage}>Capture Aadhaar Front</button>
-      <button type="button" onClick={onClose}>Close Camera</button>
+  const retakeImage = () => {
+    setPreview(null); // Clear the preview and allow retake
+    setIsCapturing(false); // Allow capturing again
+  };
 
-      {preview && (
-        <div className="image-preview">
-          <h3>Captured Image Preview:</h3>
-          <img src={preview} alt="Preview" />
+  return (
+    <div className="out">
+      <div className="camera-container">
+        {!preview ? (
+          <>
+            <video ref={videoRef} className="camera-view" playsInline muted />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            <div className="bounding-box">
+              <p>Align Aadhaar front in this box</p>
+            </div>
+          </>
+        ) : (
+          <div className="image-preview">
+            <h3>Captured Image Preview:</h3>
+            <img src={preview} alt="Preview" />
+            <button type="button" onClick={retakeImage}>
+              Retake Image
+            </button>
+          </div>
+        )}
+        <div className="button-container">
+          <button type="button" onClick={onClose}>
+            Close Camera
+          </button>
         </div>
-      )}
+      </div>
+      
+      <button type="button" onClick={captureImage}>New Button</button> {/* Updated: New Button for capturing */}
     </div>
   );
 };

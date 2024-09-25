@@ -16,7 +16,10 @@ const CustomerForm = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentField, setCurrentField] = useState('');
+  const [isCapturingFront, setIsCapturingFront] = useState(false);
+  const [isCapturingBack, setIsCapturingBack] = useState(false);
+  const [frontPreview, setFrontPreview] = useState(null); // State for front preview
+  const [backPreview, setBackPreview] = useState(null);   // State for back preview
 
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -43,9 +46,19 @@ const CustomerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formDataToSend = new FormData();
+    
+    // Loop through formData and add each field
     for (const key in formData) {
-      formDataToSend.append(key, formData[key]);
+      if (formData[key] !== null) {
+        formDataToSend.append(key, formData[key]);
+      }
+    }
+
+    // Log formData keys and values for debugging
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0]+ ', ' + pair[1]);
     }
 
     try {
@@ -57,16 +70,22 @@ const CustomerForm = () => {
         body: formDataToSend,
       });
 
-      if (!response.ok) throw new Error('Failed to submit data');
+      if (!response.ok) {
+        const errorText = await response.text(); // Get error text for debugging
+        console.error("Server response error: ", errorText);
+        throw new Error('Failed to submit data');
+      }
 
       alert('Data submitted successfully!');
     } catch (err) {
+      console.error('Submit error:', err);
       setError(err.message);
     }
   };
 
   const closeCamera = () => {
-    setCurrentField(''); // Close the camera view
+    setIsCapturingFront(false);
+    setIsCapturingBack(false);
   };
 
   return (
@@ -81,7 +100,6 @@ const CustomerForm = () => {
           <div className="customer-data">
             <p><strong>Name:</strong> {customerData.name}</p>
             <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
-            {/* Additional customer details */}
           </div>
 
           <h2>Update Customer Information</h2>
@@ -113,33 +131,61 @@ const CustomerForm = () => {
 
             <div className="file-inputs">
               {/* Aadhaar Front Photo */}
-              {currentField === 'aadhaar_front_photo' ? (
+              {isCapturingFront ? (
                 <DocumentScanner
                   onCapture={(blob) => {
+                    const previewUrl = URL.createObjectURL(blob);
+                    setFrontPreview(previewUrl); // Set preview for the front
                     setFormData((prev) => ({ ...prev, aadhaar_front_photo: blob }));
-                    closeCamera(); // Close camera after capturing image
+                    closeCamera();
                   }}
                   onClose={closeCamera}
                 />
               ) : (
-                <button type="button" onClick={() => setCurrentField('aadhaar_front_photo')}>
-                  Capture Aadhaar Front
-                </button>
+                <>
+                  {frontPreview ? (
+                    <div>
+                      <h3>Front Preview:</h3>
+                      <img src={frontPreview} alt="Front Preview" />
+                      <button type="button" onClick={() => setIsCapturingFront(true)}>
+                        Retake Front Photo
+                      </button>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => setIsCapturingFront(true)}>
+                      Capture Aadhaar Front
+                    </button>
+                  )}
+                </>
               )}
 
               {/* Aadhaar Back Photo */}
-              {currentField === 'aadhaar_back_photo' ? (
+              {isCapturingBack ? (
                 <DocumentScanner
                   onCapture={(blob) => {
+                    const previewUrl = URL.createObjectURL(blob);
+                    setBackPreview(previewUrl); // Set preview for the back
                     setFormData((prev) => ({ ...prev, aadhaar_back_photo: blob }));
-                    closeCamera(); // Close camera after capturing image
+                    closeCamera();
                   }}
                   onClose={closeCamera}
                 />
               ) : (
-                <button type="button" onClick={() => setCurrentField('aadhaar_back_photo')}>
-                  Capture Aadhaar Back
-                </button>
+                <>
+                  {backPreview ? (
+                    <div>
+                      <h3>Back Preview:</h3>
+                      <img src={backPreview} alt="Back Preview" />
+                      <button type="button" onClick={() => setIsCapturingBack(true)}>
+                        Retake Back Photo
+                      </button>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => setIsCapturingBack(true)}>
+                      Capture Aadhaar Back
+                    </button>
+                  )}
+                </>
               )}
             </div>
 

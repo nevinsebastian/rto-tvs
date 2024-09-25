@@ -5,7 +5,10 @@
   margin: 20px auto;
   border: 2px solid #ccc;
   overflow: hidden;
-  background-color: black;  /* Helps stabilize rendering */
+  background-color: black; /* Helps stabilize rendering */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;    /* Center items horizontally */
 }
 
 .camera-view {
@@ -36,6 +39,22 @@
   padding: 5px;
   border-radius: 5px;
   margin: 0;
+}
+
+.button-container {
+  margin-top: 10px; /* Adjust as needed */
+  display: flex;
+  justify-content: space-between; /* Align buttons horizontally */
+}
+
+.capture-button {
+  padding: 10px 20px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .image-preview {
