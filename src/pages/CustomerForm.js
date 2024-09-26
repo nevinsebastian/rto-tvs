@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/CustomerForm.css'; // Ensure the CSS file is present
@@ -14,13 +13,16 @@ const CustomerForm = () => {
     address: '',
     aadhaar_front_photo: null,
     aadhaar_back_photo: null,
+    passport_photo: null,  // Added for passport photo
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isCapturingFront, setIsCapturingFront] = useState(false);
   const [isCapturingBack, setIsCapturingBack] = useState(false);
+  const [isCapturingPassport, setIsCapturingPassport] = useState(false); // State for passport capture
   const [frontPreview, setFrontPreview] = useState(null); // State for front preview
   const [backPreview, setBackPreview] = useState(null);   // State for back preview
+  const [passportPreview, setPassportPreview] = useState(null);   // State for passport preview
 
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -57,11 +59,6 @@ const CustomerForm = () => {
       }
     }
 
-    // Log formData keys and values for debugging
-    for (let pair of formDataToSend.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]);
-    }
-
     try {
       const response = await fetch(`https://192.168.29.198:8000/customer/customer/${link_token}`, {
         method: 'POST',
@@ -87,6 +84,7 @@ const CustomerForm = () => {
   const closeCamera = () => {
     setIsCapturingFront(false);
     setIsCapturingBack(false);
+    setIsCapturingPassport(false); // Close passport camera
   };
 
   return (
@@ -184,6 +182,35 @@ const CustomerForm = () => {
                   ) : (
                     <button type="button" onClick={() => setIsCapturingBack(true)}>
                       Capture Aadhaar Back
+                    </button>
+                  )}
+                </>
+              )}
+
+              {/* Passport Photo */}
+              {isCapturingPassport ? (
+                <DocumentScanner
+                  onCapture={(blob) => {
+                    const previewUrl = URL.createObjectURL(blob);
+                    setPassportPreview(previewUrl); // Set preview for the passport
+                    setFormData((prev) => ({ ...prev, passport_photo: blob }));
+                    closeCamera();
+                  }}
+                  onClose={closeCamera}
+                />
+              ) : (
+                <>
+                  {passportPreview ? (
+                    <div>
+                      <h3>Passport Photo Preview:</h3>
+                      <img src={passportPreview} alt="Passport Photo Preview" />
+                      <button type="button" onClick={() => setIsCapturingPassport(true)}>
+                        Retake Passport Photo
+                      </button>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => setIsCapturingPassport(true)}>
+                      Capture Passport Photo
                     </button>
                   )}
                 </>
