@@ -203,7 +203,7 @@ const CustomerForm = () => {
                   {passportPreview ? (
                     <div>
                       <h3>Passport Photo Preview:</h3>
-                      <img src={passportPreview} alt="Passport Photo Preview" />
+                      <img src={passportPreview} alt="Passport  Preview" />
                       <button type="button" onClick={() => setIsCapturingPassport(true)}>
                         Retake Passport Photo
                       </button>
