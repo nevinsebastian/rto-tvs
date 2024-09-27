@@ -19,11 +19,34 @@ const SalesExecutive = () => {
   });
   const [generatedLink, setGeneratedLink] = useState('');
 
+  // State to store the customer counts from the API
+  const [customerCounts, setCustomerCounts] = useState({
+    total_count: 0,
+    total_pending: 0,
+    total_submitted: 0,
+  });
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
     }
+
+    // Fetch customer count data from the API
+    const fetchCustomerCounts = async () => {
+      const response = await fetch('https://192.168.29.198:8000/sales/sales/customers/count', {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const data = await response.json();
+      setCustomerCounts(data);
+    };
+
+    fetchCustomerCounts();
 
     // Prevent back navigation
     const handleBackButton = (e) => {
@@ -137,19 +160,15 @@ const SalesExecutive = () => {
       <div className="insights-container">
         <div className="insight-box">
           <h2>Total Links Generated</h2>
-          <p>{Math.floor(Math.random() * 1000)}</p>
+          <p>{customerCounts.total_count}</p>
         </div>
         <div className="insight-box">
           <h2>Waiting for Data</h2>
-          <p>{Math.floor(Math.random() * 100)}</p>
-        </div>
-        <div className="insight-box">
-          <h2>Pending Verification</h2>
-          <p>{Math.floor(Math.random() * 100)}</p>
+          <p>{customerCounts.total_pending}</p>
         </div>
         <div className="insight-box">
           <h2>Verified</h2>
-          <p>{Math.floor(Math.random() * 100)}</p>
+          <p>{customerCounts.total_submitted}</p>
         </div>
       </div>
 
