@@ -159,24 +159,24 @@ const SalesExecutive = () => {
       {/* Insights Section */}
       <div className="insights-container">
         <div className="insight-box">
-          <h2>Total Links Generated</h2>
+          <h2>Total count</h2>
           <p>{customerCounts.total_count}</p>
         </div>
         <div className="insight-box">
-          <h2>Waiting for Data</h2>
+          <h2>Pending</h2>
           <p>{customerCounts.total_pending}</p>
         </div>
         <div className="insight-box">
-          <h2>Verified</h2>
+          <h2>Submited</h2>
           <p>{customerCounts.total_submitted}</p>
         </div>
       </div>
 
       {/* Status Buttons Section */}
       <div className="status-buttons-container">
+        <button className="status-button" onClick={handleButtonClick}>all</button>
         <button className="status-button" onClick={handleButtonClick}>Pending</button>
-        <button className="status-button" onClick={handleButtonClick}>Not Verified</button>
-        <button className="status-button" onClick={handleButtonClick}>Verified</button>
+        <button className="status-button" onClick={handleButtonClick}>Submited</button>
         <button className="status-button" onClick={handleButtonClick}>Add New</button>
       </div>
 
