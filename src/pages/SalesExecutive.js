@@ -5,26 +5,43 @@ import '../styles/SalesExecutive.css'; // Import the CSS for styling
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
-  const [showForm, setShowForm] = useState(false); // State to show/hide form
-  const [formData, setFormData] = useState({
-    name: '',
-    phone_number: '',
-    vehicle_name: '',
-    vehicle_variant: '',
-    vehicle_color: '',
-    ex_showroom_price: '',
-    tax: '',
-    onroad_price: '',
-    finance_id: '' // Added finance_id field
-  });
-  const [generatedLink, setGeneratedLink] = useState('');
-
-  // State to store the customer counts from the API
+  
+  // State for customer counts
   const [customerCounts, setCustomerCounts] = useState({
     total_count: 0,
     total_pending: 0,
     total_submitted: 0,
   });
+
+  // State for customer review counts
+  const [reviewCounts, setReviewCounts] = useState({
+    reviews_pending: 0,
+    reviews_done: 0,
+  });
+
+  const [showForm, setShowForm] = useState(false); // State to show/hide form
+  const [formData, setFormData] = useState({
+    name: '',
+    phone_number: '',
+    alternate_phone_number: '',
+    vehicle_name: '',
+    vehicle_variant: '',
+    vehicle_color: '',
+    ex_showroom_price: '',
+    tax: '',
+    insurance: '',
+    tp_registration: '',
+    man_accessories: '',
+    optional_accessories: '',
+    booking: '',
+    total_price: '',
+    finance_amount: '',
+    finance_id: '' 
+  });
+  const [generatedLink, setGeneratedLink] = useState('');
+  
+  // State for customers data
+  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -32,9 +49,9 @@ const SalesExecutive = () => {
       navigate('/login');
     }
 
-    // Fetch customer count data from the API
+    // Fetch customer count data from the first API
     const fetchCustomerCounts = async () => {
-      const response = await fetch('https://192.168.29.198:8000/sales/sales/customers/count', {
+      const response = await fetch('http://13.127.21.70:8000/sales/customers/count', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -46,7 +63,25 @@ const SalesExecutive = () => {
       setCustomerCounts(data);
     };
 
+    // Fetch customer review count data from the second API
+    const fetchReviewCounts = async () => {
+      const response = await fetch('http://13.127.21.70:8000/sales/customer-verification/count', {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const data = await response.json();
+      setReviewCounts({
+        reviews_pending: data['reviews pending'],
+        reviews_done: data['reviews Done'],
+      });
+    };
+
     fetchCustomerCounts();
+    fetchReviewCounts();
 
     // Prevent back navigation
     const handleBackButton = (e) => {
@@ -68,16 +103,32 @@ const SalesExecutive = () => {
     navigate('/login');
   };
 
-  const handleButtonClick = (e) => {
+  const handleButtonClick = async (e) => {
     const buttons = document.querySelectorAll('.status-button');
     buttons.forEach(button => button.classList.remove('active')); // Remove active from all buttons
     e.target.classList.add('active'); // Add active class to the clicked button
 
     if (e.target.textContent === 'Add New') {
       setShowForm(true);
+    } else if (e.target.textContent === 'All') {
+      setShowForm(false);
+      await fetchCustomers(); // Fetch customers when "All" is clicked
     } else {
       setShowForm(false);
     }
+  };
+
+  const fetchCustomers = async () => {
+    const response = await fetch('http://13.127.21.70:8000/sales/customers', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    const data = await response.json();
+    setCustomers(data); // Set fetched customers to state
   };
 
   const handleInputChange = (e) => {
@@ -91,7 +142,7 @@ const SalesExecutive = () => {
     e.preventDefault();
 
     // Post data to API
-    const response = await fetch('https://192.168.29.198:8000/sales/sales/create-customer', {
+    const response = await fetch('http://13.127.21.70:8000/sales/create-customer', {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -144,9 +195,8 @@ const SalesExecutive = () => {
   };
   
   const shareToWhatsApp = () => {
-    const message = `Fill the data for RTO procedure 
-: ${generatedLink}`;
-    window.open(`httpss://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
+    const message = `Fill the data for RTO procedure: ${generatedLink}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
   };
 
   return (
@@ -159,24 +209,32 @@ const SalesExecutive = () => {
       {/* Insights Section */}
       <div className="insights-container">
         <div className="insight-box">
-          <h2>Total count</h2>
+          <h2>Total Customers</h2>
           <p>{customerCounts.total_count}</p>
         </div>
         <div className="insight-box">
-          <h2>Pending</h2>
+          <h2>Pending Customers</h2>
           <p>{customerCounts.total_pending}</p>
         </div>
         <div className="insight-box">
-          <h2>Submited</h2>
+          <h2>Submitted Customers</h2>
           <p>{customerCounts.total_submitted}</p>
+        </div>
+        <div className="insight-box">
+          <h2>Pending Reviews</h2>
+          <p>{reviewCounts.reviews_pending}</p>
+        </div>
+        <div className="insight-box">
+          <h2>Completed Reviews</h2>
+          <p>{reviewCounts.reviews_done}</p>
         </div>
       </div>
 
       {/* Status Buttons Section */}
       <div className="status-buttons-container">
-        <button className="status-button" onClick={handleButtonClick}>all</button>
+        <button className="status-button" onClick={handleButtonClick}>All</button>
         <button className="status-button" onClick={handleButtonClick}>Pending</button>
-        <button className="status-button" onClick={handleButtonClick}>Submited</button>
+        <button className="status-button" onClick={handleButtonClick}>Submitted</button>
         <button className="status-button" onClick={handleButtonClick}>Add New</button>
       </div>
 
@@ -190,12 +248,21 @@ const SalesExecutive = () => {
               value={formData.name}
               placeholder="Customer Name"
               onChange={handleInputChange}
+              required
             />
             <input
               type="text"
               name="phone_number"
               value={formData.phone_number}
               placeholder="Phone Number"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="alternate_phone_number"
+              value={formData.alternate_phone_number}
+              placeholder="Alternate Phone Number"
               onChange={handleInputChange}
             />
             <input
@@ -204,6 +271,7 @@ const SalesExecutive = () => {
               value={formData.vehicle_name}
               placeholder="Vehicle Name"
               onChange={handleInputChange}
+              required
             />
             <input
               type="text"
@@ -211,6 +279,7 @@ const SalesExecutive = () => {
               value={formData.vehicle_variant}
               placeholder="Vehicle Variant"
               onChange={handleInputChange}
+              required
             />
             <input
               type="text"
@@ -218,45 +287,116 @@ const SalesExecutive = () => {
               value={formData.vehicle_color}
               placeholder="Vehicle Color"
               onChange={handleInputChange}
+              required
             />
             <input
-              type="number"
+              type="text"
               name="ex_showroom_price"
               value={formData.ex_showroom_price}
-              placeholder="Ex-showroom Price"
+              placeholder="Ex-Showroom Price"
               onChange={handleInputChange}
+              required
             />
             <input
-              type="number"
+              type="text"
               name="tax"
               value={formData.tax}
               placeholder="Tax"
               onChange={handleInputChange}
+              required
             />
             <input
-              type="number"
-              name="onroad_price"
-              value={formData.onroad_price}
-              placeholder="On-road Price"
+              type="text"
+              name="insurance"
+              value={formData.insurance}
+              placeholder="Insurance"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="tp_registration"
+              value={formData.tp_registration}
+              placeholder="TP Registration"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="man_accessories"
+              value={formData.man_accessories}
+              placeholder="Mandatory Accessories"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="optional_accessories"
+              value={formData.optional_accessories}
+              placeholder="Optional Accessories"
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="booking"
+              value={formData.booking}
+              placeholder="Booking"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="total_price"
+              value={formData.total_price}
+              placeholder="Total Price"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="finance_amount"
+              value={formData.finance_amount}
+              placeholder="Finance Amount"
               onChange={handleInputChange}
             />
             <input
               type="text"
               name="finance_id"
               value={formData.finance_id}
-              placeholder="Finance ID" // Added new input field for finance_id
+              placeholder="Finance ID"
               onChange={handleInputChange}
             />
-            <button type="submit" className="submit-button">Submit</button>
+            <button type="submit">Submit</button>
           </form>
+        </div>
+      )}
 
-          {generatedLink && (
-            <div className="generated-link-container">
-              <p>Generated Link: {generatedLink}</p>
-              <button className="copy-button" onClick={copyToClipboard}>Copy to Clipboard</button>
-              <button className="whatsapp-button" onClick={shareToWhatsApp}>Share on WhatsApp</button>
-            </div>
-          )}
+     {/* Customers Section */}
+<div className="customers-container">
+  {customers.length > 0 ? (
+    customers.map((customer, index) => (
+      <div key={index} className="customer-card">
+        <img src={customer.image_url} alt={customer.name} /> {/* Example image URL */}
+        <h3>{customer.name}</h3>
+        <p>Phone: {customer.phone_number}</p>
+        <p>Vehicle: {customer.vehicle_name} {customer.vehicle_variant}</p>
+        <p>Color: {customer.vehicle_color}</p>
+        <p>Price: ₹{customer.total_price}</p>
+        <button className="contact-button">Contact</button> {/* Optional contact button */}
+      </div>
+    ))
+  ) : (
+    <p>No customers found.</p> // Updated message for no customers
+  )}
+</div>
+
+
+      {/* Share and Copy Link */}
+      {generatedLink && (
+        <div className="link-container">
+          <p>Generated Link: {generatedLink}</p>
+          <button onClick={copyToClipboard}>Copy Link</button>
+          <button onClick={shareToWhatsApp}>Share on WhatsApp</button>
         </div>
       )}
     </div>

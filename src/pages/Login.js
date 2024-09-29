@@ -3,16 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Login.css';  // Import the CSS
 
-const Login = () => {  
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Prevent form reload on submit
+
     try {
-      const response = await axios.post('https://13.127.21.70:8000/login', {
+      const response = await axios.post('http://13.127.21.70:8000/login', {
         grant_type: '',
         username,
         password,
@@ -25,30 +26,36 @@ const Login = () => {
         }
       });
 
-      const { access_token, user } = response.data;
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(user));
+      if (response.status === 200) {
+        const { access_token, user } = response.data;
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
 
-      switch (user.role_name) {
-        case 'admin':
-          navigate('/admin');
-          break;
-        case 'Sales':
-          navigate('/sales-executive');
-          break;
-        case 'accounts':
-          navigate('/accounts');
-          break;
-        case 'rto':
-          navigate('/rto');
-          break;
-        case 'manager':
-          navigate('/manager');
-          break;
-        default:
-          setError('Unknown role.');
+        // Redirect based on role
+        switch (user.role_name) {
+          case 'Admin':
+            navigate('/admin');
+            break;
+          case 'Sales':
+            navigate('/sales-executive');
+            break;
+          case 'Accounts':
+            navigate('/accounts');
+            break;
+          case 'RTO':
+            navigate('/rto');
+            break;
+          case 'Manager':
+            navigate('/manager');
+            break;
+          default:
+            setError('Unknown role.');
+        }
+      } else {
+        setError('Login failed. Please check your credentials.');
       }
     } catch (error) {
+      console.error('Error logging in:', error);
       setError('Login failed. Please check your credentials.');
     }
   };
