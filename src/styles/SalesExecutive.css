@@ -139,7 +139,8 @@
   margin-top: 20px;
 }
 
-.copy-button, .whatsapp-button {
+.copy-button,
+.whatsapp-button {
   background-color: #1dbf73;
   border: none;
   color: white;
@@ -150,7 +151,8 @@
   transition: background-color 0.3s ease;
 }
 
-.copy-button:hover, .whatsapp-button:hover {
+.copy-button:hover,
+.whatsapp-button:hover {
   background-color: #17a863;
 }
 
@@ -163,19 +165,58 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center; /* Center cards in the container */
 }
 
 .customer-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: #ffffff; /* White background for contrast */
+  border-radius: 10px; /* Rounded corners */
   padding: 15px;
-  width: 200px; /* Adjust width as needed */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
+  width: 220px; /* Adjust width as needed */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for effects */
+  text-align: center; /* Centered text */
+  overflow: hidden; /* Hide overflow */
 }
 
 .customer-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+}
+
+.customer-card img {
+  width: 100%; /* Full width for images */
+  border-radius: 10px 10px 0 0; /* Round top corners */
+  height: 150px; /* Fixed height for images */
+  object-fit: cover; /* Cover the space without distortion */
+}
+
+.customer-card h3 {
+  font-size: 18px; /* Slightly larger font for names */
+  color: #333; /* Darker color for better contrast */
+  margin: 10px 0 5px; /* Margin adjustments */
+}
+
+.customer-card p {
+  font-size: 14px; /* Slightly smaller font for details */
+  color: #666; /* Lighter color for secondary text */
+  margin: 0; /* Reset margin */
+}
+
+/* Contact Button */
+.customer-card .contact-button {
+  background-color: #1dbf73; /* Brand color for buttons */
+  border: none; /* Remove border */
+  color: white; /* Text color */
+  padding: 10px 15px; /* Button padding */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  margin-top: 10px; /* Margin above button */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+.customer-card .contact-button:hover {
+  background-color: #17a863; /* Darker shade on hover */
 }
 
 /* Media Queries for Mobile Devices */
@@ -227,8 +268,15 @@
     font-size: 14px;
   }
 
-  .submit-button, .copy-button, .whatsapp-button {
+  .submit-button,
+  .copy-button,
+  .whatsapp-button {
     font-size: 14px;
     padding: 8px;
+  }
+
+  .customer-card {
+    width: 90%; /* Full width on mobile */
+    margin: 0 auto; /* Center the card */
   }
 }

@@ -5,7 +5,7 @@ import '../styles/SalesExecutive.css'; // Import the CSS for styling
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
-  
+
   // State for customer counts
   const [customerCounts, setCustomerCounts] = useState({
     total_count: 0,
@@ -42,6 +42,7 @@ const SalesExecutive = () => {
   
   // State for customers data
   const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null); // State for selected customer data
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -160,26 +161,26 @@ const SalesExecutive = () => {
     const fallbackCopyTextToClipboard = (text) => {
       const textArea = document.createElement("textarea");
       textArea.value = text;
-      
+
       // Avoid scrolling to the bottom of the page
       textArea.style.position = "fixed";
       textArea.style.top = "0";
       textArea.style.left = "0";
-      
+
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-      
+
       try {
         document.execCommand('copy');
         alert('Link copied to clipboard!');
       } catch (err) {
         alert('Unable to copy. Please copy the link manually.');
       }
-      
+
       document.body.removeChild(textArea);
     };
-  
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(generatedLink)
         .then(() => {
@@ -193,10 +194,23 @@ const SalesExecutive = () => {
       fallbackCopyTextToClipboard(generatedLink);
     }
   };
-  
+
   const shareToWhatsApp = () => {
     const message = `Fill the data for RTO procedure: ${generatedLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
+  };
+
+  const handleCustomerClick = async (customerId) => {
+    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${customerId}`, {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    const data = await response.json();
+    setSelectedCustomer(data); // Set selected customer data to state
   };
 
   return (
@@ -290,7 +304,7 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="ex_showroom_price"
               value={formData.ex_showroom_price}
               placeholder="Ex-Showroom Price"
@@ -298,7 +312,7 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="tax"
               value={formData.tax}
               placeholder="Tax"
@@ -306,7 +320,7 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="insurance"
               value={formData.insurance}
               placeholder="Insurance"
@@ -314,7 +328,7 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="tp_registration"
               value={formData.tp_registration}
               placeholder="TP Registration"
@@ -322,7 +336,7 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="man_accessories"
               value={formData.man_accessories}
               placeholder="Mandatory Accessories"
@@ -330,22 +344,23 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="optional_accessories"
               value={formData.optional_accessories}
               placeholder="Optional Accessories"
               onChange={handleInputChange}
+              required
             />
             <input
-              type="text"
+              type="number"
               name="booking"
               value={formData.booking}
-              placeholder="Booking"
+              placeholder="Booking Amount"
               onChange={handleInputChange}
               required
             />
             <input
-              type="text"
+              type="number"
               name="total_price"
               value={formData.total_price}
               placeholder="Total Price"
@@ -353,11 +368,12 @@ const SalesExecutive = () => {
               required
             />
             <input
-              type="text"
+              type="number"
               name="finance_amount"
               value={formData.finance_amount}
               placeholder="Finance Amount"
               onChange={handleInputChange}
+              required
             />
             <input
               type="text"
@@ -371,32 +387,37 @@ const SalesExecutive = () => {
         </div>
       )}
 
-     {/* Customers Section */}
-<div className="customers-container">
-  {customers.length > 0 ? (
-    customers.map((customer, index) => (
-      <div key={index} className="customer-card">
-        <img src={customer.image_url} alt={customer.name} /> {/* Example image URL */}
-        <h3>{customer.name}</h3>
-        <p>Phone: {customer.phone_number}</p>
-        <p>Vehicle: {customer.vehicle_name} {customer.vehicle_variant}</p>
-        <p>Color: {customer.vehicle_color}</p>
-        <p>Price: ₹{customer.total_price}</p>
-        <button className="contact-button">Contact</button> {/* Optional contact button */}
-      </div>
-    ))
-  ) : (
-    <p>No customers found.</p> // Updated message for no customers
-  )}
+     {/* Customers List */}
+<div className="customers-list">
+  {customers.map(customer => (
+    <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
+      <h3>{customer.name}</h3>
+      <p>Vehicle: {customer.vehicle_name} {customer.vehicle_variant}</p>
+      <p>Status: {customer.sales_verified ? 'Verified' : 'Not Verified'}</p> {/* Status Logic */}
+    </div>
+  ))}
 </div>
 
 
-      {/* Share and Copy Link */}
+      {/* Generated Link Section */}
       {generatedLink && (
-        <div className="link-container">
-          <p>Generated Link: {generatedLink}</p>
+        <div className="generated-link-container">
+          <p>Generated Link: <a href={generatedLink} target="_blank" rel="noopener noreferrer">{generatedLink}</a></p>
           <button onClick={copyToClipboard}>Copy Link</button>
-          <button onClick={shareToWhatsApp}>Share on WhatsApp</button>
+          <button onClick={shareToWhatsApp}>Share to WhatsApp</button>
+        </div>
+      )}
+
+      {/* Selected Customer Data */}
+      {selectedCustomer && (
+        <div className="selected-customer-data">
+          <h2>Selected Customer Data</h2>
+          <p>Name: {selectedCustomer.name}</p>
+          <p>Phone Number: {selectedCustomer.phone_number}</p>
+          <p>Vehicle Name: {selectedCustomer.vehicle_name}</p>
+          <p>Vehicle Variant: {selectedCustomer.vehicle_variant}</p>
+          <p>Verification Status: {selectedCustomer.verification_status}</p>
+          {/* Add more customer data as needed */}
         </div>
       )}
     </div>
