@@ -36,7 +36,7 @@ const SalesExecutive = () => {
     booking: '',
     total_price: '',
     finance_amount: '',
-    finance_id: '' 
+    finance_id: '',
   });
   const [generatedLink, setGeneratedLink] = useState('');
   
@@ -50,7 +50,6 @@ const SalesExecutive = () => {
       navigate('/login');
     }
 
-    // Fetch customer count data from the first API
     const fetchCustomerCounts = async () => {
       const response = await fetch('http://13.127.21.70:8000/sales/customers/count', {
         method: 'GET',
@@ -59,12 +58,10 @@ const SalesExecutive = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
       const data = await response.json();
       setCustomerCounts(data);
     };
 
-    // Fetch customer review count data from the second API
     const fetchReviewCounts = async () => {
       const response = await fetch('http://13.127.21.70:8000/sales/customer-verification/count', {
         method: 'GET',
@@ -73,7 +70,6 @@ const SalesExecutive = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
       const data = await response.json();
       setReviewCounts({
         reviews_pending: data['reviews pending'],
@@ -84,7 +80,6 @@ const SalesExecutive = () => {
     fetchCustomerCounts();
     fetchReviewCounts();
 
-    // Prevent back navigation
     const handleBackButton = (e) => {
       e.preventDefault();
       window.history.pushState(null, null, window.location.pathname);
@@ -106,14 +101,32 @@ const SalesExecutive = () => {
 
   const handleButtonClick = async (e) => {
     const buttons = document.querySelectorAll('.status-button');
-    buttons.forEach(button => button.classList.remove('active')); // Remove active from all buttons
-    e.target.classList.add('active'); // Add active class to the clicked button
+    buttons.forEach(button => button.classList.remove('active'));
+    e.target.classList.add('active');
 
     if (e.target.textContent === 'Add New') {
       setShowForm(true);
+      setFormData({
+        name: '',
+        phone_number: '',
+        alternate_phone_number: '',
+        vehicle_name: '',
+        vehicle_variant: '',
+        vehicle_color: '',
+        ex_showroom_price: '',
+        tax: '',
+        insurance: '',
+        tp_registration: '',
+        man_accessories: '',
+        optional_accessories: '',
+        booking: '',
+        total_price: '',
+        finance_amount: '',
+        finance_id: '',
+      });
     } else if (e.target.textContent === 'All') {
       setShowForm(false);
-      await fetchCustomers(); // Fetch customers when "All" is clicked
+      await fetchCustomers();
     } else {
       setShowForm(false);
     }
@@ -127,9 +140,8 @@ const SalesExecutive = () => {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-
     const data = await response.json();
-    setCustomers(data); // Set fetched customers to state
+    setCustomers(data);
   };
 
   const handleInputChange = (e) => {
@@ -142,7 +154,6 @@ const SalesExecutive = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Post data to API
     const response = await fetch('http://13.127.21.70:8000/sales/create-customer', {
       method: 'POST',
       headers: {
@@ -154,63 +165,49 @@ const SalesExecutive = () => {
     });
 
     const data = await response.json();
-    setGeneratedLink(data.customer_link); // Store generated link
+    setGeneratedLink(data.customer_link);
+    fetchCustomers(); // Refresh customers list after adding
   };
 
-  const copyToClipboard = () => {
-    const fallbackCopyTextToClipboard = (text) => {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
 
-      // Avoid scrolling to the bottom of the page
-      textArea.style.position = "fixed";
-      textArea.style.top = "0";
-      textArea.style.left = "0";
+    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
+      method: 'PUT',
+      headers: {
+        accept: 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-
-      try {
-        document.execCommand('copy');
-        alert('Link copied to clipboard!');
-      } catch (err) {
-        alert('Unable to copy. Please copy the link manually.');
-      }
-
-      document.body.removeChild(textArea);
-    };
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(generatedLink)
-        .then(() => {
-          alert('Link copied to clipboard!');
-        })
-        .catch(err => {
-          console.error('Failed to copy text: ', err);
-          fallbackCopyTextToClipboard(generatedLink);
-        });
-    } else {
-      fallbackCopyTextToClipboard(generatedLink);
+    if (response.ok) {
+      const updatedCustomer = await response.json();
+      setCustomers(prev => prev.map(customer => customer.customer_id === updatedCustomer.customer_id ? updatedCustomer : customer));
+      setSelectedCustomer(updatedCustomer); // Update the selected customer with new data
     }
   };
 
-  const shareToWhatsApp = () => {
-    const message = `Fill the data for RTO procedure: ${generatedLink}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`);
+  const handleCustomerClick = (customerId) => {
+    // Navigate to CustomerDetails with the selected customer's ID
+    navigate(`/customer-details/${customerId}`);
   };
 
-  const handleCustomerClick = async (customerId) => {
-    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${customerId}`, {
-      method: 'GET',
+  const handleVerifyCustomer = async () => {
+    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
+      method: 'POST',
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
 
-    const data = await response.json();
-    setSelectedCustomer(data); // Set selected customer data to state
+    if (response.ok) {
+      const updatedCustomer = await response.json();
+      setCustomers(prev => prev.map(customer => customer.customer_id === updatedCustomer.customer_id ? updatedCustomer : customer));
+      setSelectedCustomer(updatedCustomer);
+    }
   };
 
   return (
@@ -255,169 +252,46 @@ const SalesExecutive = () => {
       {/* Add New Form */}
       {showForm && (
         <div className="form-container">
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              placeholder="Customer Name"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="phone_number"
-              value={formData.phone_number}
-              placeholder="Phone Number"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="alternate_phone_number"
-              value={formData.alternate_phone_number}
-              placeholder="Alternate Phone Number"
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="vehicle_name"
-              value={formData.vehicle_name}
-              placeholder="Vehicle Name"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="vehicle_variant"
-              value={formData.vehicle_variant}
-              placeholder="Vehicle Variant"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="vehicle_color"
-              value={formData.vehicle_color}
-              placeholder="Vehicle Color"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="ex_showroom_price"
-              value={formData.ex_showroom_price}
-              placeholder="Ex-Showroom Price"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="tax"
-              value={formData.tax}
-              placeholder="Tax"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="insurance"
-              value={formData.insurance}
-              placeholder="Insurance"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="tp_registration"
-              value={formData.tp_registration}
-              placeholder="TP Registration"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="man_accessories"
-              value={formData.man_accessories}
-              placeholder="Mandatory Accessories"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="optional_accessories"
-              value={formData.optional_accessories}
-              placeholder="Optional Accessories"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="booking"
-              value={formData.booking}
-              placeholder="Booking Amount"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="total_price"
-              value={formData.total_price}
-              placeholder="Total Price"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="finance_amount"
-              value={formData.finance_amount}
-              placeholder="Finance Amount"
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="finance_id"
-              value={formData.finance_id}
-              placeholder="Finance ID"
-              onChange={handleInputChange}
-            />
-            <button type="submit">Submit</button>
+          <form onSubmit={selectedCustomer ? handleEditSubmit : handleSubmit}>
+            <h3>{selectedCustomer ? 'Edit Customer' : 'Add New Customer'}</h3>
+            <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Customer Name" required />
+            <input type="text" name="phone_number" value={formData.phone_number} onChange={handleInputChange} placeholder="Phone Number" required />
+            <input type="text" name="alternate_phone_number" value={formData.alternate_phone_number} onChange={handleInputChange} placeholder="Alternate Phone Number" />
+            <input type="text" name="vehicle_name" value={formData.vehicle_name} onChange={handleInputChange} placeholder="Vehicle Name" />
+            <input type="text" name="vehicle_variant" value={formData.vehicle_variant} onChange={handleInputChange} placeholder="Vehicle Variant" />
+            <input type="text" name="vehicle_color" value={formData.vehicle_color} onChange={handleInputChange} placeholder="Vehicle Color" />
+            <input type="text" name="ex_showroom_price" value={formData.ex_showroom_price} onChange={handleInputChange} placeholder="Ex-showroom Price" />
+            <input type="text" name="tax" value={formData.tax} onChange={handleInputChange} placeholder="Tax" />
+            <input type="text" name="insurance" value={formData.insurance} onChange={handleInputChange} placeholder="Insurance" />
+            <input type="text" name="tp_registration" value={formData.tp_registration} onChange={handleInputChange} placeholder="TP Registration" />
+            <input type="text" name="man_accessories" value={formData.man_accessories} onChange={handleInputChange} placeholder="Mandatory Accessories" />
+            <input type="text" name="optional_accessories" value={formData.optional_accessories} onChange={handleInputChange} placeholder="Optional Accessories" />
+            <input type="text" name="booking" value={formData.booking} onChange={handleInputChange} placeholder="Booking Amount" />
+            <input type="text" name="total_price" value={formData.total_price} onChange={handleInputChange} placeholder="Total Price" />
+            <input type="text" name="finance_amount" value={formData.finance_amount} onChange={handleInputChange} placeholder="Finance Amount" />
+            <input type="text" name="finance_id" value={formData.finance_id} onChange={handleInputChange} placeholder="Finance ID" />
+            <button type="submit">{selectedCustomer ? 'Update Customer' : 'Add Customer'}</button>
           </form>
         </div>
       )}
 
-     {/* Customers List */}
-<div className="customers-list">
-  {customers.map(customer => (
-    <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
-      <h3>{customer.name}</h3>
-      <p>Vehicle: {customer.vehicle_name} {customer.vehicle_variant}</p>
-      <p>Status: {customer.sales_verified ? 'Verified' : 'Not Verified'}</p> {/* Status Logic */}
-    </div>
-  ))}
-</div>
+      {/* Customers List */}
+      <div className="customers-list">
+        {customers.map(customer => (
+          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
+            <h3>{customer.name}</h3>
+            <p>Phone: {customer.phone_number}</p>
+            <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
+            <button onClick={handleVerifyCustomer}>Verify</button>
+          </div>
+        ))}
+      </div>
 
-
-      {/* Generated Link Section */}
+      {/* Generated Link */}
       {generatedLink && (
-        <div className="generated-link-container">
-          <p>Generated Link: <a href={generatedLink} target="_blank" rel="noopener noreferrer">{generatedLink}</a></p>
-          <button onClick={copyToClipboard}>Copy Link</button>
-          <button onClick={shareToWhatsApp}>Share to WhatsApp</button>
-        </div>
-      )}
-
-      {/* Selected Customer Data */}
-      {selectedCustomer && (
-        <div className="selected-customer-data">
-          <h2>Selected Customer Data</h2>
-          <p>Name: {selectedCustomer.name}</p>
-          <p>Phone Number: {selectedCustomer.phone_number}</p>
-          <p>Vehicle Name: {selectedCustomer.vehicle_name}</p>
-          <p>Vehicle Variant: {selectedCustomer.vehicle_variant}</p>
-          <p>Verification Status: {selectedCustomer.verification_status}</p>
-          {/* Add more customer data as needed */}
+        <div className="link-container">
+          <h4>Customer Link Generated:</h4>
+          <a href={generatedLink} target="_blank" rel="noopener noreferrer">{generatedLink}</a>
         </div>
       )}
     </div>

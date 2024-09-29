@@ -7,6 +7,7 @@ import Accounts from './pages/Accounts';
 import RTO from './pages/RTO';
 import Manager from './pages/Manager';
 import CustomerForm from './pages/CustomerForm';
+import CustomerDetails from './pages/CustomerDetails'; // Import the new component
 
 const App = () => {
   const token = localStorage.getItem('token');
@@ -14,18 +15,15 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* If there's a token, navigate to the Sales Executive page, else Login */}
         <Route path="/" element={token ? <Navigate to="/sales-executive" /> : <Login />} />
-        
-        {/* Protect the routes by checking token availability */}
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={token ? <Admin /> : <Navigate to="/login" />} />
         <Route path="/sales-executive" element={token ? <SalesExecutive /> : <Navigate to="/login" />} />
         <Route path="/accounts" element={token ? <Accounts /> : <Navigate to="/login" />} />
         <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
         <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
-        <Route path="/customer-form/:link_token" element={<CustomerForm />} /> {/* New route */}
-
+        <Route path="/customer-form/:link_token" element={<CustomerForm />} />
+        <Route path="/customer-details/:customer_id" element={<CustomerDetails />} /> {/* New route for customer details */}
       </Routes>
     </Router>
   );
