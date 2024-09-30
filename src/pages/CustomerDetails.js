@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaTimesCircle, FaSyncAlt } from 'react-icons/fa';
+import { FaUser, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaTimesCircle, FaSyncAlt, FaExclamationCircle } from 'react-icons/fa'; // Added Exclamation Circle Icon
 import '../styles/CustomerDetailsModern.css'; // New modern CSS styles
 
 const CustomerDetails = () => {
@@ -36,7 +36,21 @@ const CustomerDetails = () => {
   };
 
   const renderStatusAlert = () => {
-    if (customerData.status === 'Pending') {
+    if (customerData.status === 'submitted') {
+      if (customerData.sales_verified) {
+        return (
+          <div className="status-alert verified">
+            <FaCheckCircle /> Verified
+          </div>
+        );
+      } else {
+        return (
+          <div className="status-alert verification-pending">
+            <FaExclamationCircle /> Verification Pending
+          </div>
+        );
+      }
+    } else if (customerData.status === 'Pending') {
       return (
         <div className="status-alert pending">
           <FaSyncAlt /> Waiting for customer's data
@@ -63,7 +77,6 @@ const CustomerDetails = () => {
       <div className="customer-section">
         <div className="section-title"><FaUser /> Personal Information</div>
         <div className="details-grid">
-          
           <div><strong>Name:</strong> {displayField(customerData.name)}</div>
           <div><strong>Phone Number:</strong> {displayField(customerData.phone_number)}</div>
         </div>
@@ -91,9 +104,30 @@ const CustomerDetails = () => {
       <div className="customer-section">
         <div className="section-title"><FaIdCard /> Documents</div>
         <div className="details-grid">
-          <div><strong>Aadhaar Front:</strong> {displayField(customerData.photo_adhaar_front)}</div>
-          <div><strong>Aadhaar Back:</strong> {displayField(customerData.photo_adhaar_back)}</div>
-          <div><strong>Passport Photo:</strong> {displayField(customerData.photo_passport)}</div>
+          <div>
+            <strong>Aadhaar Front:</strong>
+            {customerData.photo_adhaar_front ? (
+              <img src={customerData.photo_adhaar_front} alt="Aadhaar Front" className="document-image" />
+            ) : (
+              displayField(customerData.photo_adhaar_front)
+            )}
+          </div>
+          <div>
+            <strong>Aadhaar Back:</strong>
+            {customerData.photo_adhaar_back ? (
+              <img src={customerData.photo_adhaar_back} alt="Aadhaar Back" className="document-image" />
+            ) : (
+              displayField(customerData.photo_adhaar_back)
+            )}
+          </div>
+          <div>
+            <strong>Passport Photo:</strong>
+            {customerData.photo_passport ? (
+              <img src={customerData.photo_passport} alt="Passport Photo" className="document-image" />
+            ) : (
+              displayField(customerData.photo_passport)
+            )}
+          </div>
         </div>
       </div>
     </div>

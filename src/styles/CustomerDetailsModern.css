@@ -87,3 +87,38 @@
   text-align: center;
   padding: 20px;
 }
+
+/* Document Images */
+.document-image {
+  max-width: 100%; /* Ensures the image does not overflow the container */
+  height: auto;    /* Maintains the aspect ratio */
+  border-radius: 8px; /* Optional: Adds rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow for depth */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .details-grid {
+    grid-template-columns: 1fr; /* Stack columns on small screens */
+  }
+}
+/* Verification Pending Status */
+.verification-pending {
+  background-color: #fff3cd; /* Light yellow background */
+  color: #856404; /* Dark yellow text */
+}
+/* Verification Pending Status */
+.verification-pending {
+  background-color: #fff3cd; /* Light Yellow */
+  color: #856404; /* Dark Yellow */
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.verification-pending svg {
+  margin-right: 10px;
+}
