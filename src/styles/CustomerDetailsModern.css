@@ -122,3 +122,49 @@
 .verification-pending svg {
   margin-right: 10px;
 }
+/* Edit Icon */
+.edit-icon {
+  cursor: pointer;
+  margin-left: 10px;
+  color: #007bff;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-top: 20px;
+}
+
+.save-button, .cancel-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+/* Edit Button */
+.edit-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  font-size: 1em;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.edit-button svg {
+  margin-right: 5px;
+}

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaTimesCircle, FaSyncAlt, FaExclamationCircle } from 'react-icons/fa'; // Added Exclamation Circle Icon
-import '../styles/CustomerDetailsModern.css'; // New modern CSS styles
+import { FaUser,FaTimesCircle, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import '../styles/CustomerDetailsModern.css';
 
 const CustomerDetails = () => {
   const { customerId } = useParams();
   const [customerData, setCustomerData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     const fetchCustomerById = async () => {
@@ -19,6 +21,7 @@ const CustomerDetails = () => {
         });
         const data = await response.json();
         setCustomerData(data);
+        setFormData(data);
       } catch (error) {
         console.error('Error fetching customer details:', error);
       }
@@ -27,29 +30,88 @@ const CustomerDetails = () => {
     fetchCustomerById();
   }, [customerId]);
 
+  const handleInputChange = (field, value) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+  };
+
+  const handleEditClick = () => {
+    setEditMode(true);
+  };
+
+  const handleSaveClick = async () => {
+    try {
+      const response = await fetch(`http://13.127.21.70:8000/sales/customers/${customerId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const updatedData = await response.json();
+        setCustomerData(updatedData);
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error('Error updating customer details:', error);
+    }
+  };
+
+  const handleCancelClick = () => {
+    setFormData(customerData);
+    setEditMode(false);
+  };
+
   if (!customerData) {
     return <div className="loading">Loading customer details...</div>;
   }
 
-  const displayField = (field) => {
-    return field !== null && field !== undefined ? field : 'Not provided';
+  const renderField = (label, field, type = 'text') => {
+    const isImageField = field.startsWith('photo_'); // Assuming image fields start with 'photo_'
+
+    return (
+      <div className="field-container">
+        <strong>{label}:</strong>
+        {editMode ? (
+          isImageField ? (
+            <input
+              type="text"
+              value={formData[field] || ''}
+              onChange={(e) => handleInputChange(field, e.target.value)}
+              placeholder="Enter image URL"
+            />
+          ) : (
+            <input
+              type={type}
+              value={formData[field] || ''}
+              onChange={(e) => handleInputChange(field, e.target.value)}
+            />
+          )
+        ) : isImageField ? (
+          <img src={customerData[field]} alt={label} className="document-image" />
+        ) : (
+          <span>{customerData[field] || 'Not provided'}</span>
+        )}
+      </div>
+    );
   };
 
   const renderStatusAlert = () => {
     if (customerData.status === 'submitted') {
-      if (customerData.sales_verified) {
-        return (
-          <div className="status-alert verified">
-            <FaCheckCircle /> Verified
-          </div>
-        );
-      } else {
-        return (
-          <div className="status-alert verification-pending">
-            <FaExclamationCircle /> Verification Pending
-          </div>
-        );
-      }
+      return customerData.sales_verified ? (
+        <div className="status-alert verified">
+          <FaCheckCircle /> Verified
+        </div>
+      ) : (
+        <div className="status-alert verification-pending">
+          <FaExclamationCircle /> Verification Pending
+        </div>
+      );
     } else if (customerData.status === 'Pending') {
       return (
         <div className="status-alert pending">
@@ -74,62 +136,56 @@ const CustomerDetails = () => {
   return (
     <div className="customer-details-modern">
       {renderStatusAlert()}
+
       <div className="customer-section">
         <div className="section-title"><FaUser /> Personal Information</div>
         <div className="details-grid">
-          <div><strong>Name:</strong> {displayField(customerData.name)}</div>
-          <div><strong>Phone Number:</strong> {displayField(customerData.phone_number)}</div>
+          {renderField('Name', 'name')}
+          {renderField('Phone Number', 'phone_number')}
+          {renderField('Address', 'address')}
         </div>
       </div>
 
       <div className="customer-section">
         <div className="section-title"><FaCar /> Vehicle Information</div>
         <div className="details-grid">
-          <div><strong>Vehicle Name:</strong> {displayField(customerData.vehicle_name)}</div>
-          <div><strong>Variant:</strong> {displayField(customerData.vehicle_variant)}</div>
-          <div><strong>Ex-showroom Price:</strong> ₹{displayField(customerData.ex_showroom_price)} </div>
-          <div><strong>Tax:</strong> ₹{displayField(customerData.tax)} </div>
-          <div><strong>On-road Price:</strong> {displayField(customerData.onroad_price)}</div>
+          {renderField('Vehicle Name', 'vehicle_name')}
+          {renderField('Variant', 'vehicle_variant')}
+          {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
+          {renderField('Tax', 'tax', 'number')}
+          {renderField('On-road Price', 'onroad_price', 'number')}
         </div>
       </div>
 
       <div className="customer-section">
         <div className="section-title"><FaIdCard /> Verification Status</div>
         <div className="details-grid">
-          <div><strong>Sales Verified:</strong> {customerData.sales_verified ? <FaCheckCircle className="verified" /> : <FaTimesCircle className="not-verified" />}</div>
-          <div><strong>Accounts Verified:</strong> {customerData.accounts_verified ? <FaCheckCircle className="verified" /> : <FaTimesCircle className="not-verified" />}</div>
+          {renderField('Sales Verified', 'sales_verified', 'checkbox')}
+          {renderField('Accounts Verified', 'accounts_verified', 'checkbox')}
         </div>
       </div>
 
       <div className="customer-section">
         <div className="section-title"><FaIdCard /> Documents</div>
         <div className="details-grid">
-          <div>
-            <strong>Aadhaar Front:</strong>
-            {customerData.photo_adhaar_front ? (
-              <img src={customerData.photo_adhaar_front} alt="Aadhaar Front" className="document-image" />
-            ) : (
-              displayField(customerData.photo_adhaar_front)
-            )}
-          </div>
-          <div>
-            <strong>Aadhaar Back:</strong>
-            {customerData.photo_adhaar_back ? (
-              <img src={customerData.photo_adhaar_back} alt="Aadhaar Back" className="document-image" />
-            ) : (
-              displayField(customerData.photo_adhaar_back)
-            )}
-          </div>
-          <div>
-            <strong>Passport Photo:</strong>
-            {customerData.photo_passport ? (
-              <img src={customerData.photo_passport} alt="Passport Photo" className="document-image" />
-            ) : (
-              displayField(customerData.photo_passport)
-            )}
-          </div>
+          {renderField('Aadhaar Front', 'photo_adhaar_front')}
+          {renderField('Aadhaar Back', 'photo_adhaar_back')}
+          {renderField('Passport Photo', 'photo_passport')}
         </div>
       </div>
+
+      {!editMode && (
+        <button className="edit-button" onClick={handleEditClick}>
+          <FaEdit /> Edit Details
+        </button>
+      )}
+
+      {editMode && (
+        <div className="action-buttons">
+          <button className="save-button" onClick={handleSaveClick}><FaSave /> Save</button>
+          <button className="cancel-button" onClick={handleCancelClick}><FaTimes /> Cancel</button>
+        </div>
+      )}
     </div>
   );
 };
