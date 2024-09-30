@@ -23,7 +23,7 @@ const App = () => {
         <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
         <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
         <Route path="/customer-form/:link_token" element={<CustomerForm />} />
-        <Route path="/customer-details/:customer_id" element={<CustomerDetails />} /> {/* New route for customer details */}
+        <Route path="/customer-details/:customerId" element={<CustomerDetails />} /> {/* New route for customer details */}
       </Routes>
     </Router>
   );

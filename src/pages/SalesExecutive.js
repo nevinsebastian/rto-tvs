@@ -190,9 +190,9 @@ const SalesExecutive = () => {
   };
 
   const handleCustomerClick = (customerId) => {
-    // Navigate to CustomerDetails with the selected customer's ID
     navigate(`/customer-details/${customerId}`);
   };
+  
 
   const handleVerifyCustomer = async () => {
     const response = await fetch(`http://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
@@ -277,15 +277,20 @@ const SalesExecutive = () => {
 
       {/* Customers List */}
       <div className="customers-list">
-        {customers.map(customer => (
-          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
-            <h3>{customer.name}</h3>
-            <p>Phone: {customer.phone_number}</p>
-            <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
-            <button onClick={handleVerifyCustomer}>Verify</button>
-          </div>
-        ))}
-      </div>
+  {customers.map(customer => (
+    <div
+      key={customer.customer_id}
+      className="customer-card"
+      onClick={() => handleCustomerClick(customer.customer_id)}
+    >
+      <h3>{customer.name}</h3>
+      <p>Phone: {customer.phone_number}</p>
+      <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
+      <button onClick={handleVerifyCustomer}>Verify</button>
+    </div>
+  ))}
+</div>
+
 
       {/* Generated Link */}
       {generatedLink && (
