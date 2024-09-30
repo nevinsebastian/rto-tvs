@@ -1,47 +1,49 @@
-/* SalesExecutive.css */
-
 /* Main Container */
 .sales-executive-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 0 10px;
+  padding: 20px;
+  background-color: #f5f7fa; /* Soft background */
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif; /* Modern, clean font */
 }
 
 /* Navigation Bar */
 .nav-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  background-color: #1dbf73;
+  background-color: #1f2937; /* Dark, modern color */
   color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.user-info { 
-  margin-right: 10px;
-  font-size: 14px;
+.user-info {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .logout-button {
-  background-color: #ff4d4d;
+  background-color: #ef4444; /* Red logout button */
   border: none;
   color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .logout-button:hover {
-  background-color: #e60000;
+  background-color: #dc2626; /* Darker red */
 }
 
-/* Insights Section */
+/* Insights Section (Desktop) */
 .insights-container {
   display: flex;
   justify-content: space-between;
@@ -50,8 +52,9 @@
   gap: 20px;
 }
 
+/* Insight Box Styling */
 .insight-box {
-  background-color: #f7f7f7;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -59,224 +62,223 @@
   flex: 1;
   min-width: 200px;
   margin: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .insight-box h2 {
   font-size: 16px;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .insight-box p {
   font-size: 24px;
   font-weight: bold;
   color: #1dbf73;
+  margin: 0;
 }
+
+/* Hover Effect */
+.insight-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+  /* Insights section for mobile */
+  .insights-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 0;
+    gap: 5px;
+    overflow-x: hidden; /* Prevent scrolling */
+  }
+
+  /* Reduce the size of each box for mobile */
+  .insight-box {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .insight-box h2 {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .insight-box p {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1dbf73;
+  }
+
+  /* Adjustments to ensure zero is displayed */
+  .insight-box p::before {
+    content: attr(data-value);
+  }
+}
+
 
 /* Status Buttons Section */
 .status-buttons-container {
   display: flex;
   justify-content: space-around;
   margin: 20px 0;
+  gap: 10px;
 }
 
 .status-button {
-  background-color: #f7f7f7;
+  background-color: #f5f7fa;
   border: 2px solid #1dbf73;
   color: #1dbf73;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
   transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.status-button:hover {
-  background-color: #1dbf73;
-  color: white;
-}
-
+.status-button:hover,
 .status-button.active {
   background-color: #1dbf73;
   color: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Container */
 .form-container {
-  background-color: #f7f7f7;
+  background-color: #ffffff;
   padding: 20px;
   margin: 20px 0;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h3 {
+  font-size: 20px;
+  color: #374151;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .form-container input {
   display: block;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 10px;
-  border: 2px solid #1dbf73;
-  border-radius: 5px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
-/* Submit Button */
 .submit-button {
   background-color: #1dbf73;
   border: none;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
   transition: background-color 0.3s ease;
   width: 100%;
+  font-weight: 600;
 }
 
 .submit-button:hover {
   background-color: #17a863;
 }
 
-/* Generated Link Section */
-.generated-link-container {
-  margin-top: 20px;
-}
-
-.copy-button,
-.whatsapp-button {
-  background-color: #1dbf73;
-  border: none;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.copy-button:hover,
-.whatsapp-button:hover {
-  background-color: #17a863;
-}
-
-.whatsapp-button {
-  background-color: #25D366;
-}
-
-/* Customers Container */
-.customers-container {
+/* Customers List */
+.customers-list {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center; /* Center cards in the container */
+  justify-content: center;
 }
 
 .customer-card {
-  background-color: #ffffff; /* White background for contrast */
-  border-radius: 10px; /* Rounded corners */
-  padding: 15px;
-  width: 220px; /* Adjust width as needed */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for effects */
-  text-align: center; /* Centered text */
-  overflow: hidden; /* Hide overflow */
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 250px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  position: relative;
 }
 
 .customer-card:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
-}
-
-.customer-card img {
-  width: 100%; /* Full width for images */
-  border-radius: 10px 10px 0 0; /* Round top corners */
-  height: 150px; /* Fixed height for images */
-  object-fit: cover; /* Cover the space without distortion */
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .customer-card h3 {
-  font-size: 18px; /* Slightly larger font for names */
-  color: #333; /* Darker color for better contrast */
-  margin: 10px 0 5px; /* Margin adjustments */
+  font-size: 18px;
+  color: #374151;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .customer-card p {
-  font-size: 14px; /* Slightly smaller font for details */
-  color: #666; /* Lighter color for secondary text */
-  margin: 0; /* Reset margin */
+  font-size: 14px;
+  color: #6b7280;
+  margin: 5px 0;
 }
 
-/* Contact Button */
-.customer-card .contact-button {
-  background-color: #1dbf73; /* Brand color for buttons */
-  border: none; /* Remove border */
-  color: white; /* Text color */
-  padding: 10px 15px; /* Button padding */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor */
-  margin-top: 10px; /* Margin above button */
-  transition: background-color 0.3s; /* Smooth transition */
+.customer-card .verify-button {
+  background-color: #10b981;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.customer-card .contact-button:hover {
-  background-color: #17a863; /* Darker shade on hover */
+.customer-card .verify-button:hover {
+  background-color: #059669;
 }
 
-/* Media Queries for Mobile Devices */
+/* Generated Link Section */
+.link-container {
+  margin-top: 20px;
+  background-color: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.link-container h4 {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.link-container a {
+  font-size: 14px;
+  color: #1dbf73;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.link-container a:hover {
+  text-decoration: underline;
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
   .insights-container {
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 0 10px;
-    gap: 10px;
-    justify-content: flex-start;
-  }
-
-  .insight-box {
-    flex: 0 0 auto;
-    min-width: 120px;
-    margin: 5px;
-    padding: 10px;
-    text-align: center;
-  }
-
-  .insight-box h2 {
-    font-size: 12px;
-  }
-
-  .insight-box p {
-    font-size: 16px;
-  }
-
-  .content h1 {
-    font-size: 18px;
-  }
-
-  .content p {
-    font-size: 14px;
-  }
-
-  .status-buttons-container {
     flex-direction: column;
-    align-items: center;
     gap: 10px;
-  }
-
-  .status-button {
-    width: 100%; /* Full width on mobile */
-    text-align: center;
-  }
-
-  .form-container input {
-    font-size: 14px;
-  }
-
-  .submit-button,
-  .copy-button,
-  .whatsapp-button {
-    font-size: 14px;
-    padding: 8px;
   }
 
   .customer-card {
-    width: 90%; /* Full width on mobile */
-    margin: 0 auto; /* Center the card */
+    width: 100%;
   }
 }

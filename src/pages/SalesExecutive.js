@@ -277,20 +277,15 @@ const SalesExecutive = () => {
 
       {/* Customers List */}
       <div className="customers-list">
-  {customers.map(customer => (
-    <div
-      key={customer.customer_id}
-      className="customer-card"
-      onClick={() => handleCustomerClick(customer.customer_id)}
-    >
-      <h3>{customer.name}</h3>
-      <p>Phone: {customer.phone_number}</p>
-      <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
-      <button onClick={handleVerifyCustomer}>Verify</button>
-    </div>
-  ))}
-</div>
-
+        {customers.map(customer => (
+          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
+            <h3>{customer.name}</h3>
+            <p>Phone: {customer.phone_number}</p>
+            <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
+            <button onClick={handleVerifyCustomer}>Verify</button>
+          </div>
+        ))}
+      </div>
 
       {/* Generated Link */}
       {generatedLink && (
