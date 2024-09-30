@@ -1,0 +1,89 @@
+/* General Container */
+.customer-details-modern {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Status Alert */
+.status-alert {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+.status-alert svg {
+  margin-right: 10px;
+}
+
+.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.verified {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.not-verified {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Section Titles */
+.customer-section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 1.4em;
+  color: #343a40;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.section-title svg {
+  margin-right: 10px;
+  color: #6c757d;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.details-grid div {
+  font-size: 1.1em;
+  color: #495057;
+}
+
+/* Icons for Verified and Not Verified */
+.verified svg, .not-verified svg {
+  font-size: 1.2em;
+}
+
+.verified {
+  color: #28a745;
+}
+
+.not-verified {
+  color: #dc3545;
+}
+
+.loading {
+  font-size: 1.5em;
+  color: #6c757d;
+  text-align: center;
+  padding: 20px;
+}
