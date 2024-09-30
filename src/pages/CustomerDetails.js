@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser,FaTimesCircle, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import { FaUser, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck } from 'react-icons/fa';
 import '../styles/CustomerDetailsModern.css';
 
 const CustomerDetails = () => {
@@ -67,6 +67,29 @@ const CustomerDetails = () => {
     setEditMode(false);
   };
 
+  const handleVerifyClick = async () => {
+    try {
+      const response = await fetch(`http://13.127.21.70:8000/sales/verify/${customerId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(result.message); // Show success message
+      } else {
+        const error = await response.json();
+        console.error('Verification error:', error);
+        alert('Failed to verify customer sales.');
+      }
+    } catch (error) {
+      console.error('Error verifying customer sales:', error);
+    }
+  };
+
   if (!customerData) {
     return <div className="loading">Loading customer details...</div>;
   }
@@ -127,7 +150,7 @@ const CustomerDetails = () => {
     } else {
       return (
         <div className="status-alert not-verified">
-          <FaTimesCircle /> Status: {customerData.status}
+          <FaTimes /> Status: {customerData.status}
         </div>
       );
     }
@@ -175,9 +198,15 @@ const CustomerDetails = () => {
       </div>
 
       {!editMode && (
-        <button className="edit-button" onClick={handleEditClick}>
-          <FaEdit /> Edit Details
-        </button>
+        <>
+          <button className="edit-button" onClick={handleEditClick}>
+  <FaEdit /> Edit Details
+</button>
+<button className="verify-button" onClick={handleVerifyClick}>
+  <FaCheck /> Verify Sales
+</button>
+
+        </>
       )}
 
       {editMode && (
