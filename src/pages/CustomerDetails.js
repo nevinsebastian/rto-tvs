@@ -74,8 +74,8 @@ const CustomerDetails = () => {
         <div className="details-grid">
           <div><strong>Vehicle Name:</strong> {displayField(customerData.vehicle_name)}</div>
           <div><strong>Variant:</strong> {displayField(customerData.vehicle_variant)}</div>
-          <div><strong>Ex-showroom Price:</strong> ₹{displayField(customerData.ex_showroom_price)} Lakhs</div>
-          <div><strong>Tax:</strong> ₹{displayField(customerData.tax)} Lakhs</div>
+          <div><strong>Ex-showroom Price:</strong> ₹{displayField(customerData.ex_showroom_price)} </div>
+          <div><strong>Tax:</strong> ₹{displayField(customerData.tax)} </div>
           <div><strong>On-road Price:</strong> {displayField(customerData.onroad_price)}</div>
         </div>
       </div>
