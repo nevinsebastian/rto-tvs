@@ -1,0 +1,129 @@
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  font-family: 'Inter', sans-serif; /* Modern font */
+  background-color: #f9fafb; /* Light background */
+  min-height: 100vh; /* Full height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar styles */
+.navbar {
+  background-color: #ff5a5f; /* Airbnb-inspired red */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px; /* Increased padding */
+  color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.logo {
+  font-size: 24px; /* Main logo font size */
+  font-weight: bold;
+  letter-spacing: 1px; /* Spaced-out text */
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  margin-right: 15px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.logout-button {
+  background-color: #ffffff;
+  color: #ff5a5f;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #f1f1f1;
+}
+
+/* Content Styles */
+.content {
+  flex: 1; /* Take available space */
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 32px; /* Hierarchy: Large title */
+  font-weight: 700;
+  color: #333333; /* Dark text for headings */
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 18px; /* Hierarchy: Body text */
+  color: #666666; /* Subtle text color */
+  line-height: 1.6;
+}
+
+/* Responsive Styles */
+
+/* For mobile devices */
+@media only screen and (max-width: 768px) {
+  .navbar {
+    padding: 15px; /* Reduce navbar padding */
+  }
+
+  .logo {
+    font-size: 20px; /* Smaller logo size */
+  }
+
+  .username {
+    font-size: 14px; /* Smaller username text */
+    margin-right: 10px; /* Reduce margin */
+  }
+
+  .logout-button {
+    padding: 8px 15px; /* Adjust button size */
+    font-size: 14px; /* Smaller font */
+  }
+
+  .content {
+    padding: 20px; /* Reduce padding for content */
+  }
+
+  h1 {
+    font-size: 28px; /* Smaller heading size */
+  }
+
+  p {
+    font-size: 16px; /* Adjust font size for better readability */
+  }
+}
+
+/* For larger desktops */
+@media only screen and (min-width: 1200px) {
+  .navbar {
+    padding: 25px 50px; /* Increased padding for wider screens */
+  }
+
+  .content {
+    max-width: 1200px; /* Limit content width */
+    margin: 0 auto; /* Center the content */
+  }
+
+  h1 {
+    font-size: 36px; /* Larger heading for desktop */
+  }
+
+  p {
+    font-size: 20px; /* Larger paragraph text */
+  }
+}
