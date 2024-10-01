@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminDashboard.css'; // Importing the updated CSS file
+import '../styles/AdminDashboard.css'; // Importing the CSS file for styles
 
 const Admin = () => {
   const user = JSON.parse(localStorage.getItem('user'));

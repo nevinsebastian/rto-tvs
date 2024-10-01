@@ -1,29 +1,38 @@
-/* Admin Dashboard Styles */
+/* Ensure full screen width and remove margins */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
 .admin-dashboard {
-  font-family: 'Inter', sans-serif; /* Modern font */
-  background-color: #1c1c1e; /* Dark background */
-  min-height: 100vh; /* Full height */
+  font-family: 'Inter', sans-serif;
+  background-color: #1c1c1e;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #e4e4e7; /* Light text for dark theme */
+  color: #e4e4e7;
+  width: 100vw; /* Use full viewport width */
 }
 
 /* Navbar styles */
 .navbar {
-  background-color: #333333; /* Darker navbar */
+  background-color: #333333;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px; /* Smaller padding for mobile */
+  padding: 15px 20px;
   color: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
-  font-size: 22px; /* Slightly smaller for a modern look */
+  font-size: 22px;
   font-weight: bold;
-  letter-spacing: 1.2px; /* More spacing */
-  color: #ff5a5f; /* Airbnb-inspired red */
+  letter-spacing: 1.2px;
+  color: #ff5a5f;
 }
 
 .navbar-right {
@@ -35,7 +44,7 @@
   margin-right: 12px;
   font-size: 16px;
   font-weight: 500;
-  color: #f0f0f0; /* Softer light color */
+  color: #f0f0f0;
 }
 
 .logout-button {
@@ -50,7 +59,7 @@
 }
 
 .logout-button:hover {
-  background-color: #ff7b7f; /* Hover effect with softer tone */
+  background-color: #ff7b7f;
 }
 
 /* Content Styles */
@@ -61,20 +70,23 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center; /* Center text */
+  text-align: center;
+  width: 100%; /* Full width */
+  max-width: 100%; /* Remove any max width */
+  margin: 0 auto; /* Center content */
 }
 
 h1 {
-  font-size: 28px; /* Adjusted for mobile */
+  font-size: 32px;
   font-weight: 700;
-  color: #ff5a5f; /* Highlight color */
+  color: #ff5a5f;
   margin-bottom: 15px;
 }
 
 p {
-  font-size: 16px;
+  font-size: 18px;
   color: #e4e4e7;
-  line-height: 1.8;
+  line-height: 1.6;
 }
 
 /* Responsive Styles */
@@ -82,11 +94,11 @@ p {
 /* For mobile devices */
 @media only screen and (max-width: 768px) {
   .navbar {
-    padding: 10px 15px; /* Reduce navbar padding */
+    padding: 10px 15px;
   }
 
   .logo {
-    font-size: 18px; /* Smaller logo size */
+    font-size: 18px;
   }
 
   .username {
@@ -96,7 +108,7 @@ p {
 
   .logout-button {
     padding: 6px 12px;
-    font-size: 12px; /* Smaller button for mobile */
+    font-size: 12px;
   }
 
   .content {
@@ -104,11 +116,11 @@ p {
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   p {
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 
@@ -119,15 +131,15 @@ p {
   }
 
   .content {
-    max-width: 1000px; /* Limit content width */
-    margin: 0 auto; /* Center the content */
+    width: 100%; /* Remove any unnecessary width constraints */
+    margin: 0;
   }
 
   h1 {
-    font-size: 36px; /* Larger for desktop */
+    font-size: 36px;
   }
 
   p {
-    font-size: 18px;
+    font-size: 20px;
   }
 }
