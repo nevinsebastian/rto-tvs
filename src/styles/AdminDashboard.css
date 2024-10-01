@@ -1,27 +1,29 @@
 /* Admin Dashboard Styles */
 .admin-dashboard {
   font-family: 'Inter', sans-serif; /* Modern font */
-  background-color: #f9fafb; /* Light background */
+  background-color: #1c1c1e; /* Dark background */
   min-height: 100vh; /* Full height */
   display: flex;
   flex-direction: column;
+  color: #e4e4e7; /* Light text for dark theme */
 }
 
 /* Navbar styles */
 .navbar {
-  background-color: #ff5a5f; /* Airbnb-inspired red */
+  background-color: #333333; /* Darker navbar */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px; /* Increased padding */
-  color: white;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  padding: 15px 20px; /* Smaller padding for mobile */
+  color: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Stronger shadow */
 }
 
 .logo {
-  font-size: 24px; /* Main logo font size */
+  font-size: 22px; /* Slightly smaller for a modern look */
   font-weight: bold;
-  letter-spacing: 1px; /* Spaced-out text */
+  letter-spacing: 1.2px; /* More spacing */
+  color: #ff5a5f; /* Airbnb-inspired red */
 }
 
 .navbar-right {
@@ -30,47 +32,49 @@
 }
 
 .username {
-  margin-right: 15px;
-  font-size: 18px;
+  margin-right: 12px;
+  font-size: 16px;
   font-weight: 500;
+  color: #f0f0f0; /* Softer light color */
 }
 
 .logout-button {
-  background-color: #ffffff;
-  color: #ff5a5f;
+  background-color: #ff5a5f;
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-size: 16px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .logout-button:hover {
-  background-color: #f1f1f1;
+  background-color: #ff7b7f; /* Hover effect with softer tone */
 }
 
 /* Content Styles */
 .content {
-  flex: 1; /* Take available space */
-  padding: 30px;
+  flex: 1;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center; /* Center text */
 }
 
 h1 {
-  font-size: 32px; /* Hierarchy: Large title */
+  font-size: 28px; /* Adjusted for mobile */
   font-weight: 700;
-  color: #333333; /* Dark text for headings */
-  margin-bottom: 10px;
+  color: #ff5a5f; /* Highlight color */
+  margin-bottom: 15px;
 }
 
 p {
-  font-size: 18px; /* Hierarchy: Body text */
-  color: #666666; /* Subtle text color */
-  line-height: 1.6;
+  font-size: 16px;
+  color: #e4e4e7;
+  line-height: 1.8;
 }
 
 /* Responsive Styles */
@@ -78,52 +82,52 @@ p {
 /* For mobile devices */
 @media only screen and (max-width: 768px) {
   .navbar {
-    padding: 15px; /* Reduce navbar padding */
+    padding: 10px 15px; /* Reduce navbar padding */
   }
 
   .logo {
-    font-size: 20px; /* Smaller logo size */
+    font-size: 18px; /* Smaller logo size */
   }
 
   .username {
-    font-size: 14px; /* Smaller username text */
-    margin-right: 10px; /* Reduce margin */
+    font-size: 14px;
+    margin-right: 8px;
   }
 
   .logout-button {
-    padding: 8px 15px; /* Adjust button size */
-    font-size: 14px; /* Smaller font */
+    padding: 6px 12px;
+    font-size: 12px; /* Smaller button for mobile */
   }
 
   .content {
-    padding: 20px; /* Reduce padding for content */
+    padding: 20px;
   }
 
   h1 {
-    font-size: 28px; /* Smaller heading size */
+    font-size: 24px;
   }
 
   p {
-    font-size: 16px; /* Adjust font size for better readability */
+    font-size: 14px;
   }
 }
 
 /* For larger desktops */
 @media only screen and (min-width: 1200px) {
   .navbar {
-    padding: 25px 50px; /* Increased padding for wider screens */
+    padding: 20px 40px;
   }
 
   .content {
-    max-width: 1200px; /* Limit content width */
+    max-width: 1000px; /* Limit content width */
     margin: 0 auto; /* Center the content */
   }
 
   h1 {
-    font-size: 36px; /* Larger heading for desktop */
+    font-size: 36px; /* Larger for desktop */
   }
 
   p {
-    font-size: 20px; /* Larger paragraph text */
+    font-size: 18px;
   }
 }
