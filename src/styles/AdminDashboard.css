@@ -39,18 +39,6 @@
   color: #f0f0f0;
 }
 
-.add-icon {
-  font-size: 24px;
-  color: #ff5a5f;
-  cursor: pointer;
-  margin-right: 20px;
-  transition: color 0.3s;
-}
-
-.add-icon:hover {
-  color: #ff7b7f;
-}
-
 .logout-button {
   background-color: #ff5a5f;
   color: #ffffff;
@@ -66,18 +54,85 @@
   background-color: #ff7b7f;
 }
 
+.add-employee-icon {
+  color: #ff5a5f;
+  font-size: 20px;
+  margin-left: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.add-employee-icon:hover {
+  transform: scale(1.1);
+  color: #ff7b7f;
+}
+
+/* Employee Form Container */
+.employee-form-container {
+  background-color: #2c2c2e;
+  padding: 30px;
+  margin: 30px auto;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  color: #e4e4e7;
+}
+
+.employee-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #1c1c1e;
+  color: white;
+}
+
+.employee-form input::placeholder {
+  color: #888;
+}
+
+.submit-button {
+  background-color: #ff5a5f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #ff7b7f;
+}
+
 /* Responsive Styles */
 @media only screen and (max-width: 768px) {
   .logo {
     font-size: 12px;
   }
 
-  .add-icon {
-    font-size: 20px;
+  .add-employee-icon {
+    font-size: 18px;
   }
 
-  .logout-button {
-    padding: 6px 14px;
-    font-size: 10px;
+  .employee-form-container {
+    width: 300px;
   }
+}.employee-form select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #1c1c1e;
+  color: white;
 }
+
+.employee-form select:focus {
+  outline: none;
+  border: 1px solid #ff5a5f;
+}
+
