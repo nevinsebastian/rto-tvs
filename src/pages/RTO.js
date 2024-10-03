@@ -93,7 +93,7 @@ const RTO = () => {
                 <div key={customer.customer_id} className="rto-customer-card">
                   <h4>{customer.first_name} {customer.last_name}</h4>
                   <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
-                  <p className="status">Status: Not Submitted</p>
+                  <p className="status">Status: Not completed</p>
                 </div>
               ))
             )

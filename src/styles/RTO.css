@@ -5,16 +5,19 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  font-family: 'Inter', sans-serif; /* Modern font choice */
+  font-family: 'Inter', sans-serif; /* Airbnb-inspired modern font */
 }
 
-/* Full-screen container */
+/* Full-screen container with gradient background */
 .rto-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  background-color: #f9f9f9; /* Subtle light background */
+  background: linear-gradient(135deg, #f7f8fa 0%, #ebf3ff 100%); /* Subtle gradient */
+  justify-content: flex-start;
+  align-items: center;
+  padding: 30px 0;
 }
 
 /* Global Navbar Styles */
@@ -34,6 +37,8 @@ html, body {
   font-weight: bold;
   letter-spacing: 1.2px;
   color: #ff5a5f;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .navbar-right {
@@ -68,19 +73,19 @@ html, body {
 .toggle-buttons {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .toggle-button {
   background-color: #ffffff;
   border: 1px solid #ddd;
-  padding: 12px 20px;
+  padding: 15px 30px;
   margin: 0 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-size: 14px;
-  border-radius: 25px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
 }
 
 .toggle-button:hover {
@@ -97,24 +102,25 @@ html, body {
 .rto-section {
   padding: 20px;
   flex: 1;
-  overflow: auto;
+  width: 80%;
+  max-width: 1200px;
   box-sizing: border-box;
-  width: 100%;
 }
 
 /* Customer List */
 .rto-customer-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid layout */
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Larger min column size */
+  gap: 30px;
 }
 
+/* Enhanced Customer Card Style */
 .rto-customer-card {
   background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 20px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1); /* Stronger shadow for depth */
+  padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -123,26 +129,26 @@ html, body {
 }
 
 .rto-customer-card:hover {
-  transform: translateY(-5px); /* Lift on hover */
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  transform: translateY(-10px); /* Lift card on hover */
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
 }
 
 .rto-customer-card h4 {
-  font-size: 20px;
+  font-size: 22px;
   color: #333;
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
 
 .rto-customer-card p {
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
   margin: 0;
 }
 
 .rto-customer-card .status {
-  margin-top: 10px;
-  font-weight: 500;
-  color: #ff5a5f; /* Highlight status with accent color */
+  margin-top: 12px;
+  font-weight: 600;
+  color: #ff5a5f; /* Status highlighted with accent color */
 }
 
 /* Loading/Error styles */
@@ -151,34 +157,34 @@ html, body {
   color: #ff5a5f;
   text-align: center;
   margin-top: 20px;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* Responsive Styles for Mobile */
 @media only screen and (max-width: 768px) {
   .navbar {
-    padding: 8px 10px;
+    padding: 10px 20px;
   }
 
   .logo {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .username {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .logout-button {
-    font-size: 12px;
-    padding: 8px 12px;
+    font-size: 14px;
+    padding: 8px 15px;
   }
 
   .toggle-button {
-    font-size: 12px;
-    padding: 8px 12px;
+    font-size: 14px;
+    padding: 10px 20px;
   }
 
   .rto-customer-card {
-    padding: 15px;
+    padding: 20px;
   }
 }
