@@ -5,22 +5,30 @@ html, body {
   padding: 0; /* Remove default padding */
 }
 
+/* Full-screen container */
+.rto-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full height */
+  background-color: #f5f5f5; /* Light background for contrast */
+}
+
 /* Global Navbar Styles */
 .navbar {
   background-color: #333333;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 20px;
+  padding: 10px 20px;
   color: #ffffff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  width: 100vw; /* Full width */
+  width: 100%; /* Full width */
   box-sizing: border-box;
 }
 
 /* Logo default size for desktop */
 .logo {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   letter-spacing: 1.2px;
   color: #ff5a5f;
@@ -33,7 +41,7 @@ html, body {
 
 .username {
   margin-right: 12px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #f0f0f0;
 }
@@ -42,9 +50,9 @@ html, body {
   background-color: #ff5a5f;
   color: #ffffff;
   border: none;
-  padding: 8px 18px;
+  padding: 10px 15px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -53,47 +61,51 @@ html, body {
   background-color: #ff7b7f;
 }
 
-.add-employee-icon {
-  color: #ff5a5f;
-  font-size: 20px;
-  margin-left: 20px;
+/* Toggle Buttons */
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.toggle-button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 12px 20px;
+  margin: 0 10px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: background-color 0.3s;
+  font-size: 14px;
+  border-radius: 5px;
 }
 
-.add-employee-icon:hover {
-  transform: scale(1.1);
-  color: #ff7b7f;
+.toggle-button:hover {
+  background-color: #d9d9d9;
 }
 
-/* Responsive Styles */
-@media only screen and (max-width: 768px) {
-  .logo {
-    font-size: 12px;
-  }
-
-  .add-employee-icon {
-    font-size: 18px;
-  }
+.toggle-button.active {
+  background-color: #ff5a5f;
+  color: white;
 }
 
+/* Main Section Styles */
 .rto-section {
   padding: 20px;
-  height: calc(100% - 55px); /* Adjusting height based on navbar */
+  flex: 1; /* Use remaining space */
   overflow: auto; /* Allow scrolling if necessary */
 }
 
 .rto-customer-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px; /* Increased gap for better spacing */
 }
 
 .rto-customer-card {
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+  padding: 20px; /* Increased padding */
   transition: transform 0.2s;
 }
 
@@ -112,4 +124,5 @@ h3 {
   color: #ff5a5f;
   text-align: center;
   margin-top: 20px;
+  font-size: 18px; /* Increased font size */
 }

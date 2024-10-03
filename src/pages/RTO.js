@@ -6,6 +6,7 @@ const RTO = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('pending'); // State for active tab
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
@@ -49,7 +50,7 @@ const RTO = () => {
   const doneCustomers = customers.filter(customer => customer.rto_verified === true);
 
   return (
-    <div className="rto-container" style={{ height: '100%' }}>
+    <div className="rto-container">
       <nav className="navbar">
         <h2 className="logo">RTO Dashboard</h2>
         <div className="navbar-right">
@@ -63,37 +64,52 @@ const RTO = () => {
       </nav>
 
       <div className="rto-section">
-        <h3>Pending Verification</h3>
+        {/* Toggle Buttons */}
+        <div className="toggle-buttons">
+          <button 
+            className={`toggle-button ${activeTab === 'pending' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('pending')}
+          >
+            Pending Verification
+          </button>
+          <button 
+            className={`toggle-button ${activeTab === 'verified' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('verified')}
+          >
+            Verified Customers
+          </button>
+        </div>
+
+        {/* Customer List based on Active Tab */}
         <div className="rto-customer-list">
           {loading ? (
             <p className="rto-loading">Loading customers...</p>
           ) : error ? (
             <p className="rto-error">{error}</p>
-          ) : pendingCustomers.length === 0 ? (
-            <p>No pending customers.</p>
+          ) : activeTab === 'pending' ? (
+            pendingCustomers.length === 0 ? (
+              <p>No pending customers.</p>
+            ) : (
+              pendingCustomers.map((customer) => (
+                <div key={customer.customer_id} className="rto-customer-card">
+                  <h4>{customer.first_name} {customer.last_name}</h4>
+                  <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
+                  <p><strong>Status:</strong> Not Submitted</p>
+                </div>
+              ))
+            )
           ) : (
-            pendingCustomers.map((customer) => (
-              <div key={customer.customer_id} className="rto-customer-card">
-                <h4>{customer.first_name} {customer.last_name}</h4>
-                <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
-                <p><strong>Status:</strong> Not Submitted</p>
-              </div>
-            ))
-          )}
-        </div>
-
-        <h3>Verified Customers</h3>
-        <div className="rto-customer-list">
-          {doneCustomers.length === 0 ? (
-            <p>No verified customers.</p>
-          ) : (
-            doneCustomers.map((customer) => (
-              <div key={customer.customer_id} className="rto-customer-card">
-                <h4>{customer.first_name} {customer.last_name}</h4>
-                <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
-                <p><strong>Status:</strong> Submitted</p>
-              </div>
-            ))
+            doneCustomers.length === 0 ? (
+              <p>No verified customers.</p>
+            ) : (
+              doneCustomers.map((customer) => (
+                <div key={customer.customer_id} className="rto-customer-card">
+                  <h4>{customer.first_name} {customer.last_name}</h4>
+                  <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
+                  <p><strong>Status:</strong> Submitted</p>
+                </div>
+              ))
+            )
           )}
         </div>
       </div>
