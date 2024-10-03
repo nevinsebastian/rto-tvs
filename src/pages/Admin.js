@@ -1,23 +1,23 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FaPlus } from 'react-icons/fa';  // Plus icon for adding employee
+import { FaPlus } from 'react-icons/fa'; // Plus icon for adding employee
 
 const Admin = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
-  const [showForm, setShowForm] = useState(false);  // To toggle form visibility
+  const [showForm, setShowForm] = useState(false); // To toggle form visibility
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    role_id: '',  // Will be set dynamically based on dropdown selection
-    branch_id: ''  // Admin will enter this manually
+    role_id: '', // Will be set dynamically based on dropdown selection
+    branch_id: '' // Admin will enter this manually
   });
-  const [ setApiResponse] = useState(null);
+  const [apiResponse, setApiResponse] = useState(null);
+  const [branchCount, setBranchCount] = useState(0); // State to hold the branch count
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -55,7 +55,7 @@ const Admin = () => {
         roleId = 4;
         break;
       default:
-        roleId = '';  // Default to empty if nothing is selected
+        roleId = ''; // Default to empty if nothing is selected
     }
     setFormData({
       ...formData,
@@ -79,13 +79,35 @@ const Admin = () => {
 
       const data = await response.json();
       setApiResponse(data);
-      alert('Employee created successfully!');  // Handle success
-      setShowForm(false);  // Close form after submission
+      alert('Employee created successfully!'); // Handle success
+      setShowForm(false); // Close form after submission
     } catch (error) {
       console.error('Error creating employee:', error);
-      alert('Failed to create employee');  // Handle error
+      alert('Failed to create employee'); // Handle error
     }
   };
+
+  // Fetch branches when the component mounts
+  useEffect(() => {
+    const fetchBranches = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('http://13.127.21.70:8000/admin/', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Accept': 'application/json'
+          },
+        });
+        const data = await response.json();
+        setBranchCount(data.length); // Update branch count with the number of branches received
+      } catch (error) {
+        console.error('Error fetching branches:', error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
 
   return (
     <div className="admin-dashboard">
@@ -95,12 +117,18 @@ const Admin = () => {
           <span className="username">
             Welcome, {user?.first_name} {user?.last_name}
           </span>
+          <FaPlus className="add-employee-icon" onClick={toggleForm} />
           <button className="logout-button" onClick={handleLogout}>
             Logout
           </button>
-          <FaPlus className="add-employee-icon" onClick={toggleForm} />
         </div>
       </nav>
+
+      {/* Display branch count in a glowing container */}
+      <div className="branch-count-container">
+        <h3>Number of Branches</h3>
+        <div className="branch-count">{branchCount}</div>
+      </div>
 
       {showForm && (
         <div className="employee-form-container">
@@ -146,7 +174,6 @@ const Admin = () => {
               onChange={handleChange}
               required
             />
-
             {/* Dropdown for selecting role */}
             <select name="role" onChange={handleRoleChange} required>
               <option value="">Select Role</option>
@@ -155,7 +182,6 @@ const Admin = () => {
               <option value="Accounts">Accounts</option>
               <option value="RTO">RTO</option>
             </select>
-
             <button type="submit" className="submit-button">Create Employee</button>
           </form>
         </div>
