@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser, FaPhone, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaUser, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck } from 'react-icons/fa';
 import '../styles/CustomerDetailsModern.css';
 
 const CustomerDetails = () => {

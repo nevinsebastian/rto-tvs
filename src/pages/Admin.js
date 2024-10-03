@@ -17,7 +17,7 @@ const Admin = () => {
     role_id: '',  // Will be set dynamically based on dropdown selection
     branch_id: ''  // Admin will enter this manually
   });
-  const [apiResponse, setApiResponse] = useState(null);
+  const [ setApiResponse] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
