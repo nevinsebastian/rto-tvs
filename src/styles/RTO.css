@@ -2,21 +2,19 @@
 html, body {
   height: 100%;
   width: 100%;
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif; /* Modern font choice */
 }
 
 /* Full-screen container */
 .rto-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full height */
-  width: 100vw; /* Full width */
-  background-color: #f5f5f5; /* Light background for contrast */
-  box-sizing: border-box; /* Ensure padding does not affect width */
-  padding: 0;
-  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f9f9f9; /* Subtle light background */
 }
 
 /* Global Navbar Styles */
@@ -27,14 +25,12 @@ html, body {
   align-items: center;
   padding: 10px 20px;
   color: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  width: 100%; /* Full width */
-  box-sizing: border-box;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  width: 100%;
 }
 
-/* Logo default size for desktop */
 .logo {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
   letter-spacing: 1.2px;
   color: #ff5a5f;
@@ -61,6 +57,7 @@ html, body {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-right: 30px;
 }
 
 .logout-button:hover {
@@ -75,100 +72,113 @@ html, body {
 }
 
 .toggle-button {
-  background-color: #f0f0f0;
-  border: none;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
   padding: 12px 20px;
   margin: 0 10px;
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 14px;
-  border-radius: 5px;
+  border-radius: 25px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-button:hover {
-  background-color: #d9d9d9;
+  background-color: #f2f2f2;
 }
 
 .toggle-button.active {
   background-color: #ff5a5f;
   color: white;
+  border-color: #ff5a5f;
 }
 
 /* Main Section Styles */
 .rto-section {
   padding: 20px;
-  flex: 1; /* Use remaining space */
-  overflow: auto; /* Allow scrolling if necessary */
-  box-sizing: border-box; /* Prevent overflow issues */
-  width: 100%; /* Ensure section spans full width */
+  flex: 1;
+  overflow: auto;
+  box-sizing: border-box;
+  width: 100%;
 }
 
+/* Customer List */
 .rto-customer-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Increased gap for better spacing */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid layout */
+  gap: 20px;
 }
 
 .rto-customer-card {
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px; /* Increased padding */
-  transition: transform 0.2s;
+  border-radius: 15px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .rto-customer-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px); /* Lift on hover */
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
 }
 
-h3 {
-  margin-top: 30px;
-  font-size: 24px;
-  color: #333333;
+.rto-customer-card h4 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 10px;
 }
 
+.rto-customer-card p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.rto-customer-card .status {
+  margin-top: 10px;
+  font-weight: 500;
+  color: #ff5a5f; /* Highlight status with accent color */
+}
+
+/* Loading/Error styles */
 .rto-loading,
 .rto-error {
   color: #ff5a5f;
   text-align: center;
   margin-top: 20px;
-  font-size: 18px; /* Increased font size */
+  font-size: 18px;
 }
 
 /* Responsive Styles for Mobile */
-
-/* For screens smaller than 768px */
 @media only screen and (max-width: 768px) {
-  /* Smaller Navbar for Mobile */
   .navbar {
-    padding: 8px 10px; /* Less padding on mobile */
+    padding: 8px 10px;
   }
 
   .logo {
-    font-size: 16px; /* Smaller logo on mobile */
+    font-size: 18px;
   }
 
   .username {
-    font-size: 12px; /* Smaller username on mobile */
+    font-size: 12px;
   }
 
   .logout-button {
-    font-size: 12px; /* Smaller logout button on mobile */
-    padding: 8px 12px; /* Smaller padding for mobile */
+    font-size: 12px;
+    padding: 8px 12px;
   }
 
-  /* Toggle button adjustments for mobile */
   .toggle-button {
-    font-size: 12px; /* Smaller toggle button text */
-    padding: 8px 12px; /* Smaller padding on mobile */
+    font-size: 12px;
+    padding: 8px 12px;
   }
 
-  /* Reduce padding on customer cards */
   .rto-customer-card {
-    padding: 15px; /* Less padding for mobile */
-  }
-
-  .rto-customer-list {
-    gap: 10px; /* Reduced gap between customer cards */
+    padding: 15px;
   }
 }

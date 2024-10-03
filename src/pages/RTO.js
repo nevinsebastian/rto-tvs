@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/RTO.css'; // Assuming the CSS file for RTO design
+import '../styles/RTO.css'; // Updated styles
 
 const RTO = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('pending'); // State for active tab
+  const [activeTab, setActiveTab] = useState('pending');
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
@@ -45,9 +45,8 @@ const RTO = () => {
     navigate('/login');
   };
 
-  // Separate customers into pending and done based on rto_verified
-  const pendingCustomers = customers.filter(customer => customer.rto_verified === null);
-  const doneCustomers = customers.filter(customer => customer.rto_verified === true);
+  const pendingCustomers = customers.filter((customer) => customer.rto_verified === null);
+  const doneCustomers = customers.filter((customer) => customer.rto_verified === true);
 
   return (
     <div className="rto-container">
@@ -66,14 +65,14 @@ const RTO = () => {
       <div className="rto-section">
         {/* Toggle Buttons */}
         <div className="toggle-buttons">
-          <button 
-            className={`toggle-button ${activeTab === 'pending' ? 'active' : ''}`} 
+          <button
+            className={`toggle-button ${activeTab === 'pending' ? 'active' : ''}`}
             onClick={() => setActiveTab('pending')}
           >
             Pending Verification
           </button>
-          <button 
-            className={`toggle-button ${activeTab === 'verified' ? 'active' : ''}`} 
+          <button
+            className={`toggle-button ${activeTab === 'verified' ? 'active' : ''}`}
             onClick={() => setActiveTab('verified')}
           >
             Verified Customers
@@ -94,22 +93,20 @@ const RTO = () => {
                 <div key={customer.customer_id} className="rto-customer-card">
                   <h4>{customer.first_name} {customer.last_name}</h4>
                   <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
-                  <p><strong>Status:</strong> Not Submitted</p>
+                  <p className="status">Status: Not Submitted</p>
                 </div>
               ))
             )
+          ) : doneCustomers.length === 0 ? (
+            <p>No verified customers.</p>
           ) : (
-            doneCustomers.length === 0 ? (
-              <p>No verified customers.</p>
-            ) : (
-              doneCustomers.map((customer) => (
-                <div key={customer.customer_id} className="rto-customer-card">
-                  <h4>{customer.first_name} {customer.last_name}</h4>
-                  <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
-                  <p><strong>Status:</strong> Submitted</p>
-                </div>
-              ))
-            )
+            doneCustomers.map((customer) => (
+              <div key={customer.customer_id} className="rto-customer-card">
+                <h4>{customer.first_name} {customer.last_name}</h4>
+                <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
+                <p className="status">Status: Submitted</p>
+              </div>
+            ))
           )}
         </div>
       </div>
