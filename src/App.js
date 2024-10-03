@@ -1,3 +1,4 @@
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SalesExecutive from './pages/SalesExecutive';
@@ -7,9 +8,8 @@ import Accounts from './pages/Accounts';
 import RTO from './pages/RTO';
 import Manager from './pages/Manager';
 import CustomerForm from './pages/CustomerForm';
-import CustomerDetails from './pages/CustomerDetails'; // Import the new component
+import RTODetails from './pages/RTODetails'; // Import the new component
 import Pdf from './pages/PdfEditor';
-
 
 const App = () => {
   const token = localStorage.getItem('token');
@@ -25,8 +25,8 @@ const App = () => {
         <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
         <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
         <Route path="/customer-form/:link_token" element={<CustomerForm />} />
-        <Route path="/customer-details/:customerId" element={<CustomerDetails />} /> {/* New route for customer details */}
-        <Route path='/pdf' element={<Pdf/>}/>
+        <Route path="/rto/customer-details/:customerId" element={<RTODetails />} /> {/* Updated route for customer details */}
+        <Route path='/pdf' element={<Pdf />} />
       </Routes>
     </Router>
   );
