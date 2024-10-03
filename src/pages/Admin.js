@@ -17,7 +17,12 @@ const Admin = () => {
     branch_id: '' // Admin will enter this manually
   });
   const [apiResponse, setApiResponse] = useState(null);
-  const [branchCount, setBranchCount] = useState(0); // State to hold the branch count
+  const [employeeData, setEmployeeData] = useState({
+    totalEmployees: 0,
+    salesCount: 0,
+    rtoCount: 0,
+    accountsCount: 0
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -87,26 +92,38 @@ const Admin = () => {
     }
   };
 
-  // Fetch branches when the component mounts
-  useEffect(() => {
-    const fetchBranches = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch('http://13.127.21.70:8000/admin/', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Accept': 'application/json'
-          },
-        });
-        const data = await response.json();
-        setBranchCount(data.length); // Update branch count with the number of branches received
-      } catch (error) {
-        console.error('Error fetching branches:', error);
-      }
-    };
+  const fetchEmployeeData = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch('http://13.127.21.70:8000/admin/users', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    fetchBranches();
+      const data = await response.json();
+
+      // Calculate counts for employee data
+      const totalEmployees = data.length;
+      const salesCount = data.filter(user => user.role_name === 'Sales').length;
+      const rtoCount = data.filter(user => user.role_name === 'RTO').length;
+      const accountsCount = data.filter(user => user.role_name === 'Accounts').length;
+
+      setEmployeeData({
+        totalEmployees,
+        salesCount,
+        rtoCount,
+        accountsCount
+      });
+    } catch (error) {
+      console.error('Error fetching employee data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeData(); // Fetch employee data on component mount
   }, []);
 
   return (
@@ -123,12 +140,25 @@ const Admin = () => {
           </button>
         </div>
       </nav>
-
-      {/* Display branch count in a glowing container */}
-      <div className="branch-count-container">
-        <h3>Number of Branches</h3>
-        <div className="branch-count">{branchCount}</div>
-      </div>
+    <div class='employee-insights'>
+      <div className="employee-stats">
+        <div className="stat-box glowing-box">
+          <h3>Total Employees</h3>
+          <p>{employeeData.totalEmployees}</p>
+        </div>
+        <div className="stat-box glowing-box">
+          <h3>Sales Employees</h3>
+          <p>{employeeData.salesCount}</p>
+        </div>
+        <div className="stat-box glowing-box">
+          <h3>RTO Employees</h3>
+          <p>{employeeData.rtoCount}</p>
+        </div>
+        <div className="stat-box glowing-box">
+          <h3>Accounts Employees</h3>
+          <p>{employeeData.accountsCount}</p>
+        </div>
+      </div></div>
 
       {showForm && (
         <div className="employee-form-container">

@@ -1,16 +1,16 @@
 /* Admin Dashboard Styles */
 .admin-dashboard {
   font-family: 'Inter', sans-serif;
-  background-color: #1c1c1e;
+  background-color: #1c1c1e; /* Dark Gray Background */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #e4e4e7;
+  color: #e4e4e7; /* Light Gray Text Color */
   width: 100vw;
 }
 
 .navbar {
-  background-color: #333333;
+  background-color: #333333; /* Navbar Background */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,12 +19,11 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Logo default size for desktop */
 .logo {
   font-size: 28px; /* Default size for desktop */
   font-weight: bold;
   letter-spacing: 1.2px;
-  color: #ff5a5f;
+  color: #ff5a5f; /* Primary Color */
 }
 
 .navbar-right {
@@ -36,11 +35,11 @@
   margin-right: 12px;
   font-size: 12px;
   font-weight: 500;
-  color: #f0f0f0;
+  color: #f0f0f0; /* Light Text */
 }
 
 .logout-button {
-  background-color: #ff5a5f;
+  background-color: #ff5a5f; /* Primary Color */
   color: #ffffff;
   border: none;
   padding: 8px 18px;
@@ -51,11 +50,11 @@
 }
 
 .logout-button:hover {
-  background-color: #ff7b7f;
+  background-color: #ff7b7f; /* Hover Effect */
 }
 
 .add-employee-icon {
-  color: #ff5a5f;
+  color: #ff5a5f; /* Primary Color */
   font-size: 24px; /* Increased size for visibility */
   margin-left: 20px;
   cursor: pointer;
@@ -65,18 +64,18 @@
 
 .add-employee-icon:hover {
   transform: scale(1.1);
-  color: #ff7b7f;
+  color: #ff7b7f; /* Hover Effect */
 }
 
 /* Employee Form Container */
 .employee-form-container {
-  background-color: #2c2c2e;
+  background-color: #2c2c2e; /* Darker Gray */
   padding: 30px;
   margin: 30px auto;
   border-radius: 10px;
   width: 400px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-  color: #e4e4e7;
+  color: #e4e4e7; /* Light Gray Text */
 }
 
 .employee-form input {
@@ -85,16 +84,16 @@
   margin: 10px 0;
   border: none;
   border-radius: 5px;
-  background-color: #1c1c1e;
+  background-color: #1c1c1e; /* Dark Gray */
   color: white;
 }
 
 .employee-form input::placeholder {
-  color: #888;
+  color: #888; /* Placeholder Color */
 }
 
 .submit-button {
-  background-color: #ff5a5f;
+  background-color: #ff5a5f; /* Primary Color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -106,7 +105,7 @@
 }
 
 .submit-button:hover {
-  background-color: #ff7b7f;
+  background-color: #ff7b7f; /* Hover Effect */
 }
 
 /* Responsive Styles */
@@ -117,11 +116,10 @@
 
   .add-employee-icon {
     font-size: 20px; /* Adjusted for responsiveness */
-    padding-right: 10px;
   }
 
   .employee-form-container {
-    width: 300px;
+    width: 300px; /* Smaller width for mobile */
   }
 }
 
@@ -131,16 +129,17 @@
   margin: 10px 0;
   border: none;
   border-radius: 5px;
-  background-color: #1c1c1e;
+  background-color: #1c1c1e; /* Dark Gray */
   color: white;
 }
 
 .employee-form select:focus {
   outline: none;
-  border: 1px solid #ff5a5f;
+  border: 1px solid #ff5a5f; /* Primary Color Border */
 }
+
 .branch-count-container {
-  background-color: #1c1c1e; /* Dark background */
+  background-color: #1c1c1e; /* Dark Background */
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Glowing effect */
@@ -151,6 +150,39 @@
 
 .branch-count {
   font-size: 48px; /* Font size for branch count */
-  color: #00ff00; /* Bright green color */
+  color: #00ff00; /* Bright Green Color */
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect */
+}
+
+.employee-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.stat-box {
+  background: rgb(71, 61, 61); /* Background color of the box */
+  color: #fff; /* Text color */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners */
+  text-align: center; /* Centered text */
+  -webkit-box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
+  -moz-box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
+  box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
+  transition: transform 0.2s; /* Smooth scaling on hover */
+}
+
+.stat-box:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+}
+
+.glowing-box {
+  position: relative; /* To handle positioning for the glow effect */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.glowing-box h3,
+.glowing-box p {
+  position: relative; /* Ensure text appears above the glowing shadow */
+  z-index: 1;
 }
