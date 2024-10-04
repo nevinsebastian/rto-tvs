@@ -71,10 +71,14 @@
 }
 
 .stat-box {
-  background: #444444;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.1); /* Glassmorphism background */
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37); /* Shadow effect */
+  backdrop-filter: blur(2.5px); /* Blurring effect */
+  -webkit-backdrop-filter: blur(2.5px); /* WebKit blurring effect */
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid rgba(255, 255, 255, 0.18); /* Light border */
+  color: #e4e4e7; /* Font color blending with overall theme */
   padding: 20px;
-  border-radius: 10px;
   text-align: center;
   transition: transform 0.3s ease;
 }
@@ -85,7 +89,7 @@
 
 .insight-icon {
   font-size: 30px;
-  color: #ff5a5f;
+  color: #ff5a5f; /* Icon color */
   margin-bottom: 10px;
 }
 
@@ -116,7 +120,7 @@
   max-width: 400px;
 }
 
-.employee-form input, 
+.employee-form input,
 .employee-form select {
   padding: 10px;
   margin-bottom: 20px;
