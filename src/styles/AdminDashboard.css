@@ -1,29 +1,27 @@
-/* Admin Dashboard Styles */
 .admin-dashboard {
   font-family: 'Inter', sans-serif;
-  background-color: #1c1c1e; /* Dark Gray Background */
+  background-color: #1c1c1e;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #e4e4e7; /* Light Gray Text Color */
+  color: #e4e4e7;
   width: 100vw;
 }
 
 .navbar {
-  background-color: #333333; /* Navbar Background */
+  background-color: #333333;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 100px 20px;
+  padding: 20px;
   color: #ffffff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
-  font-size: 28px; /* Default size for desktop */
+  font-size: 28px;
   font-weight: bold;
-  letter-spacing: 1.2px;
-  color: #ff5a5f; /* Primary Color */
+  color: #ff5a5f;
 }
 
 .navbar-right {
@@ -33,156 +31,107 @@
 
 .username {
   margin-right: 12px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  color: #f0f0f0; /* Light Text */
+  color: #f0f0f0;
 }
 
 .logout-button {
-  background-color: #ff5a5f; /* Primary Color */
+  background-color: #ff5a5f;
   color: #ffffff;
   border: none;
   padding: 8px 18px;
   border-radius: 20px;
   font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .logout-button:hover {
-  background-color: #ff7b7f; /* Hover Effect */
+  background-color: #ff7b7f;
 }
 
 .add-employee-icon {
-  color: #ff5a5f; /* Primary Color */
-  font-size: 24px; /* Increased size for visibility */
+  color: #ff5a5f;
+  font-size: 24px;
   margin-left: 20px;
   cursor: pointer;
-  transition: transform 0.3s ease;
-  padding-right: 10px;
 }
 
-.add-employee-icon:hover {
-  transform: scale(1.1);
-  color: #ff7b7f; /* Hover Effect */
-}
-
-/* Employee Form Container */
-.employee-form-container {
-  background-color: #2c2c2e; /* Darker Gray */
-  padding: 30px;
-  margin: 30px auto;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-  color: #e4e4e7; /* Light Gray Text */
-}
-
-.employee-form input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 5px;
-  background-color: #1c1c1e; /* Dark Gray */
-  color: white;
-}
-
-.employee-form input::placeholder {
-  color: #888; /* Placeholder Color */
-}
-
-.submit-button {
-  background-color: #ff5a5f; /* Primary Color */
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 15px;
-  transition: background-color 0.3s;
-}
-
-.submit-button:hover {
-  background-color: #ff7b7f; /* Hover Effect */
-}
-
-/* Responsive Styles */
-@media only screen and (max-width: 768px) {
-  .logo {
-    font-size: 14px; /* Smaller size for mobile users */
-  }
-
-  .add-employee-icon {
-    font-size: 20px; /* Adjusted for responsiveness */
-  }
-
-  .employee-form-container {
-    width: 300px; /* Smaller width for mobile */
-  }
-}
-
-.employee-form select {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 5px;
-  background-color: #1c1c1e; /* Dark Gray */
-  color: white;
-}
-
-.employee-form select:focus {
-  outline: none;
-  border: 1px solid #ff5a5f; /* Primary Color Border */
-}
-
-.branch-count-container {
-  background-color: #1c1c1e; /* Dark Background */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Glowing effect */
-  margin: 30px auto;
-  text-align: center;
-  width: 300px; /* Set width for the container */
-}
-
-.branch-count {
-  font-size: 48px; /* Font size for branch count */
-  color: #00ff00; /* Bright Green Color */
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect */
+.employee-insights {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
 }
 
 .employee-stats {
   display: flex;
   justify-content: space-around;
-  margin: 20px 0;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .stat-box {
-  background: rgb(71, 61, 61); /* Background color of the box */
-  color: #fff; /* Text color */
+  background: #444444;
+  color: #fff;
   padding: 20px;
-  border-radius: 10px; /* Rounded corners */
-  text-align: center; /* Centered text */
-  -webkit-box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
-  -moz-box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
-  box-shadow: 0px 0px 134px 0px rgba(45, 255, 196, 0.35); /* Glow effect */
-  transition: transform 0.2s; /* Smooth scaling on hover */
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
 .stat-box:hover {
-  transform: scale(1.05); /* Scale effect on hover */
+  transform: scale(1.05);
+}
+
+.insight-icon {
+  font-size: 30px;
+  color: #ff5a5f;
+  margin-bottom: 10px;
 }
 
 .glowing-box {
-  position: relative; /* To handle positioning for the glow effect */
-  overflow: hidden; /* Prevent overflow */
+  box-shadow: 0px 0px 20px rgba(255, 90, 95, 0.4);
 }
 
-.glowing-box h3,
-.glowing-box p {
-  position: relative; /* Ensure text appears above the glowing shadow */
-  z-index: 1;
+.employee-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.employee-form {
+  background-color: #333;
+  padding: 40px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 400px;
+}
+
+.employee-form input, 
+.employee-form select {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #555;
+  color: #fff;
+}
+
+.employee-form button {
+  background-color: #ff5a5f;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
 }

@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FaPlus } from 'react-icons/fa'; // Plus icon for adding employee
+import { FaPlus, FaUserTie, FaUsers, FaChartLine, FaCashRegister } from 'react-icons/fa'; // Icons for insight section
 
 const Admin = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
-  const [showForm, setShowForm] = useState(false); // To toggle form visibility
+  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    role_id: '', // Will be set dynamically based on dropdown selection
-    branch_id: '' // Admin will enter this manually
+    role_id: '',
+    branch_id: ''
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [employeeData, setEmployeeData] = useState({
     totalEmployees: 0,
     salesCount: 0,
     rtoCount: 0,
-    accountsCount: 0
+    accountsCount: 0,
+    totalCustomers: 0 // New state for total customers
   });
 
   const handleLogout = () => {
@@ -42,7 +43,6 @@ const Admin = () => {
     });
   };
 
-  // Map the selected role to the corresponding role_id
   const handleRoleChange = (e) => {
     const selectedRole = e.target.value;
     let roleId = '';
@@ -60,7 +60,7 @@ const Admin = () => {
         roleId = 4;
         break;
       default:
-        roleId = ''; // Default to empty if nothing is selected
+        roleId = '';
     }
     setFormData({
       ...formData,
@@ -70,7 +70,6 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://13.127.21.70:8000/admin/create_user', {
@@ -84,11 +83,12 @@ const Admin = () => {
 
       const data = await response.json();
       setApiResponse(data);
-      alert('Employee created successfully!'); // Handle success
-      setShowForm(false); // Close form after submission
+      alert('Employee created successfully!');
+      setShowForm(false);
+      fetchEmployeeData(); // Refresh employee data after creating a new employee
     } catch (error) {
       console.error('Error creating employee:', error);
-      alert('Failed to create employee'); // Handle error
+      alert('Failed to create employee');
     }
   };
 
@@ -104,26 +104,43 @@ const Admin = () => {
       });
 
       const data = await response.json();
-
-      // Calculate counts for employee data
       const totalEmployees = data.length;
       const salesCount = data.filter(user => user.role_name === 'Sales').length;
       const rtoCount = data.filter(user => user.role_name === 'RTO').length;
       const accountsCount = data.filter(user => user.role_name === 'Accounts').length;
 
-      setEmployeeData({
+      setEmployeeData(prevState => ({
+        ...prevState,
         totalEmployees,
         salesCount,
         rtoCount,
         accountsCount
+      }));
+
+      // Fetch total customers
+      const customerResponse = await fetch('http://13.127.21.70:8000/admin/customers', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      const customerData = await customerResponse.json();
+      const totalCustomers = customerData.length;
+
+      setEmployeeData(prevState => ({
+        ...prevState,
+        totalCustomers // Update total customers state
+      }));
+
     } catch (error) {
       console.error('Error fetching employee data:', error);
     }
   };
 
   useEffect(() => {
-    fetchEmployeeData(); // Fetch employee data on component mount
+    fetchEmployeeData();
   }, []);
 
   return (
@@ -140,25 +157,36 @@ const Admin = () => {
           </button>
         </div>
       </nav>
-    <div class='employee-insights'>
-      <div className="employee-stats">
-        <div className="stat-box glowing-box">
-          <h3>Total Employees</h3>
-          <p>{employeeData.totalEmployees}</p>
+
+      <div className="employee-insights">
+        <div className="employee-stats">
+          <div className="stat-box glowing-box">
+            <FaUsers className="insight-icon" />
+            <h3>Total Customers</h3>
+            <p>{employeeData.totalCustomers}</p> {/* Total Customers Display */}
+          </div>
+          <div className="stat-box glowing-box">
+            <FaUsers className="insight-icon" />
+            <h3>Total Employees</h3>
+            <p>{employeeData.totalEmployees}</p>
+          </div>
+          <div className="stat-box glowing-box">
+            <FaUserTie className="insight-icon" />
+            <h3>Sales Employees</h3>
+            <p>{employeeData.salesCount}</p>
+          </div>
+          <div className="stat-box glowing-box">
+            <FaChartLine className="insight-icon" />
+            <h3>RTO Employees</h3>
+            <p>{employeeData.rtoCount}</p>
+          </div>
+          <div className="stat-box glowing-box">
+            <FaCashRegister className="insight-icon" />
+            <h3>Accounts Employees</h3>
+            <p>{employeeData.accountsCount}</p>
+          </div>
         </div>
-        <div className="stat-box glowing-box">
-          <h3>Sales Employees</h3>
-          <p>{employeeData.salesCount}</p>
-        </div>
-        <div className="stat-box glowing-box">
-          <h3>RTO Employees</h3>
-          <p>{employeeData.rtoCount}</p>
-        </div>
-        <div className="stat-box glowing-box">
-          <h3>Accounts Employees</h3>
-          <p>{employeeData.accountsCount}</p>
-        </div>
-      </div></div>
+      </div>
 
       {showForm && (
         <div className="employee-form-container">
@@ -204,7 +232,6 @@ const Admin = () => {
               onChange={handleChange}
               required
             />
-            {/* Dropdown for selecting role */}
             <select name="role" onChange={handleRoleChange} required>
               <option value="">Select Role</option>
               <option value="Admin">Admin</option>
