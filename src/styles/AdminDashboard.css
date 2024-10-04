@@ -214,3 +214,35 @@
 .dropdown-menu li:hover {
   background-color: #f1f1f1;
 }
+.graph-container {
+  margin: 20px 0; /* Adjusts spacing above and below the graph */
+  display: flex;
+  justify-content: center; /* Centers the graph, adjust as needed */
+  width: 100%; /* Ensure it takes the full width */
+  max-width: 1200px; /* Max width similar to insights */
+}
+.admin-dashboard {
+  background: #1f1f1f;
+  color: white;
+  padding: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #333;
+  padding: 15px;
+}
+
+.branch-details {
+  margin-top: 20px;
+}
+
+.employee-data {
+  margin-top: 20px;
+}
+
+.customer-graph {
+  margin-top: 20px;
+}
