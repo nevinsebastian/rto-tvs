@@ -1,24 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FaPlus, FaUserTie, FaUsers, FaChartLine, FaCashRegister } from 'react-icons/fa';
+import { FaPlus, FaUserTie, FaUsers, FaChartLine, FaCashRegister, FaEdit, FaSave } from 'react-icons/fa';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register the components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
 
 const Admin = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
-  
-  // States for branches and selected branch details
+
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [branchDetails, setBranchDetails] = useState(null);
-  
-  // States for employee data
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableBranchDetails, setEditableBranchDetails] = useState({
+    name: '',
+    address: '',
+    branch_manager: '',
+    phone_number: ''
+  });
+
   const [employeeData, setEmployeeData] = useState({
     totalEmployees: 0,
     salesCount: 0,
     rtoCount: 0,
     accountsCount: 0,
     totalCustomers: 0
+  });
+  const [customerData, setCustomerData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Customers per Month',
+        data: [],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
   });
 
   const handleLogout = () => {
@@ -27,7 +59,6 @@ const Admin = () => {
     navigate('/login');
   };
 
-  // Fetch all branches on load
   const fetchBranches = async () => {
     const token = localStorage.getItem('token');
     try {
@@ -39,13 +70,12 @@ const Admin = () => {
         },
       });
       const data = await response.json();
-      setBranches(data); // Store branches in state
+      setBranches(data);
     } catch (error) {
       console.error('Error fetching branches:', error);
     }
   };
 
-  // Fetch branch details when a branch is selected
   const fetchBranchDetails = async (branchId) => {
     const token = localStorage.getItem('token');
     try {
@@ -57,13 +87,13 @@ const Admin = () => {
         },
       });
       const data = await response.json();
-      setBranchDetails(data); // Store selected branch details in state
+      setBranchDetails(data);
+      setEditableBranchDetails(data);
     } catch (error) {
       console.error('Error fetching branch details:', error);
     }
   };
 
-  // Fetch employee data and customer count
   const fetchEmployeeData = async () => {
     const token = localStorage.getItem('token');
     try {
@@ -105,37 +135,135 @@ const Admin = () => {
         totalCustomers
       }));
 
+      await fetchCustomerData();
     } catch (error) {
       console.error('Error fetching employee data:', error);
     }
   };
 
-  useEffect(() => {
-    fetchBranches(); // Fetch branches on component mount
-    fetchEmployeeData(); // Fetch employee and customer data
-  }, []);
+  const fetchCustomerData = async () => {
+    const token = localStorage.getItem('token');
+    const date = new Date();
+    const currentMonth = date.getMonth() + 1;
+    const currentYear = date.getFullYear();
+    const months = [];
 
-  const handleBranchClick = (branchId) => {
-    setSelectedBranch(branchId); // Set the selected branch ID
-    fetchBranchDetails(branchId); // Fetch details of the selected branch
+    for (let i = 0; i < 5; i++) {
+      const month = currentMonth - i;
+      const year = currentYear;
+      if (month < 1) {
+        months.push({ month: 12 + month, year: year - 1 });
+      } else {
+        months .push({ month, year });
+      }
+    }
+
+    const customerData = [];
+    const labels = [];
+
+    for (const month of months) {
+      try {
+        const response = await fetch(`http://13.127.21.70:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        customerData.push(data.length);
+        labels.push(`${month.month}/${month.year}`);
+      } catch (error) {
+        console.error('Error fetching customer data:', error);
+      }
+    }
+
+    setCustomerData(prevState => ({
+      ...prevState,
+      labels,
+      datasets: [
+        {
+          ...prevState.datasets[0],
+          data: customerData
+        }
+      ]
+    }));
   };
 
-  // Reload the page when the logo is clicked
-  const handleLogoClick = () => {
-    window.location.reload();
+  useEffect(() => {
+    fetchBranches();
+    fetchEmployeeData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedBranch) {
+      fetchBranchDetails(selectedBranch);
+    }
+  }, [selectedBranch]);
+
+  const handleBranchClick = (branchId) => {
+    setSelectedBranch(branchId);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = async () => {
+    const token = localStorage.getItem('token');
+
+    const updatedBranchDetails = {
+      name: editableBranchDetails.name,
+      address: editableBranchDetails.address,
+      branch_manager: editableBranchDetails.branch_manager,
+      phone_number: editableBranchDetails.phone_number,
+    };
+
+    if (!updatedBranchDetails.name || !updatedBranchDetails.address || !updatedBranchDetails.phone_number || !updatedBranchDetails.branch_manager) {
+      console.error('All fields are required');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://13.127.21.70:8000/admin/${selectedBranch}`, {
+        method: 'PUT',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedBranchDetails),
+      });
+
+      if (response.ok) {
+        console.log('Branch updated successfully');
+        await fetchBranchDetails(selectedBranch);
+        setIsEditing(false);
+      } else {
+        const data = await response.json();
+        console.error('Error saving branch details:', data);
+      }
+    } catch (error) {
+      console.error('Error saving branch details:', error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditableBranchDetails(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   return (
     <div className="admin-dashboard">
       <nav className="navbar">
-        {/* Make the logo clickable to reload the page */}
-        <h2 className="logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+        <h2 className="logo" onClick={() => window.location.reload()} style={{ cursor: 'pointer' }}>
           Admin Dashboard
         </h2>
         <div className="navbar-right">
           <span className="username">Welcome, {user?.first_name} {user?.last_name}</span>
-
-          {/* Branch dropdown */}
           <div className="branch-dropdown">
             <button className="dropdown-button">Branches</button>
             <div className="dropdown-content">
@@ -146,23 +274,57 @@ const Admin = () => {
               ))}
             </div>
           </div>
-
           <FaPlus className="add-employee-icon" />
           <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
-      {/* Display selected branch details */}
       {selectedBranch && branchDetails && (
         <div className="branch-details">
           <h3>Branch Details: {branchDetails.name}</h3>
-          <p><strong>Address:</strong> {branchDetails.address}</p>
-          <p><strong>Branch Manager:</strong> {branchDetails.branch_manager}</p>
-          <p><strong>Phone Number:</strong> {branchDetails.phone_number}</p>
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                name="name"
+                value={editableBranchDetails.name}
+                onChange={handleInputChange}
+                placeholder="Branch Name"
+              />
+              <input
+                type="text"
+                name="address"
+                value={editableBranchDetails.address}
+                onChange={handleInputChange}
+                placeholder="Address"
+              />
+              <input
+                type="text"
+                name="branch_manager"
+                value={editableBranchDetails.branch_manager}
+                onChange={handleInputChange}
+                placeholder="Branch Manager"
+              />
+              <input
+                type="text"
+                name="phone_number"
+                value={editableBranchDetails.phone_number}
+                onChange={handleInputChange}
+                placeholder="Phone Number"
+              />
+              <FaSave className="edit-icon" onClick={handleSaveClick} />
+            </>
+          ) : (
+            <>
+              <p><strong>Address:</strong> {branchDetails.address}</p>
+              <p><strong>Branch Manager:</strong> {branchDetails.branch_manager}</p>
+              <p><strong>Phone Number:</strong> {branchDetails.phone_number}</p>
+              <FaEdit className="edit-icon" onClick={handleEditClick} />
+            </>
+          )}
         </div>
       )}
 
-      {/* Employee and customer insights */}
       <div className="employee-insights">
         <div className="employee-stats">
           <div className="stat-box glowing-box">
@@ -191,6 +353,10 @@ const Admin = () => {
             <p>{employeeData.accountsCount}</p>
           </div>
         </div>
+        <div className="customer-graph">
+  {customerData.labels.length > 0 && <Line data={customerData} />}
+</div>
+
       </div>
     </div>
   );
