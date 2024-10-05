@@ -1,11 +1,23 @@
 .rto-details-container {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  max-width: 900px;
 }
 
-.customer-details p {
-  margin: 8px 0;
-  font-size: 16px;
+.rto-card {
+  background-color: #1c1e22;
+  color: #fff;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.customer-details-grid {
+  margin-top: 1rem;
+}
+
+.customer-details p, .customer-details .MuiTypography-root {
+  margin: 0.5rem 0;
+}
+
+.MuiDivider-root {
+  margin: 1rem 0;
 }
