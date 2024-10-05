@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/RTO.css'; // Updated styles
@@ -46,6 +45,10 @@ const RTO = () => {
     navigate('/login');
   };
 
+  const handleCustomerClick = (customerId) => {
+    navigate(`/rto/${customerId}`); // Navigate to RTODetails screen with the customer ID
+  };
+
   const pendingCustomers = customers.filter((customer) => customer.rto_verified === null);
   const doneCustomers = customers.filter((customer) => customer.rto_verified === true);
 
@@ -91,7 +94,11 @@ const RTO = () => {
               <p>No pending customers.</p>
             ) : (
               pendingCustomers.map((customer) => (
-                <div key={customer.customer_id} className="rto-customer-card">
+                <div 
+                  key={customer.customer_id} 
+                  className="rto-customer-card"
+                  onClick={() => handleCustomerClick(customer.customer_id)}  // Navigate on click
+                >
                   <h4>{customer.first_name} {customer.last_name}</h4>
                   <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
                   <p className="status">Status: Not completed</p>
@@ -102,7 +109,11 @@ const RTO = () => {
             <p>No verified customers.</p>
           ) : (
             doneCustomers.map((customer) => (
-              <div key={customer.customer_id} className="rto-customer-card">
+              <div 
+                key={customer.customer_id} 
+                className="rto-customer-card"
+                onClick={() => handleCustomerClick(customer.customer_id)}  // Navigate on click
+              >
                 <h4>{customer.first_name} {customer.last_name}</h4>
                 <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
                 <p className="status">Status: Submitted</p>

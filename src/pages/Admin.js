@@ -147,8 +147,7 @@ const Admin = () => {
     const currentMonth = date.getMonth() + 1;
     const currentYear = date.getFullYear();
     const months = [];
-
-    for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
       const month = currentMonth - i;
       const year = currentYear;
       if (month < 1) {
@@ -354,8 +353,10 @@ const Admin = () => {
           </div>
         </div>
         <div className="customer-graph">
-  {customerData.labels.length > 0 && <Line data={customerData} />}
-</div>
+          <div className='customer-graph'>
+            {customerData.labels.length > 0 && <Line data={customerData} />}
+            </div>
+          </div>
 
       </div>
     </div>

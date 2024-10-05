@@ -25,7 +25,7 @@ const App = () => {
         <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
         <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
         <Route path="/customer-form/:link_token" element={<CustomerForm />} />
-        <Route path="/rto/customer-details/:customerId" element={<RTODetails />} /> {/* Updated route for customer details */}
+        <Route path="/rto/:customerId" element={<RTODetails />} /> {/* Updated route for customer details */}
         <Route path='/pdf' element={<Pdf />} />
       </Routes>
     </Router>

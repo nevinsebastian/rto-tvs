@@ -1,10 +1,10 @@
-// src/pages/RTODetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import '../styles/RTODetails.css'; // Create this CSS file for custom styling
 
 const RTODetails = () => {
-  const { customerId } = useParams();
-  const [customerDetails, setCustomerDetails] = useState(null);
+  const { customerId } = useParams(); // Extract customer ID from URL
+  const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
@@ -14,7 +14,7 @@ const RTODetails = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`http://13.127.21.70:8000/rto/-list/${customerId}`, {
+      fetch(`http://13.127.21.70:8000/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -27,7 +27,7 @@ const RTODetails = () => {
           return response.json();
         })
         .then((data) => {
-          setCustomerDetails(data);
+          setCustomer(data);
           setLoading(false);
         })
         .catch((error) => {
@@ -37,17 +37,32 @@ const RTODetails = () => {
     }
   }, [customerId, token, navigate]);
 
-  if (loading) return <p>Loading customer details...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return <p>Loading customer details...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
-    <div className="customer-details">
-      <h2>{customerDetails.first_name} {customerDetails.last_name}</h2>
-      <p><strong>Address:</strong> {customerDetails.address}</p>
-      <p><strong>Vehicle:</strong> {customerDetails.vehicle_name} ({customerDetails.vehicle_variant})</p>
-      <p><strong>Status:</strong> {customerDetails.status}</p>
-      <p><strong>Phone Number:</strong> {customerDetails.phone_number}</p>
-      {/* Add more fields as necessary */}
+    <div className="rto-details-container">
+      <h2>Customer Details</h2>
+      {customer && (
+        <div className="customer-details">
+          <p><strong>Name:</strong> {customer.first_name} {customer.last_name}</p>
+          <p><strong>Address:</strong> {customer.address}</p>
+          <p><strong>Phone:</strong> {customer.phone_number}</p>
+          <p><strong>Nominee:</strong> {customer.nominee} ({customer.relation})</p>
+          <p><strong>Vehicle:</strong> {customer.vehicle_name} - {customer.vehicle_variant}</p>
+          <p><strong>Ex-showroom Price:</strong> ₹{customer.ex_showroom_price}</p>
+          <p><strong>Tax:</strong> ₹{customer.tax}</p>
+          <p><strong>Status:</strong> {customer.status}</p>
+          <p><strong>RTO Verified:</strong> {customer.rto_verified ? 'Yes' : 'No'}</p>
+          <p><strong>Sales Verified:</strong> {customer.sales_verified ? 'Yes' : 'No'}</p>
+          <p><strong>Accounts Verified:</strong> {customer.accounts_verified ? 'Yes' : 'No'}</p>
+        </div>
+      )}
     </div>
   );
 };
