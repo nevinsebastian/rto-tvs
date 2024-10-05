@@ -21,3 +21,22 @@
 .MuiDivider-root {
   margin: 1rem 0;
 }
+.rto-details-container {
+  padding: 20px;
+}
+
+.rto-card {
+  margin-bottom: 20px;
+}
+
+.customer-details-grid {
+  margin-top: 20px;
+}
+
+input[type="file"] {
+  margin: 10px 0;
+}
+
+h3 {
+  margin: 10px 0;
+}

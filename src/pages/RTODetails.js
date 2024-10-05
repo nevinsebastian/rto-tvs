@@ -7,6 +7,7 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
 import '../styles/RTODetails.css';
 
 const RTODetails = () => {
@@ -17,7 +18,19 @@ const RTODetails = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
-  const [openImage, setOpenImage] = useState(null); // New state for image enlargement
+  const [openImage, setOpenImage] = useState(null);
+
+  // PDF Editor State
+  const [form21Pdf, setForm21Pdf] = useState(null);
+  const [form20Pdf, setForm20Pdf] = useState(null);
+  const [signature, setSignature] = useState(null);
+  const [financeCompany, setFinanceCompany] = useState('idfc');
+  const [invoicePdf, setInvoicePdf] = useState(null);
+  const [buyerSignature, setBuyerSignature] = useState(null);
+  const [processedForm21, setProcessedForm21] = useState(null);
+  const [processedForm20, setProcessedForm20] = useState(null);
+  const [processedInvoice, setProcessedInvoice] = useState(null);
+  
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -48,37 +61,88 @@ const RTODetails = () => {
     }
   }, [customerId, token, navigate]);
 
-  const handleSubmission = () => {
-    setSubmitting(true);
-    fetch(`http://13.127.21.70:8000/rto/verify/${customerId}`, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to submit data.');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setSubmissionSuccess(true);
-        setSubmitting(false);
-      })
-      .catch((error) => {
-        setSubmissionError(error.message);
-        setSubmitting(false);
-      });
-  };
-
   const handleImageClick = (image) => {
     setOpenImage(image);
   };
 
   const handleCloseImage = () => {
     setOpenImage(null);
+  };
+
+  // PDF Editor Functions
+  const handleForm21Change = (e) => {
+    setForm21Pdf(e.target.files[0]);
+  };
+
+  const handleForm20Change = (e) => {
+    setForm20Pdf(e.target.files[0]);
+  };
+
+  const handleSignatureChange = (e) => {
+    setSignature(e.target.files[0]);
+  };
+
+  const handleFinanceCompanyChange = (e) => {
+    setFinanceCompany(e.target.value);
+  };
+
+  const handleInvoiceChange = (e) => {
+    setInvoicePdf(e.target.files[0]);
+  };
+
+  const handleBuyerSignatureChange = (e) => {
+    setBuyerSignature(e.target.files[0]);
+  };
+
+  const handleForm21Submit = async () => {
+    if (!form21Pdf) return;
+
+    const formData = new FormData();
+    formData.append('pdf', form21Pdf);
+
+    try {
+      const response = await axios.post('https://13.127.21.70:8000/process_pdf/form21', formData, {
+        responseType: 'blob',
+      });
+      setProcessedForm21(URL.createObjectURL(response.data));
+    } catch (error) {
+      console.error('Error processing form21:', error);
+    }
+  };
+
+  const handleForm20Submit = async () => {
+    if (!form20Pdf || !signature) return;
+
+    const formData = new FormData();
+    formData.append('pdf', form20Pdf);
+    formData.append('signature', signature);
+    formData.append('finance_company', financeCompany);
+
+    try {
+      const response = await axios.post('https://13.127.21.70:8000/process_pdf/form20', formData, {
+        responseType: 'blob',
+      });
+      setProcessedForm20(URL.createObjectURL(response.data));
+    } catch (error) {
+      console.error('Error processing form20:', error);
+    }
+  };
+
+  const handleInvoiceSubmit = async () => {
+    if (!invoicePdf || !buyerSignature) return;
+
+    const formData = new FormData();
+    formData.append('pdf', invoicePdf);
+    formData.append('signature', buyerSignature);
+
+    try {
+      const response = await axios.post('https://13.127.21.70:8000/process_pdf/invoice', formData, {
+        responseType: 'blob',
+      });
+      setProcessedInvoice(URL.createObjectURL(response.data));
+    } catch (error) {
+      console.error('Error processing invoice:', error);
+    }
   };
 
   if (loading) {
@@ -172,59 +236,66 @@ const RTODetails = () => {
                 </Grid>
               </Grid>
 
-              {/* Submit Button */}
+              {/* PDF Editor Section */}
               <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmission}
-                  disabled={submitting}
-                  fullWidth
-                >
-                  {submitting ? <CircularProgress size={24} /> : 'Submit RTO Verification'}
-                </Button>
+                <Typography variant="h6">PDF Editor</Typography>
+
+                <h3>Form 21</h3>
+                <input type="file" accept="application/pdf" onChange={handleForm21Change} />
+                <button onClick={handleForm21Submit}>Submit Form 21</button>
+                {processedForm21 && (
+                  <a href={processedForm21} download="processed_form21.pdf">Download Processed Form 21</a>
+                )}
+
+                <h3>Form 20</h3>
+                <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+                <input type="file" accept="image/png" onChange={handleSignatureChange} />
+                <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+                  <option value="idfc">IDFC</option>
+                  <option value="tvscredit">TVS Credit</option>
+                </select>
+                <button onClick={handleForm20Submit}>Submit Form 20</button>
+                {processedForm20 && (
+                  <a href={processedForm20} download="processed_form20.pdf">Download Processed Form 20</a>
+                )}
+
+                <h3>Invoice</h3>
+                <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
+                <input type="file" accept="image/png" onChange={handleBuyerSignatureChange} />
+                <button onClick={handleInvoiceSubmit}>Submit Invoice</button>
+                {processedInvoice && (
+                  <a href={processedInvoice} download="processed_invoice.pdf">Download Processed Invoice</a>
+                )}
               </Grid>
             </Grid>
           )}
         </CardContent>
       </Card>
 
-      {/* Success and Error Feedback */}
-      <Snackbar
-        open={submissionSuccess}
-        autoHideDuration={4000}
-        onClose={() => setSubmissionSuccess(false)}
-      >
-        <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
-          Customer RTO registration successful!
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={!!submissionError}
-        autoHideDuration={4000}
-        onClose={() => setSubmissionError(null)}
-      >
-        <Alert onClose={() => setSubmissionError(null)} severity="error">
-          {submissionError}
-        </Alert>
-      </Snackbar>
-
-      {/* Dialog for Image Enlargement */}
-      <Dialog
-        open={!!openImage}
-        onClose={handleCloseImage}
-        maxWidth="lg"
-      >
-        <div style={{ position: 'relative' }}>
-          <IconButton
-            onClick={handleCloseImage}
-            style={{ position: 'absolute', right: 10, top: 10, color: 'white' }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <img src={openImage} alt="Enlarged Document" style={{ width: '100%', height: 'auto' }} />
-        </div>
+      {/* Modal for Image Display */}
+      <Dialog open={Boolean(openImage)} onClose={handleCloseImage}>
+        <IconButton onClick={handleCloseImage} style={{ position: 'absolute', right: 8, top: 8 }}>
+          <CloseIcon />
+        </IconButton>
+        <img src={openImage} alt="Preview" style={{ maxWidth: '100%', maxHeight: '90vh' }} />
       </Dialog>
+
+      {/* Snackbar for Submission Status */}
+      <Snackbar
+        open={submissionSuccess || Boolean(submissionError)}
+        autoHideDuration={6000}
+        onClose={() => {
+          setSubmissionSuccess(false);
+          setSubmissionError(null);
+        }}
+      >
+        <Alert onClose={() => {
+          setSubmissionSuccess(false);
+          setSubmissionError(null);
+        }} severity={submissionSuccess ? 'success' : 'error'}>
+          {submissionSuccess ? 'Submission successful!' : submissionError}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
