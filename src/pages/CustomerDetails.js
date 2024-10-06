@@ -95,7 +95,7 @@ const CustomerDetails = () => {
   }
 
   const renderField = (label, field, type = 'text') => {
-    const isImageField = field.startsWith('photo_'); // Assuming image fields start with 'photo_'
+    const isImageField = field.startsWith('photo_') || field === 'customer_sign'; // Include signature field as image
 
     return (
       <div className="field-container">
@@ -194,18 +194,18 @@ const CustomerDetails = () => {
           {renderField('Aadhaar Front', 'photo_adhaar_front')}
           {renderField('Aadhaar Back', 'photo_adhaar_back')}
           {renderField('Passport Photo', 'photo_passport')}
+          {renderField('Customer Signature', 'customer_sign')} {/* Added signature display */}
         </div>
       </div>
 
       {!editMode && (
         <>
           <button className="edit-button" onClick={handleEditClick}>
-  <FaEdit /> Edit Details
-</button>
-<button className="verify-button" onClick={handleVerifyClick}>
-  <FaCheck /> Verify Sales
-</button>
-
+            <FaEdit /> Edit Details
+          </button>
+          <button className="verify-button" onClick={handleVerifyClick}>
+            <FaCheck /> Verify Sales
+          </button>
         </>
       )}
 

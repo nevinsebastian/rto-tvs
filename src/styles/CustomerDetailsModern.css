@@ -43,7 +43,7 @@
 }
 
 .section-title {
-  font-size: 1.4em;
+  font-size: 1.3em; /* Slightly reduced size */
   color: #343a40;
   margin-bottom: 15px;
   display: flex;
@@ -64,7 +64,7 @@
 }
 
 .details-grid div {
-  font-size: 1.1em;
+  font-size: 1em; /* Slightly reduced size */
   color: #495057;
 }
 
@@ -90,27 +90,24 @@
 
 /* Document Images */
 .document-image {
-  max-width: 100%; /* Ensures the image does not overflow the container */
-  height: auto;    /* Maintains the aspect ratio */
-  border-radius: 8px; /* Optional: Adds rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow for depth */
+  max-width: 100%;
+  max-height: 300px; /* Set a maximum height */
+  height: auto;    
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
   .details-grid {
-    grid-template-columns: 1fr; /* Stack columns on small screens */
+    grid-template-columns: 1fr; 
   }
 }
+
 /* Verification Pending Status */
 .verification-pending {
-  background-color: #fff3cd; /* Light yellow background */
-  color: #856404; /* Dark yellow text */
-}
-/* Verification Pending Status */
-.verification-pending {
-  background-color: #fff3cd; /* Light Yellow */
-  color: #856404; /* Dark Yellow */
+  background-color: #fff3cd;
+  color: #856404;
   padding: 12px;
   border-radius: 8px;
   display: flex;
@@ -122,6 +119,7 @@
 .verification-pending svg {
   margin-right: 10px;
 }
+
 /* Edit Icon */
 .edit-icon {
   cursor: pointer;
@@ -151,39 +149,40 @@
   background-color: #dc3545;
   color: white;
 }
+
 /* Edit Button */
 .edit-button, .verify-button {
-  background-color: #ff5a5f; /* Airbnb's red color */
-  color: white; /* White text */
+  background-color: #ff5a5f;
+  color: white;
   border: none;
-  padding: 12px 20px; /* Spacing */
-  border-radius: 30px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-  font-weight: bold; /* Font weight */
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 16px; 
+  font-weight: bold; 
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  display: inline-flex; /* Align icons and text */
-  align-items: center; /* Center items vertically */
+  transition: background-color 0.3s, transform 0.2s; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  display: inline-flex; 
+  align-items: center; 
 }
 
 .edit-button:hover, .verify-button:hover {
-  background-color: #e94e54; /* Darker shade on hover */
-  transform: translateY(-2px); /* Lift effect on hover */
+  background-color: #e94e54; 
+  transform: translateY(-2px); 
 }
 
 .edit-button:focus, .verify-button:focus {
-  outline: none; /* Remove default outline */
-  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.5); /* Custom focus outline */
+  outline: none; 
+  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.5); 
 }
 
 .edit-button svg, .verify-button svg {
-  margin-right: 8px; /* Space between icon and text */
+  margin-right: 8px; 
 }
 
 .verify-button {
-  background-color: #28a745; /* Green background */
-  color: white; /* White text */
+  background-color: #28a745; 
+  color: white; 
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
@@ -192,5 +191,5 @@
 }
 
 .verify-button:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838; 
 }

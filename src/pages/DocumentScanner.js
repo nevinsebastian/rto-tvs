@@ -23,10 +23,12 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
   useEffect(() => {
     const startCamera = async () => {
       try {
+        console.log('Attempting to start camera...');
         if (!streamRef.current) {
           const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' }, // Use environment camera
+            video: { facingMode: 'environment' },
           });
+          console.log('Camera access granted');
           streamRef.current = mediaStream;
           videoRef.current.srcObject = mediaStream;
           videoRef.current.play();
@@ -35,6 +37,7 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
         console.error('Error accessing the camera:', error);
       }
     };
+    
 
     startCamera();
 
