@@ -145,6 +145,28 @@ const RTODetails = () => {
     }
   };
 
+  const handleVerifyCustomer = async () => {
+    setSubmitting(true);
+    setSubmissionError(null);
+
+    try {
+      const response = await axios.post(`http://13.127.21.70:8000/rto/verify/${customerId}`, {}, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setSubmissionSuccess(true);
+      }
+    } catch (error) {
+      setSubmissionError('Verification failed.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading customer details...</p>;
   }
@@ -236,64 +258,85 @@ const RTODetails = () => {
                 </Grid>
               </Grid>
 
-              {/* PDF Editor Section */}
+              {/* Form Submission Section */}
               <Grid item xs={12}>
-                <Typography variant="h6">PDF Editor</Typography>
+                <Typography variant="h6">Form Submission</Typography>
+                <div>
+                  <Button variant="contained" component="label">
+                    Upload Form 21 PDF
+                    <input type="file" hidden onChange={handleForm21Change} />
+                  </Button>
+                  <Button variant="contained" onClick={handleForm21Submit}>Process Form 21</Button>
+                  {processedForm21 && <a href={processedForm21} download>Download Processed Form 21</a>}
+                </div>
 
-                <h3>Form 21</h3>
-                <input type="file" accept="application/pdf" onChange={handleForm21Change} />
-                <button onClick={handleForm21Submit}>Submit Form 21</button>
-                {processedForm21 && (
-                  <a href={processedForm21} download="processed_form21.pdf">Download Processed Form 21</a>
-                )}
+                <div>
+                  <Button variant="contained" component="label">
+                    Upload Form 20 PDF
+                    <input type="file" hidden onChange={handleForm20Change} />
+                  </Button>
+                  <Button variant="contained" component="label">
+                    Upload Signature
+                    <input type="file" hidden onChange={handleSignatureChange} />
+                  </Button>
+                  <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+                    <option value="idfc">IDFC</option>
+                    <option value="bajaj">Bajaj</option>
+                    <option value="hdfc">HDFC</option>
+                  </select>
+                  <Button variant="contained" onClick={handleForm20Submit}>Process Form 20</Button>
+                  {processedForm20 && <a href={processedForm20} download>Download Processed Form 20</a>}
+                </div>
 
-                <h3>Form 20</h3>
-                <input type="file" accept="application/pdf" onChange={handleForm20Change} />
-                <input type="file" accept="image/png" onChange={handleSignatureChange} />
-                <select value={financeCompany} onChange={handleFinanceCompanyChange}>
-                  <option value="idfc">IDFC</option>
-                  <option value="tvscredit">TVS Credit</option>
-                </select>
-                <button onClick={handleForm20Submit}>Submit Form 20</button>
-                {processedForm20 && (
-                  <a href={processedForm20} download="processed_form20.pdf">Download Processed Form 20</a>
-                )}
+                <div>
+                  <Button variant="contained" component="label">
+                    Upload Invoice PDF
+                    <input type="file" hidden onChange={handleInvoiceChange} />
+                  </Button>
+                  <Button variant="contained" component="label">
+                    Upload Buyer Signature
+                    <input type="file" hidden onChange={handleBuyerSignatureChange} />
+                  </Button>
+                  <Button variant="contained" onClick={handleInvoiceSubmit}>Process Invoice</Button>
+                  {processedInvoice && <a href={processedInvoice} download>Download Processed Invoice</a>}
+                </div>
+              </Grid>
 
-                <h3>Invoice</h3>
-                <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
-                <input type="file" accept="image/png" onChange={handleBuyerSignatureChange} />
-                <button onClick={handleInvoiceSubmit}>Submit Invoice</button>
-                {processedInvoice && (
-                  <a href={processedInvoice} download="processed_invoice.pdf">Download Processed Invoice</a>
-                )}
+              {/* Verify RTO Button */}
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<VerifiedIcon />}
+                  onClick={handleVerifyCustomer}
+                  disabled={submitting || customer.rto_verified}
+                >
+                  {submitting ? <CircularProgress size={24} /> : 'Verify RTO'}
+                </Button>
               </Grid>
             </Grid>
           )}
         </CardContent>
       </Card>
 
-      {/* Modal for Image Display */}
-      <Dialog open={Boolean(openImage)} onClose={handleCloseImage}>
-        <IconButton onClick={handleCloseImage} style={{ position: 'absolute', right: 8, top: 8 }}>
+      {/* Fullscreen Image Viewer */}
+      <Dialog open={Boolean(openImage)} onClose={handleCloseImage} maxWidth="lg">
+        <IconButton onClick={handleCloseImage} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: '9999' }}>
           <CloseIcon />
         </IconButton>
-        <img src={openImage} alt="Preview" style={{ maxWidth: '100%', maxHeight: '90vh' }} />
+        <img src={openImage} alt="Document" style={{ maxWidth: '100%', maxHeight: '90vh' }} />
       </Dialog>
 
-      {/* Snackbar for Submission Status */}
-      <Snackbar
-        open={submissionSuccess || Boolean(submissionError)}
-        autoHideDuration={6000}
-        onClose={() => {
-          setSubmissionSuccess(false);
-          setSubmissionError(null);
-        }}
-      >
-        <Alert onClose={() => {
-          setSubmissionSuccess(false);
-          setSubmissionError(null);
-        }} severity={submissionSuccess ? 'success' : 'error'}>
-          {submissionSuccess ? 'Submission successful!' : submissionError}
+      {/* Snackbar for Success or Error */}
+      <Snackbar open={submissionSuccess} autoHideDuration={3000} onClose={() => setSubmissionSuccess(false)}>
+        <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
+          RTO Verified Successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={Boolean(submissionError)} autoHideDuration={3000} onClose={() => setSubmissionError(null)}>
+        <Alert onClose={() => setSubmissionError(null)} severity="error">
+          {submissionError}
         </Alert>
       </Snackbar>
     </div>

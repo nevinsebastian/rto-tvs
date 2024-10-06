@@ -40,3 +40,28 @@ input[type="file"] {
 h3 {
   margin: 10px 0;
 }
+.rto-details-container {
+  padding: 20px;
+}
+
+.rto-card {
+  margin: 20px;
+}
+
+button {
+  margin-right: 10px;
+}
+
+.customer-details-grid {
+  margin-top: 20px;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.MuiDialog-paper {
+  padding: 20px;
+  background-color: #f4f4f4;
+}
