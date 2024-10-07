@@ -99,6 +99,18 @@ const CustomerForm = () => {
           <div className="customer-data">
             <p><strong>Name:</strong> {customerData.name}</p>
             <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
+            <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
+            <p><strong>Vehicle Variant:</strong> {customerData.vehicle_variant}</p>
+            <p><strong>Vehicle Color:</strong> {customerData.vehicle_color}</p>
+            <p><strong>Ex-Showroom Price:</strong> {customerData.ex_showroom_price}</p>
+            <p><strong>Tax:</strong> {customerData.tax}</p>
+            <p><strong>Insurance:</strong> {customerData.insurance}</p>
+            <p><strong>TP Registration:</strong> {customerData.tp_registration}</p>
+            <p><strong>Manufacturer Accessories:</strong> {customerData.man_accessories}</p>
+            <p><strong>Optional Accessories:</strong> {customerData.optional_accessories}</p>
+            <p><strong>Total Price:</strong> {customerData.total_price}</p>
+            <p><strong>Booking:</strong> {customerData.booking}</p>
+            <p><strong>Finance Amount:</strong> {customerData.finance_amount}</p>
           </div>
 
           <h2>Update Customer Information</h2>
