@@ -38,7 +38,7 @@ const RTODetails = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`http://13.127.21.70:8000/rto/${customerId}`, {
+      fetch(`https://13.127.21.70:8000/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ const RTODetails = () => {
     formData.append('pdf', form21Pdf);
 
     try {
-      const response = await axios.post('http://13.127.21.70:8000/pdf/process_pdf/form21', formData, {
+      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/form21', formData, {
         responseType: 'blob',
       });
       setProcessedForm21(URL.createObjectURL(response.data));
@@ -119,7 +119,7 @@ const RTODetails = () => {
     formData.append('finance_company', financeCompany);
 
     try {
-      const response = await axios.post('http://13.127.21.70:8000/pdf/process_pdf/form20', formData, {
+      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/form20', formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -136,7 +136,7 @@ const RTODetails = () => {
     formData.append('signature', buyerSignature);
 
     try {
-      const response = await axios.post('http://13.127.21.70:8000/pdf/process_pdf/invoice', formData, {
+      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/invoice', formData, {
         responseType: 'blob',
       });
       setProcessedInvoice(URL.createObjectURL(response.data));
@@ -150,7 +150,7 @@ const RTODetails = () => {
     setSubmissionError(null);
 
     try {
-      const response = await axios.post(`http://13.127.21.70:8000/rto/verify/${customerId}`, {}, {
+      const response = await axios.post(`https://13.127.21.70:8000/rto/verify/${customerId}`, {}, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,

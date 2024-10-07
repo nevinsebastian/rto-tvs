@@ -27,7 +27,7 @@ const CustomerForm = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`http://13.127.21.70:8000/customer/customer-form/${link_token}`);
+        const response = await fetch(`https://13.127.21.70:8000/customer/customer-form/${link_token}`);
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setCustomerData(data);
@@ -60,7 +60,7 @@ const CustomerForm = () => {
     }
 
     try {
-      const response = await fetch(`http://13.127.21.70:8000/customer/customer/${link_token}`, {
+      const response = await fetch(`https://13.127.21.70:8000/customer/customer/${link_token}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

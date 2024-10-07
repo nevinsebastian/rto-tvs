@@ -52,7 +52,7 @@ const SalesExecutive = () => {
     }
 
     const fetchCustomerCounts = async () => {
-      const response = await fetch('http://13.127.21.70:8000/sales/customers/count', {
+      const response = await fetch('https://13.127.21.70:8000/sales/customers/count', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -64,7 +64,7 @@ const SalesExecutive = () => {
     };
 
     const fetchReviewCounts = async () => {
-      const response = await fetch('http://13.127.21.70:8000/sales/customer-verification/count', {
+      const response = await fetch('https://13.127.21.70:8000/sales/customer-verification/count', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -134,7 +134,7 @@ const SalesExecutive = () => {
   };
 
   const fetchCustomers = async () => {
-    const response = await fetch('http://13.127.21.70:8000/sales/customers', {
+    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
       method: 'GET',
       headers: {
         accept: 'application/json',
@@ -155,7 +155,7 @@ const SalesExecutive = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://13.127.21.70:8000/sales/create-customer', {
+    const response = await fetch('https://13.127.21.70:8000/sales/create-customer', {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -173,7 +173,7 @@ const SalesExecutive = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
+    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',
@@ -196,7 +196,7 @@ const SalesExecutive = () => {
   
 
   const handleVerifyCustomer = async () => {
-    const response = await fetch(`http://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
+    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
       method: 'POST',
       headers: {
         accept: 'application/json',

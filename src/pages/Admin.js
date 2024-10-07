@@ -32,6 +32,54 @@ const Admin = () => {
     branch_manager: '',
     phone_number: ''
   });
+  const [newEmployee, setNewEmployee] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    role_id: '',
+    branch_id: ''
+  });
+  const handleNewEmployeeChange = (e) => {
+    const { name, value } = e.target;
+    setNewEmployee(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+  const handleAddEmployee = async () => {
+    const token = localStorage.getItem('token');
+  
+    try {
+      const response = await fetch('https://13.127.21.70:8000/admin/create_user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newEmployee),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Employee added:', data);
+        // Optionally, refresh employee data after adding the new employee
+        fetchEmployeeData();
+      } else {
+        const data = await response.json();
+        console.error('Error adding employee:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
+
+  const handleAddEmployeeClick = () => {
+    setShowAddEmployeeForm(true);
+  };
+  
+  
 
   const [employeeData, setEmployeeData] = useState({
     totalEmployees: 0,
@@ -62,7 +110,7 @@ const Admin = () => {
   const fetchBranches = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://13.127.21.70:8000/admin/', {
+      const response = await fetch('https://13.127.21.70:8000/admin/', {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -79,7 +127,7 @@ const Admin = () => {
   const fetchBranchDetails = async (branchId) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://13.127.21.70:8000/admin/${branchId}`, {
+      const response = await fetch(`https://13.127.21.70:8000/admin/${branchId}`, {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -97,7 +145,7 @@ const Admin = () => {
   const fetchEmployeeData = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://13.127.21.70:8000/admin/users', {
+      const response = await fetch('https://13.127.21.70:8000/admin/users', {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -119,7 +167,7 @@ const Admin = () => {
         accountsCount
       }));
 
-      const customerResponse = await fetch('http://13.127.21.70:8000/admin/customers', {
+      const customerResponse = await fetch('https://13.127.21.70:8000/admin/customers', {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -162,7 +210,7 @@ const Admin = () => {
 
     for (const month of months) {
       try {
-        const response = await fetch(`http://13.127.21.70:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
+        const response = await fetch(`https://13.127.21.70:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
           method: 'GET',
           headers: {
             'accept': 'application/json',
@@ -224,7 +272,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch(`http://13.127.21.70:8000/admin/${selectedBranch}`, {
+      const response = await fetch(`https://13.127.21.70:8000/admin/${selectedBranch}`, {
         method: 'PUT',
         headers: {
           'accept': 'application/json',
@@ -273,7 +321,57 @@ const Admin = () => {
               ))}
             </div>
           </div>
-          <FaPlus className="add-employee-icon" />
+          <FaPlus className="add-employee-icon" onClick={handleAddEmployeeClick} />
+          {showAddEmployeeForm && (
+  <div className="add-employee-form">
+    <h3>Add New Employee</h3>
+    <input 
+      type="text" 
+      name="first_name" 
+      placeholder="First Name" 
+      value={newEmployee.first_name} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <input 
+      type="text" 
+      name="last_name" 
+      placeholder="Last Name" 
+      value={newEmployee.last_name} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <input 
+      type="email" 
+      name="email" 
+      placeholder="Email" 
+      value={newEmployee.email} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <input 
+      type="password" 
+      name="password" 
+      placeholder="Password" 
+      value={newEmployee.password} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <input 
+      type="number" 
+      name="role_id" 
+      placeholder="Role ID" 
+      value={newEmployee.role_id} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <input 
+      type="number" 
+      name="branch_id" 
+      placeholder="Branch ID" 
+      value={newEmployee.branch_id} 
+      onChange={handleNewEmployeeChange} 
+    />
+    <button onClick={handleAddEmployee}>Add Employee</button>
+    <button onClick={() => setShowAddEmployeeForm(false)}>Cancel</button>
+  </div>
+)}
+
           <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
       </nav>

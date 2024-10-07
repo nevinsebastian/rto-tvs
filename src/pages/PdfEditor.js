@@ -43,7 +43,7 @@ const PDFEditor = () => {
         formData.append('pdf', form21Pdf);
 
         try {
-            const response = await axios.post('https://127.0.0.1:8000/process_pdf/form21', formData, {
+            const response = await axios.post('httpss://127.0.0.1:8000/process_pdf/form21', formData, {
                 responseType: 'blob',
             });
             setProcessedForm21(URL.createObjectURL(response.data));
@@ -61,7 +61,7 @@ const PDFEditor = () => {
         formData.append('finance_company', financeCompany);
 
         try {
-            const response = await axios.post('https://127.0.0.1:8000/process_pdf/form20', formData, {
+            const response = await axios.post('httpss://127.0.0.1:8000/process_pdf/form20', formData, {
                 responseType: 'blob',
             });
             setProcessedForm20(URL.createObjectURL(response.data));
@@ -78,7 +78,7 @@ const PDFEditor = () => {
         formData.append('signature', buyerSignature);
 
         try {
-            const response = await axios.post('https://127.0.0.1:8000/process_pdf/invoice', formData, {
+            const response = await axios.post('httpss://127.0.0.1:8000/process_pdf/invoice', formData, {
                 responseType: 'blob',
             });
             setProcessedInvoice(URL.createObjectURL(response.data));
