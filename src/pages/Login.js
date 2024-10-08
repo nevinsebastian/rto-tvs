@@ -48,6 +48,9 @@ const Login = () => {
           case 'Manager':
             navigate('/manager');
             break;
+          case 'stock_person':
+            navigate('/stock');
+            break;
           default:
             setError('Unknown role.');
         }

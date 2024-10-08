@@ -11,6 +11,10 @@ import CustomerForm from './pages/CustomerForm';
 import RTODetails from './pages/RTODetails'; // Import the new component
 import Pdf from './pages/PdfEditor';
 import CustomerDetails from './pages/CustomerDetails';
+import AccountCustomerDetails from './pages/AccountCustomerDetails'; 
+import Stock from './pages/Stock';
+
+
 const App = () => {
   const token = localStorage.getItem('token');
 
@@ -28,7 +32,10 @@ const App = () => {
         <Route path="/rto/:customerId" element={<RTODetails />} /> {/* Updated route for customer details */}
         <Route path='/pdf' element={<Pdf />} />
         <Route path="/customer-details/:customerId" element={<CustomerDetails />} />
+        <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} /> {/* Updated route for account customer details */}
+        <Route  path='/stock' element={token ? <Stock/> :<Navigate to="/login" />}/>
         </Routes>
+        
     </Router>
   );
 };
