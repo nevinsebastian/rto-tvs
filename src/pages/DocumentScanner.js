@@ -23,20 +23,29 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
   useEffect(() => {
     const startCamera = async () => {
       try {
-        console.log('Attempting to start camera...');
-        if (!streamRef.current) {
-          const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' },
-          });
-          console.log('Camera access granted');
-          streamRef.current = mediaStream;
-          videoRef.current.srcObject = mediaStream;
-          videoRef.current.play();
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('Camera API is not supported in this browser.');
         }
+    
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }, // Use back camera
+        });
+    
+        streamRef.current = mediaStream;
+        videoRef.current.srcObject = mediaStream;
+    
+        // Wait for video to be ready before playing
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current.play();
+        };
+    
       } catch (error) {
-        console.error('Error accessing the camera:', error);
+        console.error('Camera access error:', error);
+        alert(error.message); // Show the error message to the user
       }
     };
+    
+
     
 
     startCamera();
