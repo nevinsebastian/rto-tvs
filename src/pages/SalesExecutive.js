@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SalesExecutive.css'; // Import the CSS for styling
@@ -193,7 +192,6 @@ const SalesExecutive = () => {
   const handleCustomerClick = (customerId) => {
     navigate(`/customer-details/${customerId}`);
   };
-  
 
   const handleVerifyCustomer = async () => {
     const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
@@ -209,6 +207,11 @@ const SalesExecutive = () => {
       setCustomers(prev => prev.map(customer => customer.customer_id === updatedCustomer.customer_id ? updatedCustomer : customer));
       setSelectedCustomer(updatedCustomer);
     }
+  };
+
+  const createNewLink = (generatedLink) => {
+    const token = generatedLink.split('/customer-form/')[1];
+    return `https://192.168.113.45:3000/customer-form/${token}`;
   };
 
   return (
@@ -261,29 +264,27 @@ const SalesExecutive = () => {
             <input type="text" name="vehicle_name" value={formData.vehicle_name} onChange={handleInputChange} placeholder="Vehicle Name" />
             <input type="text" name="vehicle_variant" value={formData.vehicle_variant} onChange={handleInputChange} placeholder="Vehicle Variant" />
             <input type="text" name="vehicle_color" value={formData.vehicle_color} onChange={handleInputChange} placeholder="Vehicle Color" />
-            <input type="text" name="ex_showroom_price" value={formData.ex_showroom_price} onChange={handleInputChange} placeholder="Ex-showroom Price" />
-            <input type="text" name="tax" value={formData.tax} onChange={handleInputChange} placeholder="Tax" />
-            <input type="text" name="insurance" value={formData.insurance} onChange={handleInputChange} placeholder="Insurance" />
-            <input type="text" name="tp_registration" value={formData.tp_registration} onChange={handleInputChange} placeholder="TP Registration" />
-            <input type="text" name="man_accessories" value={formData.man_accessories} onChange={handleInputChange} placeholder="Mandatory Accessories" />
-            <input type="text" name="optional_accessories" value={formData.optional_accessories} onChange={handleInputChange} placeholder="Optional Accessories" />
-            <input type="text" name="booking" value={formData.booking} onChange={handleInputChange} placeholder="Booking Amount" />
-            <input type="text" name="total_price" value={formData.total_price} onChange={handleInputChange} placeholder="Total Price" />
-            <input type="text" name="finance_amount" value={formData.finance_amount} onChange={handleInputChange} placeholder="Finance Amount" />
+            <input type="number" name="ex_showroom_price" value={formData.ex_showroom_price} onChange={handleInputChange} placeholder="Ex-Showroom Price" />
+            <input type="number" name="tax" value={formData.tax} onChange={handleInputChange} placeholder="Tax" />
+            <input type="number" name="insurance" value={formData.insurance} onChange={handleInputChange} placeholder="Insurance" />
+            <input type="number" name="tp_registration" value={formData.tp_registration} onChange={handleInputChange} placeholder="TP Registration" />
+            <input type="number" name="man_accessories" value={formData.man_accessories} onChange={handleInputChange} placeholder="Mandatory Accessories" />
+            <input type="number" name="optional_accessories" value={formData.optional_accessories} onChange={handleInputChange} placeholder="Optional Accessories" />
+            <input type="number" name="booking" value={formData.booking} onChange={handleInputChange} placeholder="Booking Amount" />
+            <input type="number" name="total_price" value={formData.total_price} onChange={handleInputChange} placeholder="Total Price" />
+            <input type="number" name="finance_amount" value={formData.finance_amount} onChange={handleInputChange} placeholder="Finance Amount" />
             <input type="text" name="finance_id" value={formData.finance_id} onChange={handleInputChange} placeholder="Finance ID" />
-            <button type="submit">{selectedCustomer ? 'Update Customer' : 'Add Customer'}</button>
+            <button type="submit" className="submit-button">Submit</button>
           </form>
         </div>
       )}
 
       {/* Customers List */}
-      <div className="customers-list">
+      <div className="customer-list">
         {customers.map(customer => (
-          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
-            <h3>{customer.name}</h3>
-            <p>Phone: {customer.phone_number}</p>
-            <p>Vehicle: {customer.vehicle_name} - {customer.vehicle_variant}</p>
-            <button onClick={handleVerifyCustomer}>Verify</button>
+          <div className="customer-item" key={customer.customer_id} onClick={() => handleCustomerClick(customer.customer_id)}>
+            <p>{customer.name}</p>
+            <p>{customer.phone_number}</p>
           </div>
         ))}
       </div>
@@ -291,8 +292,10 @@ const SalesExecutive = () => {
       {/* Generated Link */}
       {generatedLink && (
         <div className="link-container">
-          <h4>Customer Link Generated:</h4>
-          <a href={generatedLink} target="_blank" rel="noopener noreferrer">{generatedLink}</a>
+          <h3>Generated Link:</h3>
+          <a href={createNewLink(generatedLink)} target="_blank" rel="noopener noreferrer">
+            {createNewLink(generatedLink)}
+          </a>
         </div>
       )}
     </div>

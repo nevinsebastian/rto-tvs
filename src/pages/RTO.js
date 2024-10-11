@@ -6,7 +6,7 @@ const RTO = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeTab, setActiveTab] = useState('pending'); // Default active tab
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
@@ -49,8 +49,9 @@ const RTO = () => {
     navigate(`/rto/${customerId}`); // Navigate to RTODetails screen with the customer ID
   };
 
-  const pendingCustomers = customers.filter((customer) => customer.rto_verified === null);
-  const doneCustomers = customers.filter((customer) => customer.rto_verified === true);
+  // Filter customers based on RTO verification status
+  const pendingCustomers = customers.filter((customer) => customer.rto_verified === false);
+  const verifiedCustomers = customers.filter((customer) => customer.rto_verified === true);
 
   return (
     <div className="rto-container">
@@ -99,22 +100,22 @@ const RTO = () => {
                   className="rto-customer-card"
                   onClick={() => handleCustomerClick(customer.customer_id)}  // Navigate on click
                 >
-                  <h4>{customer.first_name} {customer.last_name}</h4>
+                  <h4>{customer.first_name || customer.name} {customer.last_name}</h4>
                   <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
                   <p className="status">Status: Not completed</p>
                 </div>
               ))
             )
-          ) : doneCustomers.length === 0 ? (
+          ) : verifiedCustomers.length === 0 ? (
             <p>No verified customers.</p>
           ) : (
-            doneCustomers.map((customer) => (
+            verifiedCustomers.map((customer) => (
               <div 
                 key={customer.customer_id} 
                 className="rto-customer-card"
                 onClick={() => handleCustomerClick(customer.customer_id)}  // Navigate on click
               >
-                <h4>{customer.first_name} {customer.last_name}</h4>
+                <h4>{customer.first_name || customer.name} {customer.last_name}</h4>
                 <p><strong>Vehicle:</strong> {customer.vehicle_name}</p>
                 <p className="status">Status: Submitted</p>
               </div>

@@ -1,0 +1,100 @@
+/* src/styles/AccountCustomerDetails.css */
+
+.customer-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #121212; /* Dark background */
+  color: #ffffff; /* Light text for contrast */
+  min-height: 100vh; /* Full height for the page */
+  box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.customer-info {
+  background-color: #1e1e1e; /* Slightly lighter dark background for info box */
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px; /* Maximum width for better readability */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.customer-info h2 {
+  margin-bottom: 15px; /* Spacing below the heading */
+  font-size: 24px; /* Larger font for the name */
+  text-align: center; /* Center align name */
+}
+
+.customer-info p {
+  margin: 8px 0; /* Vertical spacing for paragraphs */
+  font-size: 16px; /* Font size for details */
+}
+
+.customer-info img {
+  max-width: 100%; /* Ensure images fit within the container */
+  height: auto; /* Maintain aspect ratio */
+  margin: 5px 0; /* Spacing above and below images */
+}
+
+/* Style for the back button */
+button {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: #ffffff; /* White text */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for the button */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  margin-bottom: 20px; /* Spacing below the button */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Media Queries for mobile responsiveness */
+@media (max-width: 600px) {
+  .customer-info {
+    padding: 15px; /* Reduce padding for smaller screens */
+    max-height: 80vh; /* Set max height for better overflow handling */
+  }
+
+  .customer-info h2 {
+    font-size: 20px; /* Smaller font size for name on mobile */
+  }
+
+  .customer-info p {
+    font-size: 14px; /* Smaller font size for details on mobile */
+  }
+
+  button {
+    font-size: 14px; /* Smaller font size for button on mobile */
+  }
+
+  .customer-info img {
+    max-width: 90%; /* Ensure images fit within the container on mobile */
+    height: auto; /* Maintain aspect ratio */
+  }
+}
+/* src/styles/AccountCustomerDetails.css */
+
+/* Existing styles remain unchanged... */
+
+.verify-button {
+  background-color: #28a745; /* Green color for verification */
+  color: #ffffff; /* White text */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for the button */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  margin-top: 15px; /* Margin above the button */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+.verify-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}

@@ -82,6 +82,7 @@ const Stock = () => {
             onChange={(e) => setChassisNumber(e.target.value)}
             required
             style={styles.input}
+            placeholder="Enter chassis number"
           />
         </div>
         
@@ -98,15 +99,27 @@ const Stock = () => {
         
         <button type="submit" style={styles.submitButton}>Upload</button>
       </form>
+
+      <footer style={styles.footer}>
+        <p style={styles.footerText}>© {new Date().getFullYear()} Hogspot. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
 
 const styles = {
   container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: '20px',
     width: '100%',
     boxSizing: 'border-box',
+    minHeight: '100vh',
+    backgroundColor: '#f9f9f9',
+    fontFamily: 'Arial, sans-serif',
+    overflow: 'hidden',
   },
   header: {
     display: 'flex',
@@ -114,12 +127,17 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: '20px',
-    backgroundColor: '#f0f0f0',
-    padding: '10px',
-    borderRadius: '5px',
+    backgroundColor: '#ffffff',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '600px',
   },
   title: {
     margin: '0',
+    fontSize: '24px',
+    color: '#333',
   },
   userSection: {
     display: 'flex',
@@ -131,17 +149,24 @@ const styles = {
   userName: {
     marginRight: '10px',
     fontWeight: 'bold',
+    color: '#555',
   },
   logoutButton: {
     backgroundColor: '#ff4c4c',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
-    padding: '5px 10px',
+    padding: '8px 12px',
     cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+  logoutButtonHover: {
+    backgroundColor: '#e63939',
   },
   form: {
     marginTop: '20px',
+    width: '100%',
+    maxWidth: '600px',
   },
   formGroup: {
     marginBottom: '15px',
@@ -150,12 +175,18 @@ const styles = {
     display: 'block',
     marginBottom: '5px',
     fontWeight: 'bold',
+    color: '#333',
   },
   input: {
     width: '100%',
-    padding: '8px',
+    padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
+    fontSize: '16px',
+    transition: 'border-color 0.3s ease',
+  },
+  inputFocus: {
+    borderColor: '#4a90e2',
   },
   submitButton: {
     backgroundColor: '#28a745',
@@ -164,6 +195,18 @@ const styles = {
     borderRadius: '5px',
     padding: '10px 15px',
     cursor: 'pointer',
+    fontSize: '16px',
+    transition: 'background-color 0.3s ease',
+    width: '100%',
+  },
+  footer: {
+    marginTop: '30px',
+    textAlign: 'center',
+    width: '100%',
+  },
+  footerText: {
+    fontSize: '14px',
+    color: '#777',
   },
 };
 
@@ -176,6 +219,9 @@ const mediaQueries = `
     .userSection {
       justify-content: space-between;
       width: 100%;
+    }
+    .input {
+      font-size: 14px;
     }
   }
 `;

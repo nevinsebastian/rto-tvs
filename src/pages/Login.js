@@ -1,7 +1,47 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Login.css';  // Import the CSS
+import {
+  Box,
+  Button,
+  Checkbox,
+  CssBaseline,
+  FormControlLabel,
+  TextField,
+  Typography,
+  Card,
+  Link,
+  Divider,
+  Stack,
+} from '@mui/material';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#90caf9', // Customize the primary color if needed
+    },
+    background: {
+      default: '#121212', // Dark background
+      paper: '#1e1e1e', // Dark background for cards and papers
+    },
+  },
+  typography: {
+    h5: {
+      fontWeight: 600,
+    },
+  },
+});
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  padding: theme.spacing(4),
+  maxWidth: '400px',
+  margin: 'auto',
+  marginTop: theme.spacing(8),
+  boxShadow: '0px 3px 15px rgba(0, 0, 0, 0.1)',
+  backgroundColor: theme.palette.background.paper, // Apply dark background to card
+}));
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -10,7 +50,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();  // Prevent form reload on submit
+    e.preventDefault();
 
     try {
       const response = await axios.post('https://13.127.21.70:8000/login', {
@@ -31,7 +71,6 @@ const Login = () => {
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Redirect based on role
         switch (user.role_name) {
           case 'Admin':
             navigate('/admin');
@@ -64,42 +103,87 @@ const Login = () => {
   };
 
   return (
-    <div className="main-container">
-      {/* Form Section */}
-      <div className="form-section">
-        <h1 className="login-title">TVS Top Heaven</h1>
-        <p className="login-subtitle">Welcome back</p>
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-container">
-            <label>Email</label>
-            <input
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          backgroundColor: darkTheme.palette.background.default,
+        }}
+      >
+        <StyledCard>
+          <Typography variant="h5" component="h1" align="center" gutterBottom>
+            TVS Top Heaven
+          </Typography>
+          <Typography variant="subtitle1" align="center" gutterBottom>
+            Welcome back
+          </Typography>
+          <Box component="form" onSubmit={handleLogin} noValidate>
+            <TextField
+              fullWidth
+              label="Email"
+              margin="normal"
               type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="input-field"
+              InputProps={{
+                sx: { color: '#fff' }, // Make text in input white
+              }}
             />
-          </div>
-          <div className="input-container">
-            <label>Password</label>
-            <input
+            <TextField
+              fullWidth
+              label="Password"
+              margin="normal"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="input-field"
+              InputProps={{
+                sx: { color: '#fff' }, // Make text in input white
+              }}
             />
-          </div>
-          <button type="submit" className="login-button">Login</button>
-        </form>
-        {error && <p className="error-message">{error}</p>}
-      </div>
-
-      {/* Image Section */}
-      <div className="image-section">
-        <img src="/login.svg" alt="Illustration" />
-      </div>
-    </div>
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2, mb: 2 }}
+            >
+              Login
+            </Button>
+          </Box>
+          {error && <Typography color="error" variant="body2" align="center">{error}</Typography>}
+          <Divider sx={{ my: 2, borderColor: '#666' }}>or</Divider>
+          <Stack spacing={2}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => alert('Sign in with Google')}
+            >
+              Sign in with Google
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => alert('Sign in with Facebook')}
+            >
+              Sign in with Facebook
+            </Button>
+          </Stack>
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            Don't have an account? <Link href="/signup" sx={{ color: '#90caf9' }}>Sign up</Link>
+          </Typography>
+        </StyledCard>
+      </Box>
+    </ThemeProvider>
   );
 };
 

@@ -13,6 +13,8 @@ import Pdf from './pages/PdfEditor';
 import CustomerDetails from './pages/CustomerDetails';
 import AccountCustomerDetails from './pages/AccountCustomerDetails'; 
 import Stock from './pages/Stock';
+import Chassis from './pages/Chassis';
+
 
 
 const App = () => {
@@ -34,6 +36,7 @@ const App = () => {
         <Route path="/customer-details/:customerId" element={<CustomerDetails />} />
         <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} /> {/* Updated route for account customer details */}
         <Route  path='/stock' element={token ? <Stock/> :<Navigate to="/login" />}/>
+        <Route path='/chassis' element={<Chassis/>}/>
         </Routes>
         
     </Router>

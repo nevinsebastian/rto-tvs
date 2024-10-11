@@ -9,6 +9,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import '../styles/RTODetails.css';
+import Chassis from './Chassis';
 
 const RTODetails = () => {
   const { customerId } = useParams();
@@ -318,6 +319,7 @@ const RTODetails = () => {
           )}
         </CardContent>
       </Card>
+      
 
       {/* Fullscreen Image Viewer */}
       <Dialog open={Boolean(openImage)} onClose={handleCloseImage} maxWidth="lg">
