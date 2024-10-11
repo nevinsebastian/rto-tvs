@@ -4,44 +4,16 @@ import axios from 'axios';
 import {
   Box,
   Button,
-  Checkbox,
-  CssBaseline,
-  FormControlLabel,
   TextField,
   Typography,
   Card,
-  Link,
   Divider,
-  Stack,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  CssBaseline,
+  Container
 } from '@mui/material';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#90caf9', // Customize the primary color if needed
-    },
-    background: {
-      default: '#121212', // Dark background
-      paper: '#1e1e1e', // Dark background for cards and papers
-    },
-  },
-  typography: {
-    h5: {
-      fontWeight: 600,
-    },
-  },
-});
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  padding: theme.spacing(4),
-  maxWidth: '400px',
-  margin: 'auto',
-  marginTop: theme.spacing(8),
-  boxShadow: '0px 3px 15px rgba(0, 0, 0, 0.1)',
-  backgroundColor: theme.palette.background.paper, // Apply dark background to card
-}));
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -103,49 +75,49 @@ const Login = () => {
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
         sx={{
+          marginTop: 8,
           display: 'flex',
-          justifyContent: 'center',
+          flexDirection: 'column',
           alignItems: 'center',
-          minHeight: '100vh',
-          backgroundColor: darkTheme.palette.background.default,
         }}
       >
-        <StyledCard>
-          <Typography variant="h5" component="h1" align="center" gutterBottom>
-            TVS Top Heaven
-          </Typography>
-          <Typography variant="subtitle1" align="center" gutterBottom>
-            Welcome back
-          </Typography>
-          <Box component="form" onSubmit={handleLogin} noValidate>
+        <Typography component="h1" variant="h4" gutterBottom>
+          TVS Top Heaven
+        </Typography>
+        <Typography component="h2" variant="body1" gutterBottom>
+          Welcome back
+        </Typography>
+        <Card sx={{ padding: 4, marginTop: 3 }}>
+          <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
             <TextField
-              fullWidth
-              label="Email"
               margin="normal"
-              type="email"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required
-              InputProps={{
-                sx: { color: '#fff' }, // Make text in input white
-              }}
             />
             <TextField
-              fullWidth
-              label="Password"
               margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
               type="password"
+              id="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              InputProps={{
-                sx: { color: '#fff' }, // Make text in input white
-              }}
             />
+            {error && <Typography color="error">{error}</Typography>}
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -154,19 +126,16 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ mt: 2, mb: 2 }}
+              sx={{ mt: 3, mb: 2 }}
             >
               Login
             </Button>
-          </Box>
-          {error && <Typography color="error" variant="body2" align="center">{error}</Typography>}
-          <Divider sx={{ my: 2, borderColor: '#666' }}>or</Divider>
-          <Stack spacing={2}>
+            <Divider>or</Divider>
             <Button
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign in with Google')}
+              sx={{ mt: 2 }}
             >
               Sign in with Google
             </Button>
@@ -174,16 +143,19 @@ const Login = () => {
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign in with Facebook')}
+              sx={{ mt: 1 }}
             >
               Sign in with Facebook
             </Button>
-          </Stack>
-          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Don't have an account? <Link href="/signup" sx={{ color: '#90caf9' }}>Sign up</Link>
-          </Typography>
-        </StyledCard>
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Box>
+          </Box>
+        </Card>
       </Box>
-    </ThemeProvider>
+    </Container>
   );
 };
 
