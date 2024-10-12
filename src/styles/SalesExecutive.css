@@ -7,6 +7,7 @@
   background-color: #f5f7fa; /* Soft background */
   box-sizing: border-box;
   font-family: 'Inter', sans-serif; /* Modern, clean font */
+  min-height: 100vh; /* Ensure full height */
 }
 
 /* Navigation Bar */
@@ -35,250 +36,134 @@
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
 }
 
 .logout-button:hover {
   background-color: #dc2626; /* Darker red */
 }
 
-/* Insights Section (Desktop) */
-.insights-container {
+/* Insights Section */
+.insights {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Allow wrapping to the next line */
   margin: 20px 0;
-  gap: 20px;
 }
 
-/* Insight Box Styling */
+/* Insight Box Styles */
 .insight-box {
-  background-color: #ffffff;
+  flex: 1 1 calc(33.333% - 20px); /* Three boxes in a row for desktop */
+  background-color: white; /* Card color */
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  flex: 1;
-  min-width: 200px;
   margin: 10px;
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Shadow for 3D effect */
+  position: relative; /* For positioning the glow */
+  overflow: hidden; /* Ensures inner glow does not spill */
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center; /* Center align content */
 }
 
-.insight-box h2 {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-.insight-box p {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1dbf73;
-  margin: 0;
-}
-
-/* Hover Effect */
 .insight-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
 }
 
-/* Media Queries for Mobile Devices */
-@media (max-width: 768px) {
-  /* Insights section for mobile */
-  .insights-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 10px 0;
-    gap: 5px;
-    overflow-x: hidden; /* Prevent scrolling */
-  }
-
-  /* Reduce the size of each box for mobile */
-  .insight-box {
-    flex: 1;
-    min-width: 80px;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .insight-box h2 {
-    font-size: 12px;
-    color: #666;
-  }
-
-  .insight-box p {
-    font-size: 16px;
-    font-weight: bold;
-    color: #1dbf73;
-  }
-
-  /* Adjustments to ensure zero is displayed */
-  .insight-box p::before {
-    content: attr(data-value);
-  }
-}
-
-
-/* Status Buttons Section */
-.status-buttons-container {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
-  gap: 10px;
-}
-
-.status-button {
-  background-color: #f5f7fa;
-  border: 2px solid #1dbf73;
-  color: #1dbf73;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-
-.status-button:hover,
-.status-button.active {
-  background-color: #1dbf73;
-  color: white;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Form Container */
-.form-container {
-  background-color: #ffffff;
-  padding: 20px;
-  margin: 20px 0;
+.insight-box:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border-radius: 12px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 0, 0.1); /* Soft yellow glow */
+  filter: blur(20px); /* Blurred effect */
+  z-index: -1; /* Send glow behind the box */
 }
 
-.form-container h3 {
-  font-size: 20px;
-  color: #374151;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.form-container input {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-.submit-button {
-  background-color: #1dbf73;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  font-weight: 600;
-}
-
-.submit-button:hover {
-  background-color: #17a863;
-}
-
-/* Customers List */
-.customers-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
+/* Customer Card */
 .customer-card {
-  background-color: #ffffff;
+  background-color: white; /* Card color */
   border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 250px;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-  position: relative;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .customer-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px); /* Lift effect */
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
 }
 
 .customer-card h3 {
+  margin: 0;
   font-size: 18px;
-  color: #374151;
-  margin-bottom: 10px;
-  font-weight: 600;
+  color: #374151; /* Darker text */
 }
 
 .customer-card p {
-  font-size: 14px;
-  color: #6b7280;
   margin: 5px 0;
+  color: #6b7280; /* Gray text */
 }
 
-.customer-card .verify-button {
-  background-color: #10b981;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
+/* Button Styles */
+.verify-button {
+  background-color: #3b82f6; /* Blue verify button */
   border: none;
-  font-size: 14px;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.customer-card .verify-button:hover {
-  background-color: #059669;
-}
-
-/* Generated Link Section */
-.link-container {
-  margin-top: 20px;
-  background-color: #f9fafb;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.link-container h4 {
-  font-size: 16px;
-  color: #374151;
-  margin-bottom: 10px;
-}
-
-.link-container a {
-  font-size: 14px;
-  color: #1dbf73;
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.link-container a:hover {
-  text-decoration: underline;
+.verify-button:hover {
+  background-color: #2563eb; /* Darker blue on hover */
 }
 
 /* Media Queries */
 @media (max-width: 768px) {
-  .insights-container {
+  .customers-list {
+    display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center; /* Center align cards */
   }
 
-  .customer-card {
-    width: 100%;
+  .insights {
+    flex-direction: row; /* Maintain row layout */
+    justify-content: center; /* Center the boxes */
+    margin: 0px;
+  }
+
+  .insight-box {
+    flex: 1 1 calc(30% - 10px); /* Adjusted width for 3 boxes */
+    margin: 5px; /* Reduce margin for smaller boxes */
+    padding: 10px; /* Smaller padding */
+    font-size: 9px;
+    max-height: 120px; /* Limit the maximum height of the insight box */
+    overflow: hidden; /* Hide overflow content */
+  }
+
+  /* Adjust review container */
+  .review-container {
+    display: flex;
+    justify-content: space-between;
+    flex: 1 1 calc(60% - 10px); /* Two boxes in the middle row */
+    margin: 5px 00; /* Reduce margin */
+    max-height: 120px; /* Add this to control height */
+    overflow: hidden; /* Hide overflow content */
+  }
+
+  .insight-box:nth-child(4),
+  .insight-box:nth-child(5) {
+    display: flex;
+    justify-content: space-between; /* Align review boxes side by side */
+    flex: 1 1 48%; /* Each box takes up about half of the row */
+    padding: 10px; /* Add padding to reduce vertical space */
+    min-height: 0px; /* Set a minimum height to keep boxes compact */
+    max-height: 10px; /* Limit the maximum height */
+    overflow: hidden; /* Hide overflow content */
   }
 }

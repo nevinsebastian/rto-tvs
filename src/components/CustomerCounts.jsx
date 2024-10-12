@@ -2,7 +2,7 @@ import React from 'react';
 
 const CustomerCounts = ({ counts }) => {
   return (
-    <div className="insights-container">
+    <div className="insights">
       {Object.entries(counts).map(([key, value]) => (
         <div className="insight-box" key={key}>
           <h2>{key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}</h2>

@@ -16,12 +16,17 @@ import Stock from './pages/Stock';
 import Chassis from './pages/Chassis';
 
 
+//theme
+import theme from './theme/theme';
+import { ThemeProvider } from 'react-bootstrap';
+
 
 const App = () => {
   const token = localStorage.getItem('token');
 
   return (
-    <Router>
+    <ThemeProvider theme={theme}>
+      <Router>
       <Routes>
         <Route path="/" element={token ? <Navigate to="/sales-executive" /> : <Login />} />
         <Route path="/login" element={<Login />} />
@@ -40,6 +45,8 @@ const App = () => {
         </Routes>
         
     </Router>
+    </ThemeProvider>
+
   );
 };
 

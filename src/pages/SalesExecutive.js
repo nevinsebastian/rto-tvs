@@ -13,6 +13,8 @@ import GeneratedLink from '../components/GeneratedLink';
 //styles
 import '../styles/SalesExecutive.css';
 
+//theme
+
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
@@ -221,7 +223,17 @@ const SalesExecutive = () => {
           isEditing={!!selectedCustomer}
         />
       )}
-      <CustomerList customers={customers} onCustomerClick={handleCustomerClick} />
+      <div className="customers-list">
+        {customers.map(customer => (
+          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
+            <h3>{customer.name}</h3>
+            <p>Phone: {customer.phone_number}</p>
+            <p>Vehicle: {customer.vehicle_name}</p>
+            <p>Status: {customer.status}</p>
+            <button className="verify-button">Verify</button>
+          </div>
+        ))}
+      </div>
       {generatedLink && <GeneratedLink link={generatedLink} />}
     </div>
   );
