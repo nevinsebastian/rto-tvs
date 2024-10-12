@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import ExpandMoreSharpIcon from '@mui/icons-material/ExpandMoreSharp'; // Import the MUI icon
+import ExpandMoreSharpIcon from '@mui/icons-material/ExpandMoreSharp';
 
 const StatusButtons = ({ onButtonClick }) => {
-  const [showButtons, setShowButtons] = useState(false); // State to toggle buttons
+  const [expanded, setExpanded] = useState(false); // Toggle state for buttons
+
   const buttons = ['All', 'Waiting for data', 'To verify', 'Verified', 'Registered', 'Add New'];
 
-  const handleIconClick = () => {
-    setShowButtons((prevState) => !prevState); // Toggle the button display
+  const handleExpandClick = () => {
+    setExpanded(!expanded); // Toggle expand/collapse
   };
 
   return (
     <div className="status-buttons-container">
-      <div className="status-icon" onClick={handleIconClick}>
-        <ExpandMoreSharpIcon style={{ transform: showButtons ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
+      <div className="expand-icon" onClick={handleExpandClick}>
+        <ExpandMoreSharpIcon style={{ fontSize: '30px', cursor: 'pointer' }} />
       </div>
-      {showButtons && (
+
+      {expanded && (
         <div className="status-buttons">
           {buttons.map((label) => (
             <button key={label} className="status-button" onClick={onButtonClick}>

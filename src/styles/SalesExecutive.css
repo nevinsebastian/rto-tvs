@@ -168,61 +168,56 @@
     overflow: hidden; /* Hide overflow content */
   }
 }
-
 .status-buttons-container {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-}
-
-.status-icon {
-  cursor: pointer;
-  font-size: 24px;
-  padding: 10px;
-  background-color: #e2e8f0;
-  border-radius: 50%;
-  margin-right: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.status-icon:hover {
-  background-color: #cbd5e1;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .status-buttons {
   display: flex;
-  flex-wrap: wrap; /* Wrap buttons when there's not enough space */
+  flex-wrap: wrap; /* Allow buttons to wrap in case they overflow */
+  justify-content: space-between; /* Spread buttons evenly */
+  width: 100%; /* Ensure buttons take up full width */
+  margin-top: 10px;
 }
 
 .status-button {
+  flex: 1 1 calc(16% - 10px); /* Make buttons fit in one line */
   padding: 10px 15px;
-  margin: 5px; /* Add margin around buttons for spacing */
-  background-color: #3b82f6;
+  margin: 5px;
+  background-color: #1f2939;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-size: 14px; /* Default font size */
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap; /* Keep text on one line */
 }
 
 .status-button:hover {
-  background-color: #cccccc;
+  background-color: #2563eb;
+}
+
+.expand-icon {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
-  .status-button {
-    padding: 8px 10px; /* Smaller padding on mobile */
-    font-size: 12px; /* Reduce font size on smaller screens */
-    flex: 1 1 calc(50% - 10px); /* Two buttons in a row on smaller screens */
-    box-sizing: border-box;
-  }
-
-  .status-buttons-container {
-    flex-direction: column; /* Stack icon and buttons vertically on mobile */
-  }
-
   .status-buttons {
-    justify-content: center; /* Center buttons on mobile */
+    justify-content: space-evenly; /* Space out buttons on mobile */
+    flex-wrap: wrap; /* Allow wrap on smaller screens */
+  }
+
+  .status-button {
+    flex: 1 1 calc(50% - 10px); /* Two buttons per row on mobile */
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }
+
