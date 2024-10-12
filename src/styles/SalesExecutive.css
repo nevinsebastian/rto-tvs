@@ -152,7 +152,7 @@
     justify-content: space-between;
     flex: 1 1 calc(60% - 10px); /* Two boxes in the middle row */
     margin: 5px 00; /* Reduce margin */
-    max-height: 120px; /* Add this to control height */
+    max-height: 100px; /* Add this to control height */
     overflow: hidden; /* Hide overflow content */
   }
 
@@ -163,7 +163,7 @@
     flex: 1 1 48%; /* Each box takes up about half of the row */
     padding: 10px; /* Add padding to reduce vertical space */
     min-height: 0px; /* Set a minimum height to keep boxes compact */
-    max-height: 10px; /* Limit the maximum height */
+    max-height: 120px; /* Limit the maximum height */
     overflow: hidden; /* Hide overflow content */
   }
 }
