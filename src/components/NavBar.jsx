@@ -1,4 +1,3 @@
-// src/components/NavBar.jsx
 import React from 'react';
 
 const NavBar = ({ user, onLogout }) => {
