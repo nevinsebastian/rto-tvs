@@ -6,16 +6,35 @@ import {
   Button,
   TextField,
   Typography,
-  Card,
+  Paper,
   Divider,
   Checkbox,
   FormControlLabel,
   Link,
+  Container,
+  createTheme,
+  ThemeProvider,
   CssBaseline,
-  Container
 } from '@mui/material';
 
-const Login = () => {
+// Create the dark theme with the bluish gradient
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: 'linear-gradient(135deg, #1f1f2e, #282846)', // Dark bluish gradient background
+    },
+    primary: {
+      main: '#1db954', // Green button color
+    },
+    text: {
+      primary: '#eaeaea',
+      secondary: '#aaa',
+    },
+  },
+});
+
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,11 +50,11 @@ const Login = () => {
         password,
         scope: '',
         client_id: '',
-        client_secret: ''
+        client_secret: '',
       }, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
 
       if (response.status === 200) {
@@ -75,88 +94,125 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box
         sx={{
-          marginTop: 8,
+          backgroundColor: 'transparent',
+          backgroundImage: 'linear-gradient(135deg, #1f1f2e, #282846)', // Dark bluish gradient
+          minHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom>
-          TVS Top Heaven
-        </Typography>
-        <Typography component="h2" variant="body1" gutterBottom>
-          Welcome back
-        </Typography>
-        <Card sx={{ padding: 4, marginTop: 3 }}>
-          <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {error && <Typography color="error">{error}</Typography>}
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Login
-            </Button>
-            <Divider>or</Divider>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              sx={{ mt: 2 }}
-            >
-              Sign in with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Facebook')}
-              sx={{ mt: 1 }}
-            >
-              Sign in with Facebook
-            </Button>
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Box>
-          </Box>
-        </Card>
-      </Box>
-    </Container>
-  );
-};
+        <Container maxWidth="sm">
+          <Paper
+            elevation={6}
+            sx={{
+              padding: 4,
+              borderRadius: 4,
+              backgroundColor: '#161b22',
+              boxShadow: '0px 4px 12px rgba(0,0,0,0.5)',
+              transition: 'background-color 0.3s ease-in-out',
+            }}
+          >
+            <Typography variant="h5" align="center">
+              TVS Top Heaven
+            </Typography>
+            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
+              Welcome back
+            </Typography>
 
-export default Login;
+            <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 3 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Email"
+                name="username"
+                autoComplete="email"
+                autoFocus
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                sx={{
+                  '& .MuiInputBase-root': {
+                    backgroundColor: '#1f2933',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#aaa',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#555',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#888',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#1db954',
+                    },
+                  },
+                }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={{
+                  '& .MuiInputBase-root': {
+                    backgroundColor: '#1f2933',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#aaa',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#555',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#888',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#1db954',
+                    },
+                  },
+                }}
+              />
+              {error && <Typography color="error">{error}</Typography>}
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+                sx={{ color: '#aaa' }}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: '#1db954',
+                  '&:hover': {
+                    backgroundColor: '#1db954a3',
+                  },
+                }}
+              >
+                Login
+              </Button>
+             
+            </Box>
+          </Paper>
+        </Container>
+      </Box>
+    </ThemeProvider>
+  );
+}
