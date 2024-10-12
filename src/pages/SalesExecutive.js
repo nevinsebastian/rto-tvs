@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SalesExecutive.css'; // Import the CSS for styling
 
+
+
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
