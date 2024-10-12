@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/SalesExecutive.css'; // Import the CSS for styling
 
+//components
+import CustomerCounts from '../components/CustomerCounts';
+import ReviewCounts from '../components/ReviewCounts';
+import NavBar from '../components/NavBar';
+import StatusButtons from '../components/StatusButtons';
+import CustomerForm from '../components/CustomerForm';
+import CustomerList from '../components/CustomerList';
+import GeneratedLink from '../components/GeneratedLink';
 
+//styles
+import '../styles/SalesExecutive.css';
 
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -40,9 +49,8 @@ const SalesExecutive = () => {
     finance_amount: '',
     finance_id: '',
   });
-  const [generatedLink, setGeneratedLink] = useState('');
   
-  // State for customers data
+  const [generatedLink, setGeneratedLink] = useState('');
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State for selected customer data
 
@@ -155,151 +163,66 @@ const SalesExecutive = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const response = await fetch('https://13.127.21.70:8000/sales/create-customer', {
+    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
       method: 'POST',
       headers: {
-        accept: 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(formData),
     });
-
     const data = await response.json();
-    setGeneratedLink(data.customer_link);
-    fetchCustomers(); // Refresh customers list after adding
-  };
-
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-
-    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
-      method: 'PUT',
-      headers: {
-        accept: 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-
     if (response.ok) {
-      const updatedCustomer = await response.json();
-      setCustomers(prev => prev.map(customer => customer.customer_id === updatedCustomer.customer_id ? updatedCustomer : customer));
-      setSelectedCustomer(updatedCustomer); // Update the selected customer with new data
+      setGeneratedLink(data.link);
+      fetchCustomers();
+    } else {
+      alert(data.message);
     }
   };
 
   const handleCustomerClick = (customerId) => {
-    navigate(`/customer-details/${customerId}`);
+    setShowForm(true);
+    const selected = customers.find(customer => customer.customer_id === customerId);
+    setSelectedCustomer(selected);
+    setFormData(selected);
   };
 
-  const handleVerifyCustomer = async () => {
-    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}/verify`, {
-      method: 'POST',
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
+      method: 'PUT',
       headers: {
-        accept: 'application/json',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
+      body: JSON.stringify(formData),
     });
-
+    const data = await response.json();
     if (response.ok) {
-      const updatedCustomer = await response.json();
-      setCustomers(prev => prev.map(customer => customer.customer_id === updatedCustomer.customer_id ? updatedCustomer : customer));
-      setSelectedCustomer(updatedCustomer);
+      setGeneratedLink(data.link);
+      fetchCustomers();
+      setSelectedCustomer(null);
+    } else {
+      alert(data.message);
     }
-  };
-
-  const createNewLink = (generatedLink) => {
-    const token = generatedLink.split('/customer-form/')[1];
-    return `https://192.168.113.45:3000/customer-form/${token}`;
   };
 
   return (
     <div className="sales-executive-container">
-      <div className="nav-bar">
-        <span className="user-info">{user.first_name} {user.last_name}</span>
-        <button onClick={handleLogout} className="logout-button">Logout</button>
-      </div>
-
-      {/* Insights Section */}
-      <div className="insights-container">
-        <div className="insight-box">
-          <h2>Total Customers</h2>
-          <p>{customerCounts.total_count}</p>
-        </div>
-        <div className="insight-box">
-          <h2>Pending Customers</h2>
-          <p>{customerCounts.total_pending}</p>
-        </div>
-        <div className="insight-box">
-          <h2>Submitted Customers</h2>
-          <p>{customerCounts.total_submitted}</p>
-        </div>
-        <div className="insight-box">
-          <h2>Pending Reviews</h2>
-          <p>{reviewCounts.reviews_pending}</p>
-        </div>
-        <div className="insight-box">
-          <h2>Completed Reviews</h2>
-          <p>{reviewCounts.reviews_done}</p>
-        </div>
-      </div>
-
-      {/* Status Buttons Section */}
-      <div className="status-buttons-container">
-        <button className="status-button" onClick={handleButtonClick}>All</button>
-        <button className="status-button" onClick={handleButtonClick}>Pending</button>
-        <button className="status-button" onClick={handleButtonClick}>Submitted</button>
-        <button className="status-button" onClick={handleButtonClick}>Add New</button>
-      </div>
-
-      {/* Add New Form */}
+      <NavBar user={user} onLogout={handleLogout} />
+      <CustomerCounts counts={customerCounts} />
+      <ReviewCounts reviewCounts={reviewCounts} />
+      <StatusButtons onButtonClick={handleButtonClick} />
       {showForm && (
-        <div className="form-container">
-          <form onSubmit={selectedCustomer ? handleEditSubmit : handleSubmit}>
-            <h3>{selectedCustomer ? 'Edit Customer' : 'Add New Customer'}</h3>
-            <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Customer Name" required />
-            <input type="text" name="phone_number" value={formData.phone_number} onChange={handleInputChange} placeholder="Phone Number" required />
-            <input type="text" name="alternate_phone_number" value={formData.alternate_phone_number} onChange={handleInputChange} placeholder="Alternate Phone Number" />
-            <input type="text" name="vehicle_name" value={formData.vehicle_name} onChange={handleInputChange} placeholder="Vehicle Name" />
-            <input type="text" name="vehicle_variant" value={formData.vehicle_variant} onChange={handleInputChange} placeholder="Vehicle Variant" />
-            <input type="text" name="vehicle_color" value={formData.vehicle_color} onChange={handleInputChange} placeholder="Vehicle Color" />
-            <input type="number" name="ex_showroom_price" value={formData.ex_showroom_price} onChange={handleInputChange} placeholder="Ex-Showroom Price" />
-            <input type="number" name="tax" value={formData.tax} onChange={handleInputChange} placeholder="Tax" />
-            <input type="number" name="insurance" value={formData.insurance} onChange={handleInputChange} placeholder="Insurance" />
-            <input type="number" name="tp_registration" value={formData.tp_registration} onChange={handleInputChange} placeholder="TP Registration" />
-            <input type="number" name="man_accessories" value={formData.man_accessories} onChange={handleInputChange} placeholder="Mandatory Accessories" />
-            <input type="number" name="optional_accessories" value={formData.optional_accessories} onChange={handleInputChange} placeholder="Optional Accessories" />
-            <input type="number" name="booking" value={formData.booking} onChange={handleInputChange} placeholder="Booking Amount" />
-            <input type="number" name="total_price" value={formData.total_price} onChange={handleInputChange} placeholder="Total Price" />
-            <input type="number" name="finance_amount" value={formData.finance_amount} onChange={handleInputChange} placeholder="Finance Amount" />
-            <input type="text" name="finance_id" value={formData.finance_id} onChange={handleInputChange} placeholder="Finance ID" />
-            <button type="submit" className="submit-button">Submit</button>
-          </form>
-        </div>
+        <CustomerForm
+          formData={formData}
+          onInputChange={handleInputChange}
+          onSubmit={selectedCustomer ? handleEditSubmit : handleSubmit}
+          isEditing={!!selectedCustomer}
+        />
       )}
-
-      {/* Customers List */}
-      <div className="customer-list">
-        {customers.map(customer => (
-          <div className="customer-item" key={customer.customer_id} onClick={() => handleCustomerClick(customer.customer_id)}>
-            <p>{customer.name}</p>
-            <p>{customer.phone_number}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Generated Link */}
-      {generatedLink && (
-        <div className="link-container">
-          <h3>Generated Link:</h3>
-          <a href={createNewLink(generatedLink)} target="_blank" rel="noopener noreferrer">
-            {createNewLink(generatedLink)}
-          </a>
-        </div>
-      )}
+      <CustomerList customers={customers} onCustomerClick={handleCustomerClick} />
+      {generatedLink && <GeneratedLink link={generatedLink} />}
     </div>
   );
 };
