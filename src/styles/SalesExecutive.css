@@ -9,6 +9,8 @@
   font-family: 'Inter', sans-serif; /* Modern, clean font */
   min-height: 100vh; /* Ensure full height */
   overflow: hidden;
+  overflow-y: auto; /* Enable scrolling for the entire page */
+
 }
 
 /* Navigation Bar */
@@ -81,6 +83,25 @@
   background: rgba(255, 255, 0, 0.1); /* Soft yellow glow */
   filter: blur(20px); /* Blurred effect */
   z-index: -1; /* Send glow behind the box */
+}
+.customers-list {
+  flex: 1; /* Allow the container to expand */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between customer cards */
+  max-height: 60vh; /* Ensure list takes up most of the screen, adjustable */
+  overflow-y: auto; /* Vertical scroll for the customer list */
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+.customers-list::-webkit-scrollbar {
+  width: 8px;
+}
+.customers-list::-webkit-scrollbar-thumb {
+  background-color: #1f2937; /* Dark scrollbar */
+  border-radius: 4px;
 }
 
 /* Customer Card */
