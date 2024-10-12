@@ -207,13 +207,22 @@ const SalesExecutive = () => {
       alert(data.message);
     }
   };
+  const [expanded, setExpanded] = useState(false); // State to control the visibility of customer and review counts
+  const handleToggleExpand = (newExpandedState) => {
+    setExpanded(newExpandedState);
+  };
 
   return (
     <div className="sales-executive-container">
       <NavBar user={user} onLogout={handleLogout} />
-      <CustomerCounts counts={customerCounts} />
-      <ReviewCounts reviewCounts={reviewCounts} />
-      <StatusButtons onButtonClick={handleButtonClick} />
+      <StatusButtons onButtonClick={handleButtonClick} onToggleExpand={handleToggleExpand} />
+      {!expanded && (
+        <>
+          <CustomerCounts counts={customerCounts} />
+          <ReviewCounts reviewCounts={reviewCounts} />
+        </>
+      )}
+      
       {showForm && (
         <CustomerForm
           formData={formData}

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import ExpandMoreSharpIcon from '@mui/icons-material/ExpandMoreSharp';
 
-const StatusButtons = ({ onButtonClick }) => {
+const StatusButtons = ({ onButtonClick, onToggleExpand }) => {
   const [expanded, setExpanded] = useState(false); // Toggle state for buttons
 
   const buttons = ['All', 'Waiting for data', 'To verify', 'Verified', 'Registered', 'Add New'];
 
   const handleExpandClick = () => {
-    setExpanded(!expanded); // Toggle expand/collapse
+    const newExpandedState = !expanded;
+    setExpanded(newExpandedState); // Toggle expand/collapse
+    onToggleExpand(newExpandedState); // Pass the state to parent
   };
 
   return (
