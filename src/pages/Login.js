@@ -118,7 +118,7 @@ export default function Login() {
             }}
           >
             <Typography variant="h5" align="center">
-              TVS Top Heaven
+              TVS Top Haven
             </Typography>
             <Typography variant="body1" align="center" sx={{ mt: 1 }}>
               Welcome back
