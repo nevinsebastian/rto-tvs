@@ -8,6 +8,7 @@
   box-sizing: border-box;
   font-family: 'Inter', sans-serif; /* Modern, clean font */
   min-height: 100vh; /* Ensure full height */
+  overflow: hidden;
 }
 
 /* Navigation Bar */
@@ -221,3 +222,78 @@
   }
 }
 
+/* Customer List Container */
+.customers-list {
+  display: flex;
+  flex-direction: column; /* Ensure the cards stack vertically */
+  gap: 10px; /* Space between cards */
+  height: 60vh; /* Limit height for scrollability */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for elegance */
+}
+
+/* Scrollbar Styling for better visibility (Optional) */
+.customers-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.customers-list::-webkit-scrollbar-thumb {
+  background-color: #1f2937; /* Dark scrollbar thumb */
+  border-radius: 4px;
+}
+
+/* Customer Card */
+.customer-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%; /* Full width for vertical stacking */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.customer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.customer-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #374151;
+}
+
+.customer-card p {
+  margin: 5px 0;
+  color: #6b7280;
+}
+
+/* Button Styles */
+.verify-button {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.verify-button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .customers-list {
+    height: 50vh; /* Reduce height on smaller screens */
+  }
+
+  .customer-card {
+    padding: 15px; /* Smaller padding for mobile */
+  }
+}

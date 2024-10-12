@@ -7,7 +7,6 @@ import ReviewCounts from '../components/ReviewCounts';
 import NavBar from '../components/NavBar';
 import StatusButtons from '../components/StatusButtons';
 import CustomerForm from '../components/CustomerForm';
-import CustomerList from '../components/CustomerList';
 import GeneratedLink from '../components/GeneratedLink';
 
 //styles
