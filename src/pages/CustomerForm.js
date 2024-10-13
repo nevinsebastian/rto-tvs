@@ -18,7 +18,7 @@ const CustomerForm = () => {
     aadhaar_front_photo: null,
     aadhaar_back_photo: null,
     passport_photo: null,
-    customer_sign: null, // Added for customer signature
+    customer_sign: null,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -26,7 +26,7 @@ const CustomerForm = () => {
   const [isCapturingBack, setIsCapturingBack] = useState(false);
   const [isCapturingPassport, setIsCapturingPassport] = useState(false);
   const [isCapturingSign, setIsCapturingSign] = useState(false);
-  const [frontPreview, setFrontPreview] = useState(null); 
+  const [frontPreview, setFrontPreview] = useState(null);
   const [backPreview, setBackPreview] = useState(null);
   const [passportPreview, setPassportPreview] = useState(null);
   const [signPreview, setSignPreview] = useState(null);
@@ -64,10 +64,9 @@ const CustomerForm = () => {
         method: 'POST',
         body: formDataToSend,
       });
-      
 
       if (!response.ok) {
-        const errorText = await response.text(); 
+        const errorText = await response.text();
         console.error("Server response error: ", errorText);
         throw new Error('Failed to submit data');
       }
@@ -89,30 +88,69 @@ const CustomerForm = () => {
   return (
     <div className="customer-form-container">
       {isLoading ? (
-        <p>Loading...</p>
+        <p className="loading-text">Loading...</p>
       ) : error ? (
         <p className="error-message">Error: {error}</p>
       ) : (
         <>
-          <h2>Customer Data</h2>
-          <div className="customer-data">
-            <p><strong>Name:</strong> {customerData.name}</p>
-            <p><strong>Phone Number:</strong> {customerData.phone_number}</p>
-            <p><strong>Vehicle Name:</strong> {customerData.vehicle_name}</p>
-            <p><strong>Vehicle Variant:</strong> {customerData.vehicle_variant}</p>
-            <p><strong>Vehicle Color:</strong> {customerData.vehicle_color}</p>
-            <p><strong>Ex-Showroom Price:</strong> {customerData.ex_showroom_price}</p>
-            <p><strong>Tax:</strong> {customerData.tax}</p>
-            <p><strong>Insurance:</strong> {customerData.insurance}</p>
-            <p><strong>TP Registration:</strong> {customerData.tp_registration}</p>
-            <p><strong>Manufacturer Accessories:</strong> {customerData.man_accessories}</p>
-            <p><strong>Optional Accessories:</strong> {customerData.optional_accessories}</p>
-            <p><strong>Total Price:</strong> {customerData.total_price}</p>
-            <p><strong>Booking:</strong> {customerData.booking}</p>
-            <p><strong>Finance Amount:</strong> {customerData.finance_amount}</p>
+          <h2 className="form-title">Welcome to TVS Top Haven</h2>
+          <h3 className="greeting-message">
+            Hi {customerData.name}, thank you for choosing us for your {customerData.vehicle_name}!
+          </h3>
+
+          {/* Modern Data Display Section */}
+          <div className="data-display-container">
+            <div className="data-card">
+              <h4>Phone Number</h4>
+              <p>{customerData.phone_number}</p>
+            </div>
+            <div className="data-card">
+              <h4>Vehicle Variant</h4>
+              <p>{customerData.vehicle_variant}</p>
+            </div>
+            <div className="data-card">
+              <h4>Vehicle Color</h4>
+              <p>{customerData.vehicle_color}</p>
+            </div>
+            <div className="data-card">
+              <h4>Ex-Showroom Price</h4>
+              <p>{customerData.ex_showroom_price}</p>
+            </div>
+            <div className="data-card">
+              <h4>Tax</h4>
+              <p>{customerData.tax}</p>
+            </div>
+            <div className="data-card">
+              <h4>Insurance</h4>
+              <p>{customerData.insurance}</p>
+            </div>
+            <div className="data-card">
+              <h4>TP Registration</h4>
+              <p>{customerData.tp_registration}</p>
+            </div>
+            <div className="data-card">
+              <h4>Manufacturer Accessories</h4>
+              <p>{customerData.man_accessories}</p>
+            </div>
+            <div className="data-card">
+              <h4>Optional Accessories</h4>
+              <p>{customerData.optional_accessories}</p>
+            </div>
+            <div className="data-card">
+              <h4>Total Price</h4>
+              <p>{customerData.total_price}</p>
+            </div>
+            <div className="data-card">
+              <h4>Booking</h4>
+              <p>{customerData.booking}</p>
+            </div>
+            <div className="data-card">
+              <h4>Finance Amount</h4>
+              <p>{customerData.finance_amount}</p>
+            </div>
           </div>
 
-          <h2>Update Customer Information</h2>
+          <h2 className="form-title">Update Customer Information</h2>
           <form onSubmit={handleSubmit} className="form">
             <input
               type="text"
@@ -121,6 +159,7 @@ const CustomerForm = () => {
               placeholder="First Name"
               onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="text"
@@ -129,14 +168,15 @@ const CustomerForm = () => {
               placeholder="Last Name"
               onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="date"
               name="dob"
               value={formData.dob}
-              placeholder="Date of Birth"
               onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="email"
@@ -145,6 +185,7 @@ const CustomerForm = () => {
               placeholder="Email"
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="text"
@@ -153,6 +194,7 @@ const CustomerForm = () => {
               placeholder="Address"
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="text"
@@ -161,6 +203,7 @@ const CustomerForm = () => {
               placeholder="Pin Code"
               onChange={(e) => setFormData({ ...formData, pin_code: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="text"
@@ -169,6 +212,7 @@ const CustomerForm = () => {
               placeholder="Nominee Name"
               onChange={(e) => setFormData({ ...formData, nominee: e.target.value })}
               required
+              className="form-input"
             />
             <input
               type="text"
@@ -177,6 +221,7 @@ const CustomerForm = () => {
               placeholder="Relation with Nominee"
               onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
               required
+              className="form-input"
             />
 
             <div className="file-inputs">
@@ -195,15 +240,15 @@ const CustomerForm = () => {
               ) : (
                 <>
                   {frontPreview ? (
-                    <div>
+                    <div className="preview-container">
                       <h3>Front Preview:</h3>
-                      <img src={frontPreview} alt="Front Preview" />
-                      <button type="button" onClick={() => setIsCapturingFront(true)}>
+                      <img src={frontPreview} alt="Front Preview" className="preview-image" />
+                      <button type="button" onClick={() => setIsCapturingFront(true)} className="retake-button">
                         Retake Front Photo
                       </button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setIsCapturingFront(true)}>
+                    <button type="button" onClick={() => setIsCapturingFront(true)} className="capture-button">
                       Capture Aadhaar Front
                     </button>
                   )}
@@ -225,15 +270,15 @@ const CustomerForm = () => {
               ) : (
                 <>
                   {backPreview ? (
-                    <div>
+                    <div className="preview-container">
                       <h3>Back Preview:</h3>
-                      <img src={backPreview} alt="Back Preview" />
-                      <button type="button" onClick={() => setIsCapturingBack(true)}>
+                      <img src={backPreview} alt="Back Preview" className="preview-image" />
+                      <button type="button" onClick={() => setIsCapturingBack(true)} className="retake-button">
                         Retake Back Photo
                       </button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setIsCapturingBack(true)}>
+                    <button type="button" onClick={() => setIsCapturingBack(true)} className="capture-button">
                       Capture Aadhaar Back
                     </button>
                   )}
@@ -255,15 +300,15 @@ const CustomerForm = () => {
               ) : (
                 <>
                   {passportPreview ? (
-                    <div>
+                    <div className="preview-container">
                       <h3>Passport Preview:</h3>
-                      <img src={passportPreview} alt="Passport Preview" />
-                      <button type="button" onClick={() => setIsCapturingPassport(true)}>
+                      <img src={passportPreview} alt="Passport Preview" className="preview-image" />
+                      <button type="button" onClick={() => setIsCapturingPassport(true)} className="retake-button">
                         Retake Passport Photo
                       </button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setIsCapturingPassport(true)}>
+                    <button type="button" onClick={() => setIsCapturingPassport(true)} className="capture-button">
                       Capture Passport Photo
                     </button>
                   )}
@@ -273,7 +318,7 @@ const CustomerForm = () => {
               {/* Customer Signature */}
               {isCapturingSign ? (
                 <DocumentScanner
-                  photoType="signature"
+                  photoType="sign"
                   onCapture={(blob) => {
                     const previewUrl = URL.createObjectURL(blob);
                     setSignPreview(previewUrl); 
@@ -285,15 +330,15 @@ const CustomerForm = () => {
               ) : (
                 <>
                   {signPreview ? (
-                    <div>
+                    <div className="preview-container">
                       <h3>Signature Preview:</h3>
-                      <img src={signPreview} alt="Signature Preview" />
-                      <button type="button" onClick={() => setIsCapturingSign(true)}>
+                      <img src={signPreview} alt="Signature Preview" className="preview-image" />
+                      <button type="button" onClick={() => setIsCapturingSign(true)} className="retake-button">
                         Retake Signature
                       </button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setIsCapturingSign(true)}>
+                    <button type="button" onClick={() => setIsCapturingSign(true)} className="capture-button">
                       Capture Signature
                     </button>
                   )}
@@ -301,8 +346,7 @@ const CustomerForm = () => {
               )}
             </div>
 
-            <button type="submit">Submit Customer Information</button>
-            {error && <p className="error-message">{error}</p>}
+            <button type="submit" className="submit-button">Submit</button>
           </form>
         </>
       )}
