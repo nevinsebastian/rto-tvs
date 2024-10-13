@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+//notification
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
 //components
 import CustomerCounts from '../components/CustomerCounts';
 import ReviewCounts from '../components/ReviewCounts';
@@ -50,7 +57,8 @@ const SalesExecutive = () => {
     finance_amount: '',
     finance_id: '',
   });
-  
+  const token = localStorage.getItem('token');
+
   const [generatedLink, setGeneratedLink] = useState('');
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State for selected customer data
@@ -164,22 +172,41 @@ const SalesExecutive = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setGeneratedLink(data.link);
-      fetchCustomers();
-    } else {
-      alert(data.message);
+  
+    try {
+      const response = await fetch('https://13.127.21.70:8000/sales/create-customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setGeneratedLink(data.customer_link);  // Access the correct field
+        fetchCustomers();
+        toast.success("Customer created successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(data.message || "Failed to create customer. Try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
+  
+  
 
   
   const handleCustomerClick = (customerId) => {
@@ -228,6 +255,7 @@ const SalesExecutive = () => {
           onInputChange={handleInputChange}
           onSubmit={selectedCustomer ? handleEditSubmit : handleSubmit}
           isEditing={!!selectedCustomer}
+          token={token}
         />
       )}
       <div className="customers-list">
@@ -239,9 +267,11 @@ const SalesExecutive = () => {
             <p>Status: {customer.status}</p>
             <button className="verify-button">Verify</button>
           </div>
+          
         ))}
       </div>
       {generatedLink && <GeneratedLink link={generatedLink} />}
+      <ToastContainer/>
     </div>
   );
 };
