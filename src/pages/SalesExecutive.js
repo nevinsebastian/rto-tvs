@@ -181,12 +181,11 @@ const SalesExecutive = () => {
     }
   };
 
+  
   const handleCustomerClick = (customerId) => {
-    setShowForm(true);
-    const selected = customers.find(customer => customer.customer_id === customerId);
-    setSelectedCustomer(selected);
-    setFormData(selected);
+    navigate(`/customer-details/${customerId}`);
   };
+  
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();

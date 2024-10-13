@@ -97,6 +97,8 @@ const CustomerDetails = () => {
   const renderField = (label, field, type = 'text') => {
     const isImageField = field.startsWith('photo_') || field === 'customer_sign'; // Include signature field as image
 
+
+
     return (
       <div className="field-container">
         <strong>{label}:</strong>

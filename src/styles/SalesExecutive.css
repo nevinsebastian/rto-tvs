@@ -194,17 +194,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background-color: white;
-  padding: 10px;
 }
 
 .status-buttons {
   display: flex;
   flex-wrap: wrap; /* Allow buttons to wrap in case they overflow */
-  justify-content: space-around; /* Spread buttons evenly */
+  justify-content: space-between; /* Spread buttons evenly */
   width: 100%; /* Ensure buttons take up full width */
   margin-top: 10px;
 }
@@ -280,13 +275,6 @@
   width: 100%; /* Full width for vertical stacking */
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-}
-.customer-card-container {
-  flex-grow: 1; /* Take up available space */
-  overflow-y: auto; /* Enable scrolling in the customer card area */
-  padding: 10px; /* Optional padding for aesthetics */
 }
 
 .customer-card:hover {
@@ -323,86 +311,277 @@
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .customers-list {
-    height: 50vh; /* Reduce height on smaller screens */
+    height: 0vh; /* Reduce height on smaller screens */
   }
 
   .customer-card {
     padding: 15px; /* Smaller padding for mobile */
   }
 }
-/* Customer Card */
-.customer-card {
-  background-color: #ffffff; /* Clean white background */
-  border-radius: 12px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+
+
+:root {
+  --primary-color: #2563eb; /* Adjust this to match your app's primary color */
+  --primary-color-hover: #1d4ed8; /* Primary color hover state */
+  --input-border-color: #d1d5db; /* Input border color */
+  --background-color: #f8f9fa; /* Light background color for the form */
+  --text-color: #333; /* General text color */
+  --font-family: 'Poppins', sans-serif; /* Change this to your app's font */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.customer-form {
+  background-color: var(--background-color);
   padding: 20px;
-  margin: 10px 0; /* Add vertical margin between cards */
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  width: calc(100% - 40px); /* Ensures form is responsive */
+}
+
+.customer-form h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px; /* Space between text elements */
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.customer-card:hover {
-  transform: translateY(-5px); /* Lift effect */
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
-}
-
-/* Customer Name */
-.customer-card h3 {
-  margin: 0;
-  font-size: 20px; /* Slightly larger for emphasis */
-  color: #111827; /* Darker for importance */
-  font-weight: 600; /* Bold for customer name */
-}
-
-/* Customer Details */
-.customer-card p {
-  margin: 4px 0;
-  font-size: 14px; /* Regular size for details */
-  color: #4b5563; /* Muted gray for supporting info */
-}
-
-.customer-card p span {
-  font-weight: 500; /* Slightly bolder for key data */
-  color: #1f2937; /* Darker gray for better visibility */
-}
-
-/* Button Styles */
-.verify-button {
-  align-self: flex-end; /* Align button to the right */
-  background-color: #10b981; /* Green for a positive action */
-  border: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
   font-size: 14px;
 }
 
-.verify-button:hover {
-  background-color: #059669; /* Darker green on hover */
+.form-group input {
+  padding: 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-family);
+  transition: border-color 0.3s ease;
+  width: 100%; /* Ensure inputs take full width */
+  box-sizing: border-box;
+  max-width: 100%; /* Prevent overflow in smaller screens */
 }
 
-/* Responsive */
+.form-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-family);
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-color-hover);
+}
+
 @media (max-width: 768px) {
-  .customer-card {
-    padding: 15px; /* Reduce padding for smaller screens */
+  .customer-form {
+    margin: 0;
+    padding: 20px;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: 0%; /* Full width on mobile */
+    height: 100vh; /* Fullscreen on mobile */
+  }
+  .form-group {
+    overflow: hidden;
+
+    margin-bottom: 15px; /* Adjust spacing on mobile */
   }
 
-  .customer-card h3 {
-    font-size: 18px; /* Adjust size for smaller screens */
+  .customer-form h2 {
+    font-size: 22px;
   }
 
-  .customer-card p {
-    font-size: 12px; /* Adjust details font size */
+  .form-group input {
+    font-size: 16px;
+    padding: 12px;
   }
 
-  .verify-button {
-    padding: 8px 12px; /* Adjust button size */
-    font-size: 12px; /* Reduce text size for mobile */
+  .submit-button {
+    font-size: 18px;
+    padding: 16px;
   }
+}
+
+@media (max-width: 480px) {
+  .customer-form h2 {
+    font-size: 20px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .submit-button {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+:root {
+  --primary-color: #2563eb; /* Adjust this to match your app's primary color */
+  --primary-color-hover: #1d4ed8; /* Primary color hover state */
+  --input-border-color: #d1d5db; /* Input border color */
+  --background-color: #f8f9fa; /* Light background color for the form */
+  --text-color: #333; /* General text color */
+  --font-family: 'Poppins', sans-serif; /* Change this to your app's font */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.customer-form {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  width: calc(100% - 40px); /* Ensures form is responsive */
+}
+
+.customer-form h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-family);
+  transition: border-color 0.3s ease;
+  width: 100%; /* Ensures input fields take full width */
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-family);
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-color-hover);
+}
+
+@media (max-width: 768px) {
+  .customer-form {
+    margin: 0;
+    padding: 20px;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: 90%; /* Full width on mobile */
+    height: 100vh; /* Fullscreen on mobile */
+  }
+
+  .customer-form h2 {
+    font-size: 22px;
+  }
+
+  .form-group input {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  .submit-button {
+    font-size: 18px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-form h2 {
+    font-size: 20px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .submit-button {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+.customers-list {
+  background-color: transparent; /* Or use another background color */
 }
