@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaUser, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck, FaTimesCircle } from 'react-icons/fa';
 import '../styles/CustomerDetailsModern.css';
 
 const CustomerDetails = () => {
@@ -156,6 +156,19 @@ const CustomerDetails = () => {
     }
   };
 
+  const renderVerificationStatus = (label, field) => {
+    return (
+      <div className="verification-status">
+        <strong>{label}:</strong>
+        {customerData[field] ? (
+          <FaCheckCircle style={{ color: 'green' }} />
+        ) : (
+          <FaTimesCircle style={{ color: 'red' }} />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="customer-details-modern">
       {renderStatusAlert()}
@@ -172,6 +185,7 @@ const CustomerDetails = () => {
           {renderField('Date of Birth', 'dob', 'date')}
           {renderField('Nominee', 'nominee')}
           {renderField('Relation with Nominee', 'relation')}
+          {renderField('Branch ID', 'branch_id')}
         </div>
       </div>
 
@@ -183,15 +197,13 @@ const CustomerDetails = () => {
           {renderField('Color', 'vehicle_color')}
           {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
           {renderField('Tax', 'tax', 'number')}
+          {renderField('Amount Paid', 'amount_paid', 'number')}
+          {renderField('Balance Amount', 'balance_amount', 'number')}
           {renderField('Optional Accessories', 'optional_accessories', 'number')}
           {renderField('Man Accessories', 'man_accessories', 'number')}
           {renderField('TP Registration', 'tp_registration', 'number')}
           {renderField('Insurance', 'insurance', 'number')}
           {renderField('Vehicle Number', 'vehicle_number')}
-          {renderField('Amount Paid', 'amount_paid', 'number')}
-          {renderField('Balance Amount', 'balance_amount', 'number')}
-
-
         </div>
       </div>
 
@@ -210,10 +222,10 @@ const CustomerDetails = () => {
       <div className="customer-section">
         <div className="section-title"><FaCheck /> Verification Status</div>
         <div className="details-grid">
-          {renderField('Sales Verified', 'sales_verified', 'checkbox')}
-          {renderField('Accounts Verified', 'accounts_verified', 'checkbox')}
-          {renderField('RTO Verified', 'rto_verified', 'checkbox')}
-          {renderField('Registered', 'registered', 'checkbox')}
+          {renderVerificationStatus('Sales Verified', 'sales_verified')}
+          {renderVerificationStatus('Accounts Verified', 'accounts_verified')}
+          {renderVerificationStatus('RTO Verified', 'rto_verified')}
+          {renderVerificationStatus('Registered', 'registered')}
         </div>
       </div>
 
