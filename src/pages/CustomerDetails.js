@@ -183,8 +183,15 @@ const CustomerDetails = () => {
           {renderField('Color', 'vehicle_color')}
           {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
           {renderField('Tax', 'tax', 'number')}
+          {renderField('Optional Accessories', 'optional_accessories', 'number')}
+          {renderField('Man Accessories', 'man_accessories', 'number')}
+          {renderField('TP Registration', 'tp_registration', 'number')}
+          {renderField('Insurance', 'insurance', 'number')}
+          {renderField('Vehicle Number', 'vehicle_number')}
           {renderField('Amount Paid', 'amount_paid', 'number')}
           {renderField('Balance Amount', 'balance_amount', 'number')}
+
+
         </div>
       </div>
 
@@ -194,6 +201,19 @@ const CustomerDetails = () => {
           {renderField('Aadhaar Combined', 'photo_adhaar_combined')}
           {renderField('Passport Photo', 'photo_passport')}
           {renderField('Customer Signature', 'customer_sign')}
+          {renderField('Front Number Plate', 'number_plate_front')}
+          {renderField('Back Number Plate', 'number_plate_back')}
+          {renderField('Delivery Photo', 'delivery_photo')}
+        </div>
+      </div>
+
+      <div className="customer-section">
+        <div className="section-title"><FaCheck /> Verification Status</div>
+        <div className="details-grid">
+          {renderField('Sales Verified', 'sales_verified', 'checkbox')}
+          {renderField('Accounts Verified', 'accounts_verified', 'checkbox')}
+          {renderField('RTO Verified', 'rto_verified', 'checkbox')}
+          {renderField('Registered', 'registered', 'checkbox')}
         </div>
       </div>
 
