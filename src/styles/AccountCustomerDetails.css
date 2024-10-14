@@ -3,66 +3,82 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #121212;
-  color: #ffffff;
+  background-color: #f5f5f5;
   min-height: 100vh;
-  box-sizing: border-box;
+  color: #333;
 }
 
 .customer-info {
-  background-color: #1e1e1e;
-  border-radius: 8px;
+  background-color: #fff;
+  border-radius: 10px;
   padding: 20px;
   width: 100%;
   max-width: 600px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  overflow-y: auto;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
 }
 
 .customer-info h2 {
-  display: flex;
-  align-items: center;
-  font-size: 24px;
+  font-size: 28px;
+  color: #333;
   margin-bottom: 20px;
-}
-
-.customer-info .status-icon {
-  margin-left: 10px;
+  text-align: center;
 }
 
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
 }
 
 .section h3 {
-  display: flex;
-  align-items: center;
   font-size: 20px;
+  color: #007bff;
   margin-bottom: 10px;
 }
 
-.section p {
-  margin: 8px 0;
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.documents img {
-  max-width: 100%;
-  height: auto;
-  margin: 10px 0;
+.detail-item .label {
+  font-weight: bold;
+}
+
+.detail-item .value {
+  font-style: italic;
+}
+
+.status-icon {
+  font-size: 20px;
+}
+
+.status-icon.success {
+  color: green;
+}
+
+.status-icon.error {
+  color: red;
 }
 
 .verify-button {
-  background-color: #28a745;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
   padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
   margin-top: 20px;
-  transition: background-color 0.3s;
 }
 
 .verify-button:hover {
-  background-color: #218838;
+  background-color: #0056b3;
+}
+
+.document-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
