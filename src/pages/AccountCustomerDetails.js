@@ -156,27 +156,6 @@ const AccountCustomerDetails = () => {
             </div>
           </div>
 
-          {/* Verification Status */}
-          <div className="section verification">
-            <h3><FaUserShield /> Verification Status</h3>
-            <div className="detail-item">
-              <span className="label">Sales Verified:</span>
-              <span className="value">{getStatusIcon(customer.sales_verified)}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Accounts Verified:</span>
-              <span className="value">{getStatusIcon(customer.accounts_verified)}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">RTO Verified:</span>
-              <span className="value">{getStatusIcon(customer.rto_verified)}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Registered:</span>
-              <span className="value">{getStatusIcon(customer.registered)}</span>
-            </div>
-          </div>
-
          
 
           {/* Verify Button */}
