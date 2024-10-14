@@ -208,7 +208,7 @@ const CustomerDetails = () => {
           <button className="verify-button" onClick={handleVerifyClick}>
             <FaCheck /> Verify Sales
           </button>
-        </>
+        </> 
       )}
 
       {editMode && (
