@@ -95,9 +95,7 @@ const CustomerDetails = () => {
   }
 
   const renderField = (label, field, type = 'text') => {
-    const isImageField = field.startsWith('photo_') || field === 'customer_sign'; // Include signature field as image
-
-
+    const isImageField = field.startsWith('photo_') || field === 'customer_sign' || field === 'photo_adhaar_combined';
 
     return (
       <div className="field-container">
@@ -165,9 +163,15 @@ const CustomerDetails = () => {
       <div className="customer-section">
         <div className="section-title"><FaUser /> Personal Information</div>
         <div className="details-grid">
-          {renderField('Name', 'name')}
+          {renderField('First Name', 'first_name')}
+          {renderField('Last Name', 'last_name')}
           {renderField('Phone Number', 'phone_number')}
+          {renderField('Alternate Phone', 'alternate_phone_number')}
           {renderField('Address', 'address')}
+          {renderField('Pin Code', 'pin_code')}
+          {renderField('Date of Birth', 'dob', 'date')}
+          {renderField('Nominee', 'nominee')}
+          {renderField('Relation with Nominee', 'relation')}
         </div>
       </div>
 
@@ -176,27 +180,20 @@ const CustomerDetails = () => {
         <div className="details-grid">
           {renderField('Vehicle Name', 'vehicle_name')}
           {renderField('Variant', 'vehicle_variant')}
+          {renderField('Color', 'vehicle_color')}
           {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
           {renderField('Tax', 'tax', 'number')}
-          {renderField('On-road Price', 'onroad_price', 'number')}
-        </div>
-      </div>
-
-      <div className="customer-section">
-        <div className="section-title"><FaIdCard /> Verification Status</div>
-        <div className="details-grid">
-          {renderField('Sales Verified', 'sales_verified', 'checkbox')}
-          {renderField('Accounts Verified', 'accounts_verified', 'checkbox')}
+          {renderField('Amount Paid', 'amount_paid', 'number')}
+          {renderField('Balance Amount', 'balance_amount', 'number')}
         </div>
       </div>
 
       <div className="customer-section">
         <div className="section-title"><FaIdCard /> Documents</div>
         <div className="details-grid">
-          {renderField('Aadhaar Front', 'photo_adhaar_front')}
-          {renderField('Aadhaar Back', 'photo_adhaar_back')}
+          {renderField('Aadhaar Combined', 'photo_adhaar_combined')}
           {renderField('Passport Photo', 'photo_passport')}
-          {renderField('Customer Signature', 'customer_sign')} {/* Added signature display */}
+          {renderField('Customer Signature', 'customer_sign')}
         </div>
       </div>
 
@@ -208,7 +205,7 @@ const CustomerDetails = () => {
           <button className="verify-button" onClick={handleVerifyClick}>
             <FaCheck /> Verify Sales
           </button>
-        </> 
+        </>
       )}
 
       {editMode && (
