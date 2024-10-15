@@ -1,7 +1,8 @@
 // src/pages/Accounts.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Accounts.css'; // Assuming you have this CSS file for styling
+import '../styles/Accounts.css'; // CSS for styling
+import NavBar from '../components/NavBar'; // Import the new NavBar component
 
 const Accounts = () => {
   const navigate = useNavigate();
@@ -67,17 +68,8 @@ const Accounts = () => {
 
   return (
     <div className="accounts-page">
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="navbar-left">
-          <h2>{`Hi, ${user?.first_name} ${user?.last_name}`}</h2>
-        </div>
-        <div className="navbar-right">
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
+      {/* Use the new NavBar component */}
+      <NavBar user={user} onLogout={handleLogout} />
 
       {/* Main Content */}
       <div className="content">
