@@ -16,39 +16,10 @@ html, body {
   align-items: center;
 }
 
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 10;
-}
 
-.navbar-left h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-}
 
-.navbar-right .logout-btn {
-  padding: 10px 15px;
-  background-color: #ff5a5f;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
 
-.logout-btn:hover {
-  background-color: #e14b4f;
-}
+
 
 /* Dashboard styling */
 .content {
@@ -57,6 +28,7 @@ html, body {
   padding-top: 100px;
   padding-left: 20px;
   padding-right: 20px;
+  margin-top: -100px;
 }
 
 .dashboard-header h1 {
@@ -149,12 +121,13 @@ html, body {
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
   margin-bottom: 20px; /* Add some space below the navbar */
-width: 100%;
+  width: 100%;
 }
 
 .user-info {
   font-size: 16px;
   font-weight: 500;
+  margin-left: 10px;
 }
 
 .logout-button {

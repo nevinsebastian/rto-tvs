@@ -73,11 +73,7 @@ const Accounts = () => {
 
       {/* Main Content */}
       <div className="content">
-        <div className="dashboard-header">
-          <h1>Accounts Dashboard</h1>
-          <p>Role: Accounts</p>
-        </div>
-
+       
         {/* Filter Buttons */}
         <div className="filter-buttons">
           <button
