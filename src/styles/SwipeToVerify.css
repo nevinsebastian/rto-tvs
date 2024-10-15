@@ -1,0 +1,53 @@
+.swipe-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 50px;
+  background-color: #28a745;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;  /* Disable text selection while swiping */
+}
+
+.swipe-container.swiped {
+  background-color: #218838;
+}
+
+.swipe-text {
+  color: white;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.swipe-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 2;
+}
+
+.swipe-button.dragging {
+  transition: none;  /* Remove transition during drag for real-time movement */
+}
+
+.swipe-container.swiped .swipe-button {
+  background-color: #4caf50;
+}
+
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}

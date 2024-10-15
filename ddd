@@ -1,0 +1,283 @@
+[33mcommit 47ac69f40662cbd4fb02b8d91317d6ea33925b0a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 15 13:09:22 2024 +0530
+
+    card in accounts
+
+[33mcommit 5e616eaa3be61cd97187953f1302e8b65d3e3417[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 15 13:05:16 2024 +0530
+
+    accounts
+
+[33mcommit 203ab6ef9c689e3d28cc3a9845a048e8fffef401[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 15 13:00:42 2024 +0530
+
+    accounts navbar
+
+[33mcommit 8a2e89cb152908888645e94ec3a88376ce2dc291[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 15 12:58:03 2024 +0530
+
+    accounts navbar
+
+[33mcommit 5ec5476584ef03e23da15321267b3c89cc12e1eb[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 13:28:31 2024 +0530
+
+    accounts design without put
+
+[33mcommit 237cd4b81a95e72a92e5732fad39ec9a0bcabe84[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 13:02:14 2024 +0530
+
+    accounts data
+
+[33mcommit faa32cc8a98d9a40a3861df5c9a58b81ae629e08[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 12:12:38 2024 +0530
+
+    accounts details
+
+[33mcommit 74d052e28de5d17adcb2dbd3c88196a37fad0e03[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 10:32:08 2024 +0530
+
+    details verification done
+
+[33mcommit 6f53242166ff3e1f741b0d18258afea6d255d2ea[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 10:28:28 2024 +0530
+
+    details
+
+[33mcommit 569df61ddadc80e07f5ec54e18220ac8eb350734[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 10:19:23 2024 +0530
+
+    details
+
+[33mcommit e4b6c4c461985459cc646aa8a4f2465838f19c9d[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 14 09:35:06 2024 +0530
+
+    details
+
+[33mcommit 667206ddd08ce83acc619ae4d669b4f10ea5c075[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sun Oct 13 12:02:08 2024 +0530
+
+    cusomter form
+
+[33mcommit 11bc8b73f157fdb326bcea11a3ad73bdbcdca289[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sun Oct 13 09:55:45 2024 +0530
+
+    notification done copy done share to whatsaoo done oon creation of customer
+
+[33mcommit 13329bc68a9b095354e0b08221e813ccae598539[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sun Oct 13 08:31:00 2024 +0530
+
+    add new customer done
+
+[33mcommit 1e29bea3df62ea34c582f735ff9af1c4b6e498b8[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sun Oct 13 03:51:35 2024 +0530
+
+    sales scroll
+
+[33mcommit efac37d56231c9ecdae55d1e635cb76275fb8b0e[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 19:41:22 2024 +0530
+
+    sales scroll
+
+[33mcommit 9a2ce3926dc736c5d9a975c5fe8f709ad7d1b194[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 19:35:58 2024 +0530
+
+    sales list
+
+[33mcommit bf645a61b2d89ca9f821b70f05f32fb7522c0195[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 18:57:22 2024 +0530
+
+    sales exicutive style
+
+[33mcommit 5892d6fcb9676f5980ff17b8767fc4c49ab34474[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 18:27:52 2024 +0530
+
+    icon for sales
+
+[33mcommit 29cb557b9fed87ccba3588d7af152c72c6a06f2b[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 16:58:25 2024 +0530
+
+    Exicutive stylying
+
+[33mcommit 4d108ccc9d3588b745e1e26876f61a88ace39319[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 16:50:57 2024 +0530
+
+    Add new components for SalesExecutive
+
+[33mcommit f5466eb9f6b93f0fcc362049c30b8ebb2bfda878[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 11:31:16 2024 +0530
+
+    Add new components for SalesExecutive
+
+[33mcommit e0b75c68b09c77394615935258e24606dab6b1b1[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 11:28:38 2024 +0530
+
+    production redy functions 👍
+
+[33mcommit a101fda3816a8f7410c35f9b4e5da3b952b65fbd[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 11:20:25 2024 +0530
+
+    now fine
+
+[33mcommit fbcece0a5b44d10a8054bddfb82c4f87f34d1643[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 11:03:58 2024 +0530
+
+    changed api logic for prodcution
+
+[33mcommit 57415e057a4dfc1a07ca5755b82ff26eb9262ea6[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 12 10:44:19 2024 +0530
+
+    login
+
+[33mcommit 685fc2c12dba9d0c044298a4c263121d3147c7b3[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 11 16:52:25 2024 +0530
+
+    Login style
+
+[33mcommit 685adba27cc09c1ff30059918e1121f28405ab1f[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 11 16:38:27 2024 +0530
+
+    Login style
+
+[33mcommit 8dc5a749e1a4fb27647b367d2635da2bcba53526[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 8 08:46:06 2024 +0530
+
+    accounts
+
+[33mcommit bba6280e629cbdc03e58caa3cdfe69a646b68514[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 8 07:47:51 2024 +0530
+
+    accounts
+
+[33mcommit 6349a6c10a494f25ff30f5829bd3cf9ba18fa66e[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 8 06:38:40 2024 +0530
+
+    customer
+
+[33mcommit 394fda14930a86cc212f54dcde0883f877072eff[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 8 06:30:28 2024 +0530
+
+    customer
+
+[33mcommit 0da0cbe98f2e05784eaf97f44032fc3353825b5c[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Tue Oct 8 05:11:50 2024 +0530
+
+    customer
+
+[33mcommit 3840fc1fe3c16a897db03361d979ec6d4cdfa422[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 7 20:13:46 2024 +0530
+
+    g
+
+[33mcommit c3d7c7296a87cf450882bcc7320b88b972b07ac7[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 7 03:48:24 2024 +0530
+
+    sales
+
+[33mcommit 0ac950a69475313de43eb92ddca3159268e9b1de[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 7 02:59:44 2024 +0530
+
+    sales
+
+[33mcommit e4f6f7fa459edbe3a750c5b1773d1bd1f8338b26[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Mon Oct 7 02:50:51 2024 +0530
+
+    rto
+
+[33mcommit 869872505e0e1a1d8d0ac57057d725e1d32cebee[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 5 17:23:07 2024 +0530
+
+    pdf🚗
+
+[33mcommit ac255c2bc5c0adad1032361741b815feb06a3b27[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 5 16:07:41 2024 +0530
+
+    pdf🚗
+
+[33mcommit efdf58087c29f7d6bc555b406d16248920f92e16[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 5 13:59:08 2024 +0530
+
+    RTO🚗
+
+[33mcommit 0f77ab0e11a3320695f43d31f0448071b135edf1[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 5 13:51:10 2024 +0530
+
+    rto
+
+[33mcommit 5e307f2c78c530a60879700c6d160f0b4af24ae5[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Sat Oct 5 12:22:53 2024 +0530
+
+    rto
+
+[33mcommit a2476436bb32dbd5d0035a7c037c31f907391d88[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 4 18:39:34 2024 +0530
+
+    admin graph done⚡
+
+[33mcommit 9f6acf6517723b4650ce4d0ea25550a3ee1ec321[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 4 18:35:19 2024 +0530
+
+    admin graph done
+
+[33mcommit a8a652bf11ea8eecae5becff3cd25a3adb905a3c[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 4 16:07:30 2024 +0530
+
+    admin
+
+[33mcommit 6926b4b72363a7671092a307b902549efe9ef760[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 4 10:47:51 2024 +0530
+
+    admin
+
+[33mcommit 6ff86290c2b26823d9a1971092d0c1cccdecbff7[m
+Author: nevinsebastian <nevinsebastian@cse.carmelcet.in>
+Date:   Fri Oct 4 10:44:56 2024 +0530
+
+    admin
+
+[
