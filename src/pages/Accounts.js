@@ -105,7 +105,6 @@ const Accounts = () => {
               >
                 <h3>{customer.name}</h3>
                 <p>Phone: {customer.phone_number}</p>
-                <p>Status: {filter === 'verified' ? 'Verified' : 'Pending'}</p>
                 <p>Vehicle: {customer.vehicle_name}</p>
               </div>
             ))

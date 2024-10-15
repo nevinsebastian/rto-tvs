@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaCheckCircle, FaTimesCircle, FaIdCard, FaCar, FaMoneyBillWave } from 'react-icons/fa';
+import {  FaIdCard, FaCar, FaMoneyBillWave } from 'react-icons/fa';
 import '../styles/AccountCustomerDetails.css';
 
 const AccountCustomerDetails = () => {
@@ -66,9 +66,7 @@ const AccountCustomerDetails = () => {
       });
   };
 
-  const getStatusIcon = (status) => {
-    return status ? <FaCheckCircle className="status-icon success" /> : <FaTimesCircle className="status-icon error" />;
-  };
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
