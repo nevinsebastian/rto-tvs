@@ -1,7 +1,6 @@
-// src/pages/AccountCustomerDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaCheckCircle, FaTimesCircle, FaIdCard, FaCar, FaUserShield, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaIdCard, FaCar, FaMoneyBillWave } from 'react-icons/fa';
 import '../styles/AccountCustomerDetails.css';
 
 const AccountCustomerDetails = () => {
@@ -115,7 +114,7 @@ const AccountCustomerDetails = () => {
             </div>
             <div className="detail-item">
               <span className="label">Ex-Showroom Price:</span>
-              <span className="value">₹{customer.ex_showroom_price.toLocaleString()}</span>
+              <span className="value">₹{customer.ex_showroom_price ? customer.ex_showroom_price.toLocaleString() : 'N/A'}</span>
             </div>
           </div>
 
@@ -124,39 +123,37 @@ const AccountCustomerDetails = () => {
             <h3><FaMoneyBillWave /> Financial Information</h3>
             <div className="detail-item">
               <span className="label">Tax:</span>
-              <span className="value">₹{customer.tax.toLocaleString()}</span>
+              <span className="value">₹{customer.tax ? customer.tax.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Insurance:</span>
-              <span className="value">₹{customer.insurance.toLocaleString()}</span>
+              <span className="value">₹{customer.insurance ? customer.insurance.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">TP Registration:</span>
-              <span className="value">₹{customer.tp_registration.toLocaleString()}</span>
+              <span className="value">₹{customer.tp_registration ? customer.tp_registration.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Manufacturer Accessories:</span>
-              <span className="value">₹{customer.man_accessories.toLocaleString()}</span>
+              <span className="value">₹{customer.man_accessories ? customer.man_accessories.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Optional Accessories:</span>
-              <span className="value">₹{customer.optional_accessories.toLocaleString()}</span>
+              <span className="value">₹{customer.optional_accessories ? customer.optional_accessories.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Total Price:</span>
-              <span className="value">₹{customer.total_price.toLocaleString()}</span>
+              <span className="value">₹{customer.total_price ? customer.total_price.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Amount Paid:</span>
-              <span className="value">₹{customer.amount_paid.toLocaleString()}</span>
+              <span className="value">₹{customer.amount_paid ? customer.amount_paid.toLocaleString() : 'N/A'}</span>
             </div>
             <div className="detail-item">
               <span className="label">Balance Amount:</span>
-              <span className="value">₹{customer.balance_amount.toLocaleString()}</span>
+              <span className="value">₹{customer.balance_amount ? customer.balance_amount.toLocaleString() : 'N/A'}</span>
             </div>
           </div>
-
-         
 
           {/* Verify Button */}
           {!customer.accounts_verified && (

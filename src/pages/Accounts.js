@@ -8,7 +8,7 @@ const Accounts = () => {
   const [loading, setLoading] = useState(true);
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('verified'); // default filter is 'verified'
+  const [filter, setFilter] = useState('pending'); // Default to 'pending'
 
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -62,28 +62,31 @@ const Accounts = () => {
   };
 
   const handleCardClick = (customerId) => {
-    // Navigate to the account customer details page
     navigate(`/account-customer-details/${customerId}`);
   };
 
   return (
-    <div>
+    <div className="accounts-page">
       {/* Navigation Bar */}
       <nav className="navbar">
         <div className="navbar-left">
-          <h2>Welcome, {user?.first_name} {user?.last_name}</h2>
+          <h2>{`Hi, ${user?.first_name} ${user?.last_name}`}</h2>
         </div>
         <div className="navbar-right">
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </nav>
 
       {/* Main Content */}
       <div className="content">
-        <h1>Accounts Dashboard</h1>
-        <p>Role: Accounts</p>
+        <div className="dashboard-header">
+          <h1>Accounts Dashboard</h1>
+          <p>Role: Accounts</p>
+        </div>
 
-        {/* Filter buttons */}
+        {/* Filter Buttons */}
         <div className="filter-buttons">
           <button
             className={filter === 'verified' ? 'active' : ''}
@@ -99,11 +102,11 @@ const Accounts = () => {
           </button>
         </div>
 
-        {/* Loading/Error states */}
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error}</p>}
+        {/* Loading/Error States */}
+        {loading && <p className="loading-text">Loading...</p>}
+        {error && <p className="error-text">Error: {error}</p>}
 
-        {/* Customer cards */}
+        {/* Customer Cards */}
         <div className="customer-cards">
           {!loading && customers.length > 0 ? (
             customers.map((customer) => (
@@ -119,7 +122,7 @@ const Accounts = () => {
               </div>
             ))
           ) : (
-            <p>No customers found</p>
+            <p className="no-customers-text">No customers found</p>
           )}
         </div>
       </div>
