@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {  FaIdCard, FaCar, FaMoneyBillWave } from 'react-icons/fa';
+import { FaIdCard, FaMotorcycle, FaMoneyBillWave } from 'react-icons/fa'; // Updated icon for motorcycle
 import '../styles/AccountCustomerDetails.css';
 
 const AccountCustomerDetails = () => {
@@ -60,13 +60,21 @@ const AccountCustomerDetails = () => {
       .then((data) => {
         alert(data.message);
         setCustomer((prev) => ({ ...prev, accounts_verified: true }));
+        triggerVerificationAnimation(); // Trigger animation on verification
       })
       .catch((error) => {
         alert(`Verification failed: ${error.message}`);
       });
   };
 
-
+  // Verification animation handler
+  const triggerVerificationAnimation = () => {
+    const button = document.querySelector('.verify-button');
+    button.classList.add('verifying');
+    setTimeout(() => {
+      button.classList.remove('verifying');
+    }, 2000); // 2-second animation
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -101,7 +109,7 @@ const AccountCustomerDetails = () => {
 
           {/* Vehicle Details */}
           <div className="section vehicle">
-            <h3><FaCar /> Vehicle Information</h3>
+            <h3><FaMotorcycle /> Vehicle Information</h3>
             <div className="detail-item">
               <span className="label">Vehicle:</span>
               <span className="value">{customer.vehicle_name} {customer.vehicle_variant}</span>
@@ -130,26 +138,6 @@ const AccountCustomerDetails = () => {
             <div className="detail-item">
               <span className="label">TP Registration:</span>
               <span className="value">₹{customer.tp_registration ? customer.tp_registration.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Manufacturer Accessories:</span>
-              <span className="value">₹{customer.man_accessories ? customer.man_accessories.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Optional Accessories:</span>
-              <span className="value">₹{customer.optional_accessories ? customer.optional_accessories.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Total Price:</span>
-              <span className="value">₹{customer.total_price ? customer.total_price.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Amount Paid:</span>
-              <span className="value">₹{customer.amount_paid ? customer.amount_paid.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Balance Amount:</span>
-              <span className="value">₹{customer.balance_amount ? customer.balance_amount.toLocaleString() : 'N/A'}</span>
             </div>
           </div>
 
