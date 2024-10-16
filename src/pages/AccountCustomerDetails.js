@@ -10,6 +10,12 @@ const AccountCustomerDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
+  const [financeAmount, setFinanceAmount] = useState(''); // Finance amount state
+  const [financeId, setFinanceId] = useState(''); // Finance ID state
+  const [showFinanceForm, setShowFinanceForm] = useState(false); // New state for toggling finance form
+
+
+
 
   useEffect(() => {
     if (!token) {
@@ -67,6 +73,52 @@ const AccountCustomerDetails = () => {
       });
   };
 
+  const handleFinanceSubmit = () => {
+    // Debugging log to ensure values are correct
+    console.log(`Finance ID: ${financeId}, Finance Amount: ${financeAmount}`);
+  
+    // Basic validation
+    if (!financeId || isNaN(financeAmount) || financeAmount <= 0) {
+      alert('Please enter a valid finance ID and amount.');
+      return;
+    }
+  
+    // Sending the request
+    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}/finance?finance_id=${financeId}&finance_amount=${financeAmount}`, {
+      method: 'PUT',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // Try to parse the response as JSON
+          return response.json().then((err) => {
+            throw new Error(err.detail || `Error: ${response.status} ${response.statusText}`);
+          }).catch(() => {
+            // If response is not JSON, throw a generic error
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        alert('Finance updated successfully!');
+        setCustomer((prev) => ({
+          ...prev,
+          finance_id: financeId,
+          finance_amount: financeAmount,
+        }));
+        setShowFinanceForm(false); // Hide form after submission
+      })
+      .catch((error) => {
+        console.error('Failed to update finance:', error.message);
+        alert(`Failed to update finance: ${error.message}`);
+      });
+  };
+  
+  
   // Verification animation handler
   const triggerVerificationAnimation = () => {
     const button = document.querySelector('.verify-button');
@@ -78,6 +130,8 @@ const AccountCustomerDetails = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
+
+  
 
   return (
     <div className="customer-details">
@@ -140,6 +194,44 @@ const AccountCustomerDetails = () => {
               <span className="value">₹{customer.tp_registration ? customer.tp_registration.toLocaleString() : 'N/A'}</span>
             </div>
           </div>
+
+          {/* Add Finance Button */}
+          {!showFinanceForm && (
+            <button onClick={() => setShowFinanceForm(true)}>
+              Add Finance
+            </button>
+          )}
+
+          {/* Finance Form */}
+{showFinanceForm && (
+  <div className="finance-form">
+    <label htmlFor="financeProvider">Finance Provider:</label>
+    <select
+      id="financeProvider" 
+      name="financeProvider"
+      value={financeId} 
+      onChange={(e) => setFinanceId(e.target.value)}
+    >
+      <option value="">Select Finance</option>
+      <option value="1">IDFC</option>
+      <option value="2">TVS Finance</option>
+    </select>
+
+    <label htmlFor="financeAmount">Finance Amount:</label>
+    <input
+      type="number"
+      id="financeAmount"
+      name="financeAmount"
+      value={financeAmount}
+      onChange={(e) => setFinanceAmount(e.target.value)}
+      placeholder="Enter finance amount"
+    />
+    
+    <button onClick={handleFinanceSubmit}>Submit Finance</button>
+    <button onClick={() => setShowFinanceForm(false)}>Cancel</button>
+  </div>
+)}
+
 
           {/* Verify Button */}
           {!customer.accounts_verified && (

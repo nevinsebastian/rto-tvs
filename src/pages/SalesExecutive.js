@@ -53,7 +53,7 @@ const SalesExecutive = () => {
     man_accessories: '',
     optional_accessories: '',
     booking: '',
-    total_price: '',
+    total_price: '', 
     finance_amount: '',
     finance_id: '',
   });

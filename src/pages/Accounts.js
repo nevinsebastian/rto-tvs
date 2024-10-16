@@ -51,6 +51,8 @@ const Accounts = () => {
     }
   }, [token, navigate, filter]);
 
+  
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
