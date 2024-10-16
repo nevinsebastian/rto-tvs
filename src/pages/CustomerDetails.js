@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUser, FaCar, FaIdCard, FaCheckCircle, FaExclamationCircle, FaSyncAlt, FaEdit, FaSave, FaTimes, FaCheck, FaTimesCircle } from 'react-icons/fa';
+import {
+  FaUser,
+  FaCar,
+  FaIdCard,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaSyncAlt,
+  FaEdit,
+  FaSave,
+  FaTimes,
+  FaCheck,
+  FaTimesCircle,
+} from 'react-icons/fa';
 import '../styles/CustomerDetailsModern.css';
 
 const CustomerDetails = () => {
   const { customerId } = useParams();
   const [customerData, setCustomerData] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    delivery_photo: null,
+    number_plate_front: null,
+    number_plate_back: null,
+  });
 
   useEffect(() => {
     const fetchCustomerById = async () => {
@@ -37,19 +53,30 @@ const CustomerDetails = () => {
     });
   };
 
+  const handleFileChange = (field, file) => {
+    setFormData({
+      ...formData,
+      [field]: file,
+    });
+  };
+
   const handleEditClick = () => {
     setEditMode(true);
   };
 
   const handleSaveClick = async () => {
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append('number_plate_front', formData.number_plate_front);
+    formDataToSubmit.append('number_plate_back', formData.number_plate_back);
+    formDataToSubmit.append('delivery_photo', formData.delivery_photo);
+
     try {
-      const response = await fetch(`https://13.127.21.70:8000/sales/customers/${customerId}`, {
-        method: 'PUT',
+      const response = await fetch(`https://13.127.21.70:8000/sales/customers/delivery-update/${customerId}`, {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(formData),
+        body: formDataToSubmit,
       });
 
       if (response.ok) {
@@ -58,7 +85,7 @@ const CustomerDetails = () => {
         setEditMode(false);
       }
     } catch (error) {
-      console.error('Error updating customer details:', error);
+      console.error('Error updating delivery details:', error);
     }
   };
 
@@ -95,7 +122,7 @@ const CustomerDetails = () => {
   }
 
   const renderField = (label, field, type = 'text') => {
-    const isImageField = field.startsWith('photo_') || field === 'customer_sign' || field === 'photo_adhaar_combined';
+    const isImageField = field.startsWith('photo_') || field === 'customer_sign';
 
     return (
       <div className="field-container">
@@ -124,9 +151,30 @@ const CustomerDetails = () => {
     );
   };
 
+  const renderDeliveryPhotoUpload = () => {
+    if (customerData.registered) {
+      return (
+        <div className="field-container">
+          <strong>Delivery Photo:</strong>
+          {editMode ? (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])}
+            />
+          ) : (
+            <img src={customerData.delivery_photo} alt="Delivery" className="document-image" />
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderStatusAlert = () => {
-    if (customerData.status === 'submitted') {
-      return customerData.sales_verified ? (
+    const { status, sales_verified } = customerData;
+    if (status === 'Submitted') {
+      return sales_verified ? (
         <div className="status-alert verified">
           <FaCheckCircle /> Verified
         </div>
@@ -135,13 +183,13 @@ const CustomerDetails = () => {
           <FaExclamationCircle /> Verification Pending
         </div>
       );
-    } else if (customerData.status === 'Pending') {
+    } else if (status === 'Pending') {
       return (
         <div className="status-alert pending">
           <FaSyncAlt /> Waiting for customer's data
         </div>
       );
-    } else if (customerData.status === 'Verified') {
+    } else if (status === 'Verified') {
       return (
         <div className="status-alert verified">
           <FaCheckCircle /> Customer Verified
@@ -150,7 +198,7 @@ const CustomerDetails = () => {
     } else {
       return (
         <div className="status-alert not-verified">
-          <FaTimes /> Status: {customerData.status}
+          <FaTimes /> Status: {status}
         </div>
       );
     }
@@ -213,39 +261,34 @@ const CustomerDetails = () => {
           {renderField('Aadhaar Combined', 'photo_adhaar_combined')}
           {renderField('Passport Photo', 'photo_passport')}
           {renderField('Customer Signature', 'customer_sign')}
-          {renderField('Front Number Plate', 'number_plate_front')}
-          {renderField('Back Number Plate', 'number_plate_back')}
-          {renderField('Delivery Photo', 'delivery_photo')}
+          {renderField('Vehicle Documents', 'vehicle_documents')}
+          {renderField('RC Book', 'rc_book')}
         </div>
       </div>
 
-      <div className="customer-section">
-        <div className="section-title"><FaCheck /> Verification Status</div>
-        <div className="details-grid">
-          {renderVerificationStatus('Sales Verified', 'sales_verified')}
-          {renderVerificationStatus('Accounts Verified', 'accounts_verified')}
-          {renderVerificationStatus('RTO Verified', 'rto_verified')}
-          {renderVerificationStatus('Registered', 'registered')}
-        </div>
+      {renderDeliveryPhotoUpload()}
+
+      <div className="button-group">
+        {editMode ? (
+          <>
+            <button className="button" onClick={handleSaveClick}>
+              <FaSave /> Save
+            </button>
+            <button className="button" onClick={handleCancelClick}>
+              <FaTimes /> Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="button" onClick={handleEditClick}>
+              <FaEdit /> Edit
+            </button>
+            <button className="button" onClick={handleVerifyClick}>
+              Verify Sales
+            </button>
+          </>
+        )}
       </div>
-
-      {!editMode && (
-        <>
-          <button className="edit-button" onClick={handleEditClick}>
-            <FaEdit /> Edit Details
-          </button>
-          <button className="verify-button" onClick={handleVerifyClick}>
-            <FaCheck /> Verify Sales
-          </button>
-        </>
-      )}
-
-      {editMode && (
-        <div className="action-buttons">
-          <button className="save-button" onClick={handleSaveClick}><FaSave /> Save</button>
-          <button className="cancel-button" onClick={handleCancelClick}><FaTimes /> Cancel</button>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,44 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-//notification
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
-
-//components
 import CustomerCounts from '../components/CustomerCounts';
 import ReviewCounts from '../components/ReviewCounts';
 import NavBar from '../components/NavBar';
 import StatusButtons from '../components/StatusButtons';
 import CustomerForm from '../components/CustomerForm';
 import GeneratedLink from '../components/GeneratedLink';
-
-//styles
 import '../styles/SalesExecutive.css';
-
-//theme
 
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
-  // State for customer counts
   const [customerCounts, setCustomerCounts] = useState({
     total_count: 0,
     total_pending: 0,
     total_submitted: 0,
   });
 
-  // State for customer review counts
   const [reviewCounts, setReviewCounts] = useState({
     reviews_pending: 0,
     reviews_done: 0,
   });
 
-  const [showForm, setShowForm] = useState(false); // State to show/hide form
+  const [showForm, setShowForm] = useState(false); 
   const [formData, setFormData] = useState({
     name: '',
     phone_number: '',
@@ -53,51 +40,25 @@ const SalesExecutive = () => {
     man_accessories: '',
     optional_accessories: '',
     booking: '',
-    total_price: '', 
+    total_price: '',
     finance_amount: '',
     finance_id: '',
   });
   const token = localStorage.getItem('token');
-
   const [generatedLink, setGeneratedLink] = useState('');
   const [customers, setCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null); // State for selected customer data
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [expanded, setExpanded] = useState(false); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
     }
-
-    const fetchCustomerCounts = async () => {
-      const response = await fetch('https://13.127.21.70:8000/sales/customers/count', {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
-      setCustomerCounts(data);
-    };
-
-    const fetchReviewCounts = async () => {
-      const response = await fetch('https://13.127.21.70:8000/sales/customer-verification/count', {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
-      setReviewCounts({
-        reviews_pending: data['reviews pending'],
-        reviews_done: data['reviews Done'],
-      });
-    };
-
-    fetchCustomerCounts();
-    fetchReviewCounts();
+    
+    // Fetch counts and customers
+    fetchCounts();
+    fetchCustomers();
 
     const handleBackButton = (e) => {
       e.preventDefault();
@@ -112,6 +73,42 @@ const SalesExecutive = () => {
     };
   }, [navigate]);
 
+  const fetchCounts = async () => {
+    // Fetch customer and review counts
+    const [customerResponse, reviewResponse] = await Promise.all([
+      fetch('https://13.127.21.70:8000/sales/customers/count', {
+        method: 'GET',
+        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
+      }),
+      fetch('https://13.127.21.70:8000/sales/customer-verification/count', {
+        method: 'GET',
+        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
+      }),
+    ]);
+
+    const customerData = await customerResponse.json();
+    setCustomerCounts(customerData);
+
+    const reviewData = await reviewResponse.json();
+    setReviewCounts({
+      reviews_pending: reviewData['reviews pending'],
+      reviews_done: reviewData['reviews Done'],
+    });
+  };
+
+  const fetchCustomers = async () => {
+    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    setCustomers(data);
+    setFilteredCustomers(data); // Initially show all customers
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -125,42 +122,35 @@ const SalesExecutive = () => {
 
     if (e.target.textContent === 'Add New') {
       setShowForm(true);
-      setFormData({
-        name: '',
-        phone_number: '',
-        alternate_phone_number: '',
-        vehicle_name: '',
-        vehicle_variant: '',
-        vehicle_color: '',
-        ex_showroom_price: '',
-        tax: '',
-        insurance: '',
-        tp_registration: '',
-        man_accessories: '',
-        optional_accessories: '',
-        booking: '',
-        total_price: '',
-        finance_amount: '',
-        finance_id: '',
-      });
+      setFormData({ name: '', phone_number: '', alternate_phone_number: '', vehicle_name: '', vehicle_variant: '', vehicle_color: '', ex_showroom_price: '', tax: '', insurance: '', tp_registration: '', man_accessories: '', optional_accessories: '', booking: '', total_price: '', finance_amount: '', finance_id: '' });
     } else if (e.target.textContent === 'All') {
       setShowForm(false);
       await fetchCustomers();
     } else {
       setShowForm(false);
+      filterCustomers(e.target.textContent);
     }
   };
 
-  const fetchCustomers = async () => {
-    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    const data = await response.json();
-    setCustomers(data);
+  const filterCustomers = (status) => {
+    let filtered;
+    switch (status) {
+      case 'Waiting for data':
+        filtered = customers.filter(customer => customer.status === 'pending');
+        break;
+      case 'To verify':
+        filtered = customers.filter(customer => customer.status === 'submitted' && !customer.sales_verified);
+        break;
+      case 'Verified':
+        filtered = customers.filter(customer => customer.sales_verified);
+        break;
+      case 'Registered':
+        filtered = customers.filter(customer => customer.registered);
+        break;
+      default:
+        filtered = customers;
+    }
+    setFilteredCustomers(filtered);
   };
 
   const handleInputChange = (e) => {
@@ -172,21 +162,21 @@ const SalesExecutive = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch('https://13.127.21.70:8000/sales/create-customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        setGeneratedLink(data.customer_link);  // Access the correct field
+        setGeneratedLink(data.customer_link);
         fetchCustomers();
         toast.success("Customer created successfully!", {
           position: "top-right",
@@ -205,35 +195,11 @@ const SalesExecutive = () => {
       });
     }
   };
-  
-  
 
-  
   const handleCustomerClick = (customerId) => {
     navigate(`/customer-details/${customerId}`);
   };
-  
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch(`https://13.127.21.70:8000/sales/customers/${selectedCustomer.customer_id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setGeneratedLink(data.link);
-      fetchCustomers();
-      setSelectedCustomer(null);
-    } else {
-      alert(data.message);
-    }
-  };
-  const [expanded, setExpanded] = useState(false); // State to control the visibility of customer and review counts
   const handleToggleExpand = (newExpandedState) => {
     setExpanded(newExpandedState);
   };
@@ -248,30 +214,31 @@ const SalesExecutive = () => {
           <ReviewCounts reviewCounts={reviewCounts} />
         </>
       )}
-      
+
       {showForm && (
         <CustomerForm
           formData={formData}
           onInputChange={handleInputChange}
-          onSubmit={selectedCustomer ? handleEditSubmit : handleSubmit}
-          isEditing={!!selectedCustomer}
+          onSubmit={handleSubmit}
+          isEditing={false}
           token={token}
         />
       )}
       <div className="customers-list">
-        {customers.map(customer => (
-          <div key={customer.customer_id} className="customer-card" onClick={() => handleCustomerClick(customer.customer_id)}>
+        {filteredCustomers.map(customer => (
+          <div 
+            key={customer.customer_id} 
+            className="customer-card" 
+            onClick={() => handleCustomerClick(customer.customer_id)}
+          >
             <h3>{customer.name}</h3>
             <p>Phone: {customer.phone_number}</p>
-            <p>Vehicle: {customer.vehicle_name}</p>
             <p>Status: {customer.status}</p>
-            <button className="verify-button">Verify</button>
           </div>
-          
         ))}
       </div>
-      {generatedLink && <GeneratedLink link={generatedLink} />}
-      <ToastContainer/>
+      <GeneratedLink link={generatedLink} />
+      <ToastContainer />
     </div>
   );
 };

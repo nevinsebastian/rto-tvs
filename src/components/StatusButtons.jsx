@@ -4,7 +4,14 @@ import ExpandMoreSharpIcon from '@mui/icons-material/ExpandMoreSharp';
 const StatusButtons = ({ onButtonClick, onToggleExpand }) => {
   const [expanded, setExpanded] = useState(false); // Toggle state for buttons
 
-  const buttons = ['All', 'Waiting for data', 'To verify', 'Verified', 'Registered', 'Add New'];
+  const buttons = [
+    'All', 
+    'Waiting for data', 
+    'To verify', 
+    'Verified', 
+    'Registered', 
+    'Add New'
+  ];
 
   const handleExpandClick = () => {
     const newExpandedState = !expanded;
@@ -21,7 +28,11 @@ const StatusButtons = ({ onButtonClick, onToggleExpand }) => {
       {expanded && (
         <div className="status-buttons">
           {buttons.map((label) => (
-            <button key={label} className="status-button" onClick={onButtonClick}>
+            <button 
+              key={label} 
+              className="status-button" 
+              onClick={onButtonClick}
+            >
               {label}
             </button>
           ))}
