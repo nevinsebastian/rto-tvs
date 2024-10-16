@@ -14,9 +14,6 @@ const AccountCustomerDetails = () => {
   const [financeId, setFinanceId] = useState(''); // Finance ID state
   const [showFinanceForm, setShowFinanceForm] = useState(false); // New state for toggling finance form
 
-
-
-
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -77,28 +74,53 @@ const AccountCustomerDetails = () => {
     // Debugging log to ensure values are correct
     console.log(`Finance ID: ${financeId}, Finance Amount: ${financeAmount}`);
   
-    // Basic validation
+    // Basic validation for finance amount
     if (!financeId || isNaN(financeAmount) || financeAmount <= 0) {
       alert('Please enter a valid finance ID and amount.');
       return;
     }
   
+    // Prepare request body with all customer details
+    const requestBody = new URLSearchParams({
+      first_name: customer.first_name || '', // Provide empty values if undefined
+      last_name: customer.last_name || '',
+      phone_number: customer.phone_number || '',
+      alternate_phone_number: customer.alternate_phone_number || '',
+      dob: customer.dob || '',
+      email: customer.email || '',
+      address: customer.address || '',
+      pin_code: customer.pin_code || '',
+      nominee: customer.nominee || '',
+      relation: customer.relation || '',
+      vehicle_name: customer.vehicle_name || '',
+      vehicle_variant: customer.vehicle_variant || '',
+      vehicle_color: customer.vehicle_color || '',
+      ex_showroom_price: customer.ex_showroom_price || 0, // Default to 0 if not available
+      tax: customer.tax || 0,
+      insurance: customer.insurance || 0,
+      tp_registration: customer.tp_registration || 0,
+      man_accessories: customer.man_accessories || 0,
+      optional_accessories: customer.optional_accessories || 0,
+      total_price: customer.total_price || 0,
+      amount_paid: customer.amount_paid || 0,
+      finance_amount: financeAmount, // Use the new finance amount
+      vehicle_number: customer.vehicle_number || '', // Provide empty values if undefined
+    });
+  
     // Sending the request
-    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}/finance?finance_id=${financeId}&finance_amount=${financeAmount}`, {
+    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}/${financeId}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
+      body: requestBody,
     })
       .then((response) => {
         if (!response.ok) {
-          // Try to parse the response as JSON
           return response.json().then((err) => {
             throw new Error(err.detail || `Error: ${response.status} ${response.statusText}`);
-          }).catch(() => {
-            // If response is not JSON, throw a generic error
-            throw new Error(`Error: ${response.status} ${response.statusText}`);
           });
         }
         return response.json();
@@ -119,6 +141,8 @@ const AccountCustomerDetails = () => {
   };
   
   
+  
+  
   // Verification animation handler
   const triggerVerificationAnimation = () => {
     const button = document.querySelector('.verify-button');
@@ -130,8 +154,6 @@ const AccountCustomerDetails = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
-
-  
 
   return (
     <div className="customer-details">
@@ -159,6 +181,14 @@ const AccountCustomerDetails = () => {
               <span className="label">Phone:</span>
               <span className="value">{customer.phone_number}</span>
             </div>
+            <div className="detail-item">
+              <span className="label">Alternate Phone:</span>
+              <span className="value">{customer.alternate_phone_number}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">DOB:</span>
+              <span className="value">{customer.dob || 'N/A'}</span>
+            </div>
           </div>
 
           {/* Vehicle Details */}
@@ -174,24 +204,48 @@ const AccountCustomerDetails = () => {
             </div>
             <div className="detail-item">
               <span className="label">Ex-Showroom Price:</span>
-              <span className="value">₹{customer.ex_showroom_price ? customer.ex_showroom_price.toLocaleString() : 'N/A'}</span>
+              <span className="value">₹{customer.ex_showroom_price.toLocaleString()}</span>
             </div>
           </div>
 
-          {/* Monetary Details */}
+          {/* Financial Details */}
           <div className="section financial">
             <h3><FaMoneyBillWave /> Financial Information</h3>
             <div className="detail-item">
               <span className="label">Tax:</span>
-              <span className="value">₹{customer.tax ? customer.tax.toLocaleString() : 'N/A'}</span>
+              <span className="value">₹{customer.tax.toLocaleString()}</span>
             </div>
             <div className="detail-item">
               <span className="label">Insurance:</span>
-              <span className="value">₹{customer.insurance ? customer.insurance.toLocaleString() : 'N/A'}</span>
+              <span className="value">₹{customer.insurance.toLocaleString()}</span>
             </div>
             <div className="detail-item">
               <span className="label">TP Registration:</span>
-              <span className="value">₹{customer.tp_registration ? customer.tp_registration.toLocaleString() : 'N/A'}</span>
+              <span className="value">₹{customer.tp_registration.toLocaleString()}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Amount Paid:</span>
+              <span className="value">₹{customer.amount_paid.toLocaleString()}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Balance Amount:</span>
+              <span className="value">₹{customer.balance_amount.toLocaleString()}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Total Price:</span>
+              <span className="value">₹{customer.total_price.toLocaleString()}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Finance ID:</span>
+              <span className="value">{customer.finance_id}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Finance Amount:</span>
+              <span className="value">₹{customer.finance_amount.toLocaleString()}</span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Registered:</span>
+              <span className="value">{customer.registered ? 'Yes' : 'No'}</span>
             </div>
           </div>
 
@@ -203,39 +257,30 @@ const AccountCustomerDetails = () => {
           )}
 
           {/* Finance Form */}
-{showFinanceForm && (
-  <div className="finance-form">
-    <label htmlFor="financeProvider">Finance Provider:</label>
-    <select
-      id="financeProvider" 
-      name="financeProvider"
-      value={financeId} 
-      onChange={(e) => setFinanceId(e.target.value)}
-    >
-      <option value="">Select Finance</option>
-      <option value="1">IDFC</option>
-      <option value="2">TVS Finance</option>
-    </select>
+          {showFinanceForm && (
+            <div className="finance-form">
+              <label htmlFor="financeProvider">Finance ID:</label>
+              <input
+                type="text"
+                id="financeProvider"
+                value={financeId}
+                onChange={(e) => setFinanceId(e.target.value)}
+              />
+              <label htmlFor="financeAmount">Finance Amount:</label>
+              <input
+                type="number"
+                id="financeAmount"
+                value={financeAmount}
+                onChange={(e) => setFinanceAmount(e.target.value)}
+              />
+              <button onClick={handleFinanceSubmit}>Submit Finance</button>
+              <button onClick={() => setShowFinanceForm(false)}>Cancel</button>
+            </div>
+          )}
 
-    <label htmlFor="financeAmount">Finance Amount:</label>
-    <input
-      type="number"
-      id="financeAmount"
-      name="financeAmount"
-      value={financeAmount}
-      onChange={(e) => setFinanceAmount(e.target.value)}
-      placeholder="Enter finance amount"
-    />
-    
-    <button onClick={handleFinanceSubmit}>Submit Finance</button>
-    <button onClick={() => setShowFinanceForm(false)}>Cancel</button>
-  </div>
-)}
-
-
-          {/* Verify Button */}
+          {/* Verification Button */}
           {!customer.accounts_verified && (
-            <button onClick={verifyCustomer} className="verify-button">
+            <button className="verify-button" onClick={verifyCustomer}>
               Verify Customer
             </button>
           )}

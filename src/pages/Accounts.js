@@ -50,7 +50,6 @@ const Accounts = () => {
       fetchCustomers(filter);
     }
   }, [token, navigate, filter]);
-
   
 
   const handleLogout = () => {
