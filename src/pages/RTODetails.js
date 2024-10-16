@@ -8,8 +8,9 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import JSZip from 'jszip';
+import FileSaver from 'file-saver';
 import '../styles/RTODetails.css';
-import Chassis from './Chassis';
 
 const RTODetails = () => {
   const { customerId } = useParams();
@@ -168,6 +169,43 @@ const RTODetails = () => {
     }
   };
 
+  const handleDownloadImages = async () => {
+    if (!customer) return;
+
+    const zip = new JSZip();
+    const imgFolder = zip.folder('documents'); // Create a folder in the zip
+
+    // Prepare the images to be downloaded
+    const imageUrls = [
+        { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
+        { name: 'passport.jpg', url: customer.photo_passport },
+        { name: 'customer_signature.png', url: customer.customer_sign },
+    ];
+
+    try {
+        // Add images to the zip
+        await Promise.all(
+            imageUrls.map(async (image) => {
+                // Log the image URL for debugging
+                console.log(`Fetching image from: ${image.url}`);
+                
+                const imgData = await axios.get(image.url, { responseType: 'arraybuffer' });
+                imgFolder.file(image.name, imgData.data);
+            })
+        );
+
+        // Generate zip file and trigger download
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+            FileSaver.saveAs(content, 'customer_documents.zip');
+        });
+    } catch (error) {
+        // Handle and log errors
+        console.error('Error downloading images:', error);
+        alert('An error occurred while downloading images. Please check the console for more details.');
+    }
+};
+
+
   if (loading) {
     return <p>Loading customer details...</p>;
   }
@@ -195,12 +233,14 @@ const RTODetails = () => {
               <Grid item xs={12} md={6}>
                 <Typography variant="h6"><PersonIcon /> {customer.first_name} {customer.last_name}</Typography>
                 <Typography><PhoneIcon /> {customer.phone_number}</Typography>
-                <Typography><strong>Address:</strong> {customer.address}</Typography>
+                <Typography><strong>Address:</strong> {customer.address}, {customer.pin_code}</Typography>
+                <Typography><strong>Date of Birth:</strong> {customer.dob}</Typography>
                 <Typography><strong>Nominee:</strong> {customer.nominee} ({customer.relation})</Typography>
               </Grid>
 
               <Grid item xs={12} md={6}>
                 <Typography variant="h6"><DirectionsCarIcon /> {customer.vehicle_name} - {customer.vehicle_variant}</Typography>
+                <Typography><strong>Color:</strong> {customer.vehicle_color}</Typography>
                 <Typography><strong>Ex-showroom Price:</strong> ₹{customer.ex_showroom_price}</Typography>
                 <Typography><strong>Tax:</strong> ₹{customer.tax}</Typography>
                 <Typography><strong>Status:</strong> {customer.status}</Typography>
@@ -209,138 +249,96 @@ const RTODetails = () => {
               {/* Verification Status */}
               <Grid item xs={12}>
                 <Typography variant="h6">Verification Status</Typography>
-                <Grid container spacing={1}>
-                  <Grid item xs={4}>
-                    <Typography>RTO Verified: {statusIcon(customer.rto_verified)}</Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography>Sales Verified: {statusIcon(customer.sales_verified)}</Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography>Accounts Verified: {statusIcon(customer.accounts_verified)}</Typography>
-                  </Grid>
-                </Grid>
+                <Typography><strong>Sales Verified:</strong> {statusIcon(customer.sales_verified)}</Typography>
+                <Typography><strong>Accounts Verified:</strong> {statusIcon(customer.accounts_verified)}</Typography>
+                <Typography><strong>RTO Verified:</strong> {statusIcon(customer.rto_verified)}</Typography>
               </Grid>
 
-              {/* Image Section */}
+              {/* Image Preview */}
               <Grid item xs={12}>
-                <Typography variant="h6">Documents</Typography>
+                <Typography variant="h6">Images</Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={4}>
-                    <Typography>Adhaar Front:</Typography>
-                    <Avatar
-                      alt="Aadhaar Front"
-                      src={customer.photo_adhaar_front}
-                      variant="rounded"
-                      sx={{ width: 150, height: 150, cursor: 'pointer' }}
-                      onClick={() => handleImageClick(customer.photo_adhaar_front)}
-                    />
+                    <Avatar variant="rounded" src={customer.photo_adhaar_combined} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_adhaar_combined)} />
                   </Grid>
                   <Grid item xs={4}>
-                    <Typography>Adhaar Back:</Typography>
-                    <Avatar
-                      alt="Aadhaar Back"
-                      src={customer.photo_adhaar_back}
-                      variant="rounded"
-                      sx={{ width: 150, height: 150, cursor: 'pointer' }}
-                      onClick={() => handleImageClick(customer.photo_adhaar_back)}
-                    />
+                    <Avatar variant="rounded" src={customer.photo_passport} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_passport)} />
                   </Grid>
                   <Grid item xs={4}>
-                    <Typography>Passport:</Typography>
-                    <Avatar
-                      alt="Passport"
-                      src={customer.photo_passport}
-                      variant="rounded"
-                      sx={{ width: 150, height: 150, cursor: 'pointer' }}
-                      onClick={() => handleImageClick(customer.photo_passport)}
-                    />
+                    <Avatar variant="rounded" src={customer.customer_sign} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign)} />
                   </Grid>
                 </Grid>
-              </Grid>
-
-              {/* Form Submission Section */}
-              <Grid item xs={12}>
-                <Typography variant="h6">Form Submission</Typography>
-                <div>
-                  <Button variant="contained" component="label">
-                    Upload Form 21 PDF
-                    <input type="file" hidden onChange={handleForm21Change} />
-                  </Button>
-                  <Button variant="contained" onClick={handleForm21Submit}>Process Form 21</Button>
-                  {processedForm21 && <a href={processedForm21} download>Download Processed Form 21</a>}
-                </div>
-
-                <div>
-                  <Button variant="contained" component="label">
-                    Upload Form 20 PDF
-                    <input type="file" hidden onChange={handleForm20Change} />
-                  </Button>
-                  <Button variant="contained" component="label">
-                    Upload Signature
-                    <input type="file" hidden onChange={handleSignatureChange} />
-                  </Button>
-                  <select value={financeCompany} onChange={handleFinanceCompanyChange}>
-                    <option value="idfc">IDFC</option>
-                    <option value="bajaj">Bajaj</option>
-                    <option value="hdfc">HDFC</option>
-                  </select>
-                  <Button variant="contained" onClick={handleForm20Submit}>Process Form 20</Button>
-                  {processedForm20 && <a href={processedForm20} download>Download Processed Form 20</a>}
-                </div>
-
-                <div>
-                  <Button variant="contained" component="label">
-                    Upload Invoice PDF
-                    <input type="file" hidden onChange={handleInvoiceChange} />
-                  </Button>
-                  <Button variant="contained" component="label">
-                    Upload Buyer Signature
-                    <input type="file" hidden onChange={handleBuyerSignatureChange} />
-                  </Button>
-                  <Button variant="contained" onClick={handleInvoiceSubmit}>Process Invoice</Button>
-                  {processedInvoice && <a href={processedInvoice} download>Download Processed Invoice</a>}
-                </div>
-              </Grid>
-
-              {/* Verify RTO Button */}
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<VerifiedIcon />}
-                  onClick={handleVerifyCustomer}
-                  disabled={submitting || customer.rto_verified}
-                >
-                  {submitting ? <CircularProgress size={24} /> : 'Verify RTO'}
-                </Button>
               </Grid>
             </Grid>
           )}
         </CardContent>
+        <Button onClick={handleVerifyCustomer} variant="contained" color="primary" disabled={submitting}>
+          {submitting ? <CircularProgress size={24} /> : 'Verify Customer'}
+        </Button>
+        <Button onClick={handleDownloadImages} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
+          Download Images
+        </Button>
+
+        <Snackbar open={submissionSuccess} autoHideDuration={6000} onClose={() => setSubmissionSuccess(false)}>
+          <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
+            Customer verified successfully!
+          </Alert>
+        </Snackbar>
+
+        <Snackbar open={Boolean(submissionError)} autoHideDuration={6000} onClose={() => setSubmissionError(null)}>
+          <Alert onClose={() => setSubmissionError(null)} severity="error">
+            {submissionError}
+          </Alert>
+        </Snackbar>
+
+        {/* Image Dialog */}
+        {openImage && (
+          <Dialog open={Boolean(openImage)} onClose={handleCloseImage}>
+            <IconButton onClick={handleCloseImage} sx={{ position: 'absolute', right: 8, top: 8 }} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <img src={openImage} alt="Document" style={{ width: '100%', height: 'auto' }} />
+          </Dialog>
+        )}
       </Card>
-      
 
-      {/* Fullscreen Image Viewer */}
-      <Dialog open={Boolean(openImage)} onClose={handleCloseImage} maxWidth="lg">
-        <IconButton onClick={handleCloseImage} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: '9999' }}>
-          <CloseIcon />
-        </IconButton>
-        <img src={openImage} alt="Document" style={{ maxWidth: '100%', maxHeight: '90vh' }} />
-      </Dialog>
+      {/* PDF Editor */}
+      <Card className="pdf-editor-card" variant="outlined">
+        <CardContent>
+          <Typography variant="h5">PDF Editor</Typography>
+          <Divider />
 
-      {/* Snackbar for Success or Error */}
-      <Snackbar open={submissionSuccess} autoHideDuration={3000} onClose={() => setSubmissionSuccess(false)}>
-        <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
-          RTO Verified Successfully!
-        </Alert>
-      </Snackbar>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography>Upload Form 21 PDF:</Typography>
+              <input type="file" accept="application/pdf" onChange={handleForm21Change} />
+              <Button onClick={handleForm21Submit} variant="contained" color="primary">Submit Form 21</Button>
+              {processedForm21 && <a href={processedForm21} target="_blank" rel="noopener noreferrer">Download Processed Form 21</a>}
+            </Grid>
 
-      <Snackbar open={Boolean(submissionError)} autoHideDuration={3000} onClose={() => setSubmissionError(null)}>
-        <Alert onClose={() => setSubmissionError(null)} severity="error">
-          {submissionError}
-        </Alert>
-      </Snackbar>
+            <Grid item xs={12} md={6}>
+              <Typography>Upload Form 20 PDF:</Typography>
+              <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+              <input type="file" accept="image/*" onChange={handleSignatureChange} />
+              <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+                <option value="idfc">IDFC</option>
+                <option value="hdfc">HDFC</option>
+                <option value="other">Other</option>
+              </select>
+              <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
+              {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography>Upload Invoice PDF:</Typography>
+              <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
+              <input type="file" accept="image/*" onChange={handleBuyerSignatureChange} />
+              <Button onClick={handleInvoiceSubmit} variant="contained" color="primary">Submit Invoice</Button>
+              {processedInvoice && <a href={processedInvoice} target="_blank" rel="noopener noreferrer">Download Processed Invoice</a>}
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </div>
   );
 };
