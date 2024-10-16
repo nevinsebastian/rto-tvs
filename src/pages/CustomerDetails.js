@@ -10,7 +10,6 @@ import {
   FaEdit,
   FaSave,
   FaTimes,
-  FaCheck,
   FaTimesCircle,
 } from 'react-icons/fa';
 import '../styles/CustomerDetailsModern.css';
@@ -37,7 +36,6 @@ const CustomerDetails = () => {
         });
         const data = await response.json();
         setCustomerData(data);
-        setFormData(data);
       } catch (error) {
         console.error('Error fetching customer details:', error);
       }
@@ -66,9 +64,15 @@ const CustomerDetails = () => {
 
   const handleSaveClick = async () => {
     const formDataToSubmit = new FormData();
-    formDataToSubmit.append('number_plate_front', formData.number_plate_front);
-    formDataToSubmit.append('number_plate_back', formData.number_plate_back);
-    formDataToSubmit.append('delivery_photo', formData.delivery_photo);
+    if (formData.number_plate_front) {
+      formDataToSubmit.append('number_plate_front', formData.number_plate_front);
+    }
+    if (formData.number_plate_back) {
+      formDataToSubmit.append('number_plate_back', formData.number_plate_back);
+    }
+    if (formData.delivery_photo) {
+      formDataToSubmit.append('delivery_photo', formData.delivery_photo);
+    }
 
     try {
       const response = await fetch(`https://13.127.21.70:8000/sales/customers/delivery-update/${customerId}`, {
@@ -83,6 +87,9 @@ const CustomerDetails = () => {
         const updatedData = await response.json();
         setCustomerData(updatedData);
         setEditMode(false);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update delivery details:', errorData);
       }
     } catch (error) {
       console.error('Error updating delivery details:', error);
@@ -90,7 +97,6 @@ const CustomerDetails = () => {
   };
 
   const handleCancelClick = () => {
-    setFormData(customerData);
     setEditMode(false);
   };
 
@@ -106,7 +112,7 @@ const CustomerDetails = () => {
 
       if (response.ok) {
         const result = await response.json();
-        alert(result.message); // Show success message
+        alert(result.message);
       } else {
         const error = await response.json();
         console.error('Verification error:', error);
@@ -152,7 +158,7 @@ const CustomerDetails = () => {
   };
 
   const renderDeliveryPhotoUpload = () => {
-    if (customerData.registered) {
+    if (customerData && customerData.registered) {
       return (
         <div className="field-container">
           <strong>Delivery Photo:</strong>
@@ -271,23 +277,25 @@ const CustomerDetails = () => {
       <div className="button-group">
         {editMode ? (
           <>
-            <button className="button" onClick={handleSaveClick}>
+            <button className="save-button" onClick={handleSaveClick}>
               <FaSave /> Save
             </button>
-            <button className="button" onClick={handleCancelClick}>
+            <button className="cancel-button" onClick={handleCancelClick}>
               <FaTimes /> Cancel
             </button>
           </>
         ) : (
-          <>
-            <button className="button" onClick={handleEditClick}>
-              <FaEdit /> Edit
-            </button>
-            <button className="button" onClick={handleVerifyClick}>
-              Verify Sales
-            </button>
-          </>
+          <button className="edit-button" onClick={handleEditClick}>
+            <FaEdit /> Edit
+          </button>
         )}
+      </div>
+
+      <div className="verify-container">
+        {renderVerificationStatus('Sales Verification', 'sales_verified')}
+        <button className="verify-button" onClick={handleVerifyClick}>
+          <FaCheckCircle /> Verify Sales
+        </button>
       </div>
     </div>
   );
