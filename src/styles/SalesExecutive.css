@@ -585,3 +585,13 @@ html, body {
 .customers-list {
   background-color: transparent; /* Or use another background color */
 }
+.customer-form-container {
+  position: relative; /* Ensure it's positioned relative to its parent */
+  z-index: 10; /* Brings the form to the front */
+  min-height: 100vh; /* Make sure it takes full height */
+  background-color: white; /* Optionally add background to cover elements behind */
+}
+
+.customers-list {
+  z-index: 1; /* Send customer list behind */
+}

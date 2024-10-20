@@ -242,7 +242,7 @@ const SalesExecutive = () => {
   )}
 </div>
 
-      <GeneratedLink link={generatedLink} />
+      { generatedLink && <GeneratedLink link={generatedLink} />}
       <ToastContainer />
       
     </div>
