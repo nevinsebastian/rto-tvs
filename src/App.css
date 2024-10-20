@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+.link-container {
+  margin-top: 300000px; /* Adjust this value as needed */
+}
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* or flex-end if you want it to stick to the bottom */
+}
+
+.link-container {
+  margin-top: auto; /* This pushes it to the bottom of the container */
+}

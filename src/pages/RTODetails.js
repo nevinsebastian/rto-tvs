@@ -32,6 +32,19 @@ const RTODetails = () => {
   const [processedForm21, setProcessedForm21] = useState(null);
   const [processedForm20, setProcessedForm20] = useState(null);
   const [processedInvoice, setProcessedInvoice] = useState(null);
+
+
+  
+  const [disclaimerPdf, setDisclaimerPdf] = useState(null);
+  const [disclaimerSignature, setDisclaimerSignature] = useState(null);
+  const [helmetCertPdf, setHelmetCertPdf] = useState(null);
+  const [helmetCertSignature, setHelmetCertSignature] = useState(null);
+  const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
+  const [chasisNumberPic, setChasisNumberPic] = useState(null);
+  const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
+  const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
+  const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
+  
   
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -95,6 +108,99 @@ const RTODetails = () => {
   const handleBuyerSignatureChange = (e) => {
     setBuyerSignature(e.target.files[0]);
   };
+  // New PDF handling functions
+  const handleDisclaimerChange = (e) => {
+    setDisclaimerPdf(e.target.files[0]);
+  };
+
+  const handleDisclaimerSignatureChange = (e) => {
+    setDisclaimerSignature(e.target.files[0]);
+  };
+
+  const handleHelmetCertChange = (e) => {
+    setHelmetCertPdf(e.target.files[0]);
+  };
+
+  const handleHelmetCertSignatureChange = (e) => {
+    setHelmetCertSignature(e.target.files[0]);
+  };
+
+  const handleInspectionLetterChange = (e) => {
+    setInspectionLetterPdf(e.target.files[0]);
+  };
+
+  const handleChasisNumberPicChange = (e) => {
+    setChasisNumberPic(e.target.files[0]);
+  };
+
+// New PDF submission functions
+const handleDisclaimerSubmit = async () => {
+  if (!disclaimerPdf || !disclaimerSignature) return;
+
+  const formData = new FormData();
+  formData.append('pdf', disclaimerPdf);
+  formData.append('signature', disclaimerSignature);
+
+  try {
+    const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/disclaimer', formData, {
+      responseType: 'blob',
+    });
+    setProcessedDisclaimer(URL.createObjectURL(response.data));
+  } catch (error) {
+    console.error('Error processing disclaimer:', error);
+  }
+};
+
+const handleHelmetCertSubmit = async () => {
+  if (!helmetCertPdf || !helmetCertSignature) return;
+
+  const formData = new FormData();
+  formData.append('pdf', helmetCertPdf);
+  formData.append('signature', helmetCertSignature);
+
+  try {
+    const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', formData, {
+      responseType: 'blob',
+    });
+    setProcessedHelmetCert(URL.createObjectURL(response.data));
+  } catch (error) {
+    console.error('Error processing helmet certificate:', error);
+  }
+};
+
+
+
+
+
+  // New PDF submission functions
+
+
+  const handleInspectionLetterSubmit = async () => {
+    if (!inspectionLetterPdf || !chasisNumberPic) return;
+
+    const formData = new FormData();
+    formData.append('pdf', inspectionLetterPdf);
+    formData.append('chasis_number_pic', chasisNumberPic);
+
+    try {
+      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/inspection_letter', formData, {
+        responseType: 'blob',
+      });
+      setProcessedInspectionLetter(URL.createObjectURL(response.data));
+    } catch (error) {
+      console.error('Error processing inspection letter:', error);
+    }
+  };
+
+
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const handleForm21Submit = async () => {
     if (!form21Pdf) return;
@@ -169,7 +275,7 @@ const RTODetails = () => {
     }
   };
 
-  const handleDownloadImages = async () => {
+const handleDownloadImages = async () => {
     if (!customer) return;
 
     const zip = new JSZip();
@@ -336,6 +442,30 @@ const RTODetails = () => {
               <Button onClick={handleInvoiceSubmit} variant="contained" color="primary">Submit Invoice</Button>
               {processedInvoice && <a href={processedInvoice} target="_blank" rel="noopener noreferrer">Download Processed Invoice</a>}
             </Grid>
+            <Grid item xs={12} md={6}>
+  <Typography>Upload Disclaimer PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleDisclaimerChange} />
+  <input type="file" accept="image/*" onChange={handleDisclaimerSignatureChange} />
+  <Button onClick={handleDisclaimerSubmit} variant="contained" color="primary">Submit Disclaimer</Button>
+  {processedDisclaimer && <a href={processedDisclaimer} target="_blank" rel="noopener noreferrer">Download Processed Disclaimer</a>}
+</Grid>
+
+<Grid item xs={12} md={6}>
+  <Typography>Upload Helmet Certificate PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleHelmetCertChange} />
+  <input type="file" accept="image/*" onChange={handleHelmetCertSignatureChange} />
+  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certificate</Button>
+  {processedHelmetCert && <a href={processedHelmetCert} target="_blank" rel="noopener noreferrer">Download Processed Helmet Certificate</a>}
+</Grid>
+
+<Grid item xs={12} md={6}>
+  <Typography>Upload Inspection Letter PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleInspectionLetterChange} />
+  <input type="file" accept="image/*" onChange={handleChasisNumberPicChange} />
+  <Button onClick={handleInspectionLetterSubmit} variant="contained" color="primary">Submit Inspection Letter</Button>
+  {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
+</Grid>
+
           </Grid>
         </CardContent>
       </Card>

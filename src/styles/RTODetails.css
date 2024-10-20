@@ -1,36 +1,28 @@
 .rto-details-container {
   margin: 2rem auto;
   max-width: 900px;
+  padding: 20px;
 }
 
 .rto-card {
   background-color: #1c1e22;
   color: #fff;
   padding: 1rem;
+  margin: 20px 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .customer-details-grid {
-  margin-top: 1rem;
+  margin-top: 20px;
 }
 
-.customer-details p, .customer-details .MuiTypography-root {
+.customer-details p,
+.customer-details .MuiTypography-root {
   margin: 0.5rem 0;
 }
 
 .MuiDivider-root {
   margin: 1rem 0;
-}
-.rto-details-container {
-  padding: 20px;
-}
-
-.rto-card {
-  margin-bottom: 20px;
-}
-
-.customer-details-grid {
-  margin-top: 20px;
 }
 
 input[type="file"] {
@@ -40,20 +32,9 @@ input[type="file"] {
 h3 {
   margin: 10px 0;
 }
-.rto-details-container {
-  padding: 20px;
-}
-
-.rto-card {
-  margin: 20px;
-}
 
 button {
   margin-right: 10px;
-}
-
-.customer-details-grid {
-  margin-top: 20px;
 }
 
 img {
@@ -64,4 +45,17 @@ img {
 .MuiDialog-paper {
   padding: 20px;
   background-color: #f4f4f4;
+}
+
+.pdf-editor-header {
+  margin: 20px 0;
+}
+
+.pdf-editor-grid {
+  margin-bottom: 20px;
+}
+
+.pdf-editor-grid input,
+.pdf-editor-grid select {
+  margin-bottom: 10px;
 }

@@ -225,21 +225,28 @@ const SalesExecutive = () => {
         />
       )}
       <div className="customers-list">
-        {filteredCustomers.map(customer => (
-          <div 
-            key={customer.customer_id} 
-            className="customer-card" 
-            onClick={() => handleCustomerClick(customer.customer_id)}
-          >
-            <h3>{customer.name}</h3>
-            <p>Phone: {customer.phone_number}</p>
-            <p>Status: {customer.status}</p>
-          </div>
-        ))}
+  {Array.isArray(filteredCustomers) && filteredCustomers.length > 0 ? (
+    filteredCustomers.map(customer => (
+      <div 
+        key={customer.customer_id} 
+        className="customer-card" 
+        onClick={() => handleCustomerClick(customer.customer_id)}
+      >
+        <h3>{customer.name}</h3>
+        <p>Phone: {customer.phone_number}</p>
+        <p>Status: {customer.status}</p>
       </div>
+    ))
+  ) : (
+    <p>No customers available</p>
+  )}
+</div>
+
       <GeneratedLink link={generatedLink} />
       <ToastContainer />
+      
     </div>
+    
   );
 };
 
