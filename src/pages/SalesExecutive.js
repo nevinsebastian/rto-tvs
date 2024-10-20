@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -44,11 +44,49 @@ const SalesExecutive = () => {
     finance_amount: '',
     finance_id: '',
   });
+
   const token = localStorage.getItem('token');
   const [generatedLink, setGeneratedLink] = useState('');
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [expanded, setExpanded] = useState(false); 
+
+  // Define fetchCounts using useCallback
+  const fetchCounts = useCallback(async () => {
+    const [customerResponse, reviewResponse] = await Promise.all([
+      fetch('https://13.127.21.70:8000/sales/customers/count', {
+        method: 'GET',
+        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
+      }),
+      fetch('https://13.127.21.70:8000/sales/customer-verification/count', {
+        method: 'GET',
+        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
+      }),
+    ]);
+
+    const customerData = await customerResponse.json();
+    setCustomerCounts(customerData);
+
+    const reviewData = await reviewResponse.json();
+    setReviewCounts({
+      reviews_pending: reviewData['reviews pending'],
+      reviews_done: reviewData['reviews Done'],
+    });
+  }, [token]);
+
+  // Define fetchCustomers using useCallback
+  const fetchCustomers = useCallback(async () => {
+    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    setCustomers(data);
+    setFilteredCustomers(data); // Initially show all customers
+  }, [token]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -71,43 +109,7 @@ const SalesExecutive = () => {
     return () => {
       window.removeEventListener('popstate', handleBackButton);
     };
-  }, [navigate]);
-
-  const fetchCounts = async () => {
-    // Fetch customer and review counts
-    const [customerResponse, reviewResponse] = await Promise.all([
-      fetch('https://13.127.21.70:8000/sales/customers/count', {
-        method: 'GET',
-        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
-      }),
-      fetch('https://13.127.21.70:8000/sales/customer-verification/count', {
-        method: 'GET',
-        headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
-      }),
-    ]);
-
-    const customerData = await customerResponse.json();
-    setCustomerCounts(customerData);
-
-    const reviewData = await reviewResponse.json();
-    setReviewCounts({
-      reviews_pending: reviewData['reviews pending'],
-      reviews_done: reviewData['reviews Done'],
-    });
-  };
-
-  const fetchCustomers = async () => {
-    const response = await fetch('https://13.127.21.70:8000/sales/customers', {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await response.json();
-    setCustomers(data);
-    setFilteredCustomers(data); // Initially show all customers
-  };
+  }, [navigate, fetchCounts, fetchCustomers]); // Added fetchCounts and fetchCustomers to dependencies
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -225,28 +227,26 @@ const SalesExecutive = () => {
         />
       )}
       <div className="customers-list">
-  {Array.isArray(filteredCustomers) && filteredCustomers.length > 0 ? (
-    filteredCustomers.map(customer => (
-      <div 
-        key={customer.customer_id} 
-        className="customer-card" 
-        onClick={() => handleCustomerClick(customer.customer_id)}
-      >
-        <h3>{customer.name}</h3>
-        <p>Phone: {customer.phone_number}</p>
-        <p>Status: {customer.status}</p>
+        {Array.isArray(filteredCustomers) && filteredCustomers.length > 0 ? (
+          filteredCustomers.map(customer => (
+            <div 
+              key={customer.customer_id} 
+              className="customer-card" 
+              onClick={() => handleCustomerClick(customer.customer_id)}
+            >
+              <h3>{customer.name}</h3>
+              <p>Phone: {customer.phone_number}</p>
+              <p>Status: {customer.status}</p>
+            </div>
+          ))
+        ) : (
+          <p>No customers available</p>
+        )}
       </div>
-    ))
-  ) : (
-    <p>No customers available</p>
-  )}
-</div>
 
-      { generatedLink && <GeneratedLink link={generatedLink} />}
+      {generatedLink && <GeneratedLink link={generatedLink} />}
       <ToastContainer />
-      
     </div>
-    
   );
 };
 
