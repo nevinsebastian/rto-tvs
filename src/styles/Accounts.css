@@ -18,6 +18,10 @@ html, body {
 
 
 
+body {
+  transform: scale(0.99); /* Adjust this value for different zoom levels */
+  transform-origin: 0 0; /* Ensures the zoom happens from the top-left corner */
+}
 
 
 

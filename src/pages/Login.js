@@ -61,19 +61,19 @@ export default function Login() {
         localStorage.setItem('user', JSON.stringify(user));
 
         switch (user.role_name) {
-          case 'Admin':
+          case 'admin':
             navigate('/admin');
             break;
-          case 'Sales':
+          case 'sales':
             navigate('/sales-executive');
             break;
-          case 'Accounts':
+          case 'accounts':
             navigate('/accounts');
             break;
-          case 'RTO':
+          case 'rto':
             navigate('/rto');
             break;
-          case 'Manager':
+          case 'manager':
             navigate('/manager');
             break;
           case 'stock_person':
