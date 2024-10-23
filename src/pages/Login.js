@@ -36,20 +36,23 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
 
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/login', {
-        grant_type: '',
-        username,
-        password,
-        scope: '',
-        client_id: '',
-        client_secret: '',
-      }, {
+      const params = new URLSearchParams();
+      params.append('grant_type', '');
+      params.append('username', username);
+      params.append('password', password);
+      params.append('scope', '');
+      params.append('client_id', '');
+      params.append('client_secret', '');
+
+      const response = await axios.post('https://api.tophaventvs.com:8000/login', params, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -88,6 +91,8 @@ export default function Login() {
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -195,6 +200,7 @@ export default function Login() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={isLoading} // Disable button while loading
                 sx={{
                   mt: 3,
                   mb: 2,
@@ -204,9 +210,8 @@ export default function Login() {
                   },
                 }}
               >
-                Login
+                {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
               </Button>
-             
             </Box>
           </Paper>
         </Container>
