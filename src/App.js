@@ -14,6 +14,7 @@ import CustomerDetails from './pages/CustomerDetails';
 import AccountCustomerDetails from './pages/AccountCustomerDetails'; 
 import Stock from './pages/Stock';
 import Chassis from './pages/Chassis';
+import NotFound from './pages/NotFound';
 
 
 //theme
@@ -42,6 +43,8 @@ const App = () => {
         <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} /> {/* Updated route for account customer details */}
         <Route  path='/stock' element={token ? <Stock/> :<Navigate to="/login" />}/>
         <Route path='/chassis' element={<Chassis/>}/>
+        <Route path='*' element={<NotFound/>}/>
+
         </Routes>
         
     </Router>
