@@ -53,7 +53,7 @@ const RTODetails = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`https://13.127.21.70:8000/rto/${customerId}`, {
+      fetch(`https://api.tophaventvs.com:8000/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -142,7 +142,7 @@ const handleDisclaimerSubmit = async () => {
   formData.append('signature', disclaimerSignature);
 
   try {
-    const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/disclaimer', formData, {
+    const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/disclaimer', formData, {
       responseType: 'blob',
     });
     setProcessedDisclaimer(URL.createObjectURL(response.data));
@@ -159,7 +159,7 @@ const handleHelmetCertSubmit = async () => {
   formData.append('signature', helmetCertSignature);
 
   try {
-    const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', formData, {
+    const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/helmetcert', formData, {
       responseType: 'blob',
     });
     setProcessedHelmetCert(URL.createObjectURL(response.data));
@@ -183,7 +183,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('chasis_number_pic', chasisNumberPic);
 
     try {
-      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/inspection_letter', formData, {
+      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/inspection_letter', formData, {
         responseType: 'blob',
       });
       setProcessedInspectionLetter(URL.createObjectURL(response.data));
@@ -209,7 +209,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('pdf', form21Pdf);
 
     try {
-      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/form21', formData, {
+      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form21', formData, {
         responseType: 'blob',
       });
       setProcessedForm21(URL.createObjectURL(response.data));
@@ -227,7 +227,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('finance_company', financeCompany);
 
     try {
-      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/form20', formData, {
+      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form20', formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -244,7 +244,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('signature', buyerSignature);
 
     try {
-      const response = await axios.post('https://13.127.21.70:8000/pdf/process_pdf/invoice', formData, {
+      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/invoice', formData, {
         responseType: 'blob',
       });
       setProcessedInvoice(URL.createObjectURL(response.data));
@@ -258,7 +258,7 @@ const handleHelmetCertSubmit = async () => {
     setSubmissionError(null);
 
     try {
-      const response = await axios.post(`https://13.127.21.70:8000/rto/verify/${customerId}`, {}, {
+      const response = await axios.post(`https://api.tophaventvs.com:8000/rto/verify/${customerId}`, {}, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,

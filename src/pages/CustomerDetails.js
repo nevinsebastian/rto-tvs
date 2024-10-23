@@ -27,7 +27,7 @@ const CustomerDetails = () => {
   useEffect(() => {
     const fetchCustomerById = async () => {
       try {
-        const response = await fetch(`https://13.127.21.70:8000/sales/customers/${customerId}`, {
+        const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/${customerId}`, {
           method: 'GET',
           headers: {
             accept: 'application/json',
@@ -75,7 +75,7 @@ const CustomerDetails = () => {
     }
 
     try {
-      const response = await fetch(`https://13.127.21.70:8000/sales/customers/delivery-update/${customerId}`, {
+      const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -102,7 +102,7 @@ const CustomerDetails = () => {
 
   const handleVerifyClick = async () => {
     try {
-      const response = await fetch(`https://13.127.21.70:8000/sales/verify/${customerId}`, {
+      const response = await fetch(`https://api.tophaventvs.com:8000/sales/verify/${customerId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

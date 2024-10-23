@@ -5,9 +5,10 @@
 }
 
 .not-found-gif {
-  width: 300px;
+  width: 900px;
   margin: 20px auto;
   display: block;
+  height: 400px;
 }
 
 .back-home {

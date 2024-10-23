@@ -16,7 +16,7 @@ const RTO = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch('https://13.127.21.70:8000/rto/customer-list', {
+      fetch('https://api.tophaventvs.com:8000/rto/customer-list', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,

@@ -17,7 +17,7 @@ const Chassis = () => {
     }
 
     try {
-      const response = await axios.get(`https://13.127.21.70:8000/chasisimage/${chassisNumber}`, {
+      const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisNumber}`, {
         headers: {
           accept: 'application/json',
         },

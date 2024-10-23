@@ -36,7 +36,7 @@ const Stock = () => {
     formData.append('chassis_photo', chassisPhoto);
 
     try {
-      const response = await fetch('https://13.127.21.70:8000/chasis/upload', {
+      const response = await fetch('https://api.tophaventvs.com:8000/chasis/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

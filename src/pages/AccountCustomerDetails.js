@@ -22,7 +22,7 @@ const AccountCustomerDetails = () => {
       return;
     }
 
-    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}`, {
+    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ const AccountCustomerDetails = () => {
   };
 
   const verifyCustomer = () => {
-    fetch(`https://13.127.21.70:8000/accounts/verify/${customerId}`, {
+    fetch(`https://api.tophaventvs.com:8000/accounts/verify/${customerId}`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -99,7 +99,7 @@ const AccountCustomerDetails = () => {
       vehicle_number: editableFields.vehicle_number || '',
     });
 
-    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}/${financeId}`, {
+    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}/${financeId}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',
@@ -141,7 +141,7 @@ const AccountCustomerDetails = () => {
   const handleUpdateCustomer = () => {
     const requestBody = new URLSearchParams(editableFields);
 
-    fetch(`https://13.127.21.70:8000/accounts/customers/${customerId}/${customer.finance_id}`, {
+    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}/${customer.finance_id}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',

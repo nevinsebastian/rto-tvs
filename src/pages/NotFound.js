@@ -9,7 +9,7 @@ const NotFound = () => {
       <h1>Oops! You got lost in the matrix!</h1>
       <p>Looks like this page doesn’t exist. Maybe try a different portal?</p>
       <img
-        src="https://media.giphy.com/media/3o6fJ1BM7P1Xdl5sCw/giphy.gif"
+        src="/rr310.jpg"
         alt="Funny Lost Gif"
         className="not-found-gif"
       />
