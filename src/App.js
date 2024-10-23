@@ -19,14 +19,20 @@ import theme from './theme/theme';
 
 const App = () => {
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Set token from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      setToken(storedToken);
+      setToken(storedToken); // Rehydrate token from localStorage
     }
+    setLoading(false); // Set loading to false after token check
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading screen while checking for token
+  }
 
   return (
     <ThemeProvider theme={theme}>
