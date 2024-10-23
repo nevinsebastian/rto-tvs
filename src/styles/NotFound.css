@@ -1,0 +1,25 @@
+/* src/pages/NotFound.css */
+.not-found-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.not-found-gif {
+  width: 300px;
+  margin: 20px auto;
+  display: block;
+}
+
+.back-home {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.back-home:hover {
+  background-color: #0056b3;
+}
