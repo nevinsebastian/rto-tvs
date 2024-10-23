@@ -2,17 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-  Checkbox,
-  FormControlLabel,
-  Container,
-  createTheme,
-  ThemeProvider,
-  CssBaseline,
+  Box, Button, TextField, Typography, Paper, Checkbox, FormControlLabel, Container, createTheme, ThemeProvider, CssBaseline
 } from '@mui/material';
 
 // Create the dark theme with the bluish gradient
@@ -32,15 +22,15 @@ const darkTheme = createTheme({
   },
 });
 
-export default function Login() {
+export default function Login({ setToken }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent form submission from reloading the page
     setIsLoading(true); // Start loading
 
     try {
@@ -63,28 +53,13 @@ export default function Login() {
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        switch (user.role_name) {
-          case 'admin':
-            navigate('/admin');
-            break;
-          case 'sales':
-            navigate('/sales-executive');
-            break;
-          case 'accounts':
-            navigate('/accounts');
-            break;
-          case 'rto':
-            navigate('/rto');
-            break;
-          case 'manager':
-            navigate('/manager');
-            break;
-          case 'stock_person':
-            navigate('/stock');
-            break;
-          default:
-            setError('Unknown role.');
-        }
+        // Update the token in App.js state
+        setToken(access_token);
+
+        // Add a small delay to ensure token is saved before navigation
+        setTimeout(() => {
+          navigateToRole(user.role_name);
+        }, 100); // 100 ms delay to ensure the token is set
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -93,6 +68,31 @@ export default function Login() {
       setError('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false); // Stop loading
+    }
+  };
+
+  const navigateToRole = (role) => {
+    switch (role) {
+      case 'admin':
+        navigate('/admin');
+        break;
+      case 'sales':
+        navigate('/sales-executive');
+        break;
+      case 'accounts':
+        navigate('/accounts');
+        break;
+      case 'rto':
+        navigate('/rto');
+        break;
+      case 'manager':
+        navigate('/manager');
+        break;
+      case 'stock_person':
+        navigate('/stock');
+        break;
+      default:
+        setError('Unknown role.');
     }
   };
 
@@ -139,25 +139,6 @@ export default function Login() {
                 autoFocus
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#1f2933',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: '#aaa',
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#555',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#888',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#1db954',
-                    },
-                  },
-                }}
               />
               <TextField
                 margin="normal"
@@ -170,31 +151,11 @@ export default function Login() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#1f2933',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: '#aaa',
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#555',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#888',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#1db954',
-                    },
-                  },
-                }}
               />
               {error && <Typography color="error">{error}</Typography>}
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
-                sx={{ color: '#aaa' }}
               />
               <Button
                 type="submit"
