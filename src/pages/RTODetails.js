@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect,useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Grid, Avatar, Divider, Button, CircularProgress, Snackbar, Alert, Dialog, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
@@ -10,7 +10,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
+import { 
+          
+  DialogTitle, DialogContent, DialogActions, TextField
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+
+
 import '../styles/RTODetails.css';
+
+
 
 const RTODetails = () => {
   const { customerId } = useParams();
@@ -54,11 +63,181 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   const [chassisImageUrl, setChassisImageUrl] = useState('');
   const [chassisError, setChassisError] = useState('');
   const [loadingChassisImage, setLoadingChassisImage] = useState(false);
-  
+   // Add new state variables for edit functionality
+   const [openEditDialog, setOpenEditDialog] = useState(false);
+   const [editFormData, setEditFormData] = useState({
+     first_name: '',
+     last_name: '',
+     phone_number: '',
+     address: '',
+     vehicle_number: ''
+   });
+   const [editLoading, setEditLoading] = useState(false);
+   const [editError, setEditError] = useState(null);
+   const [editSuccess, setEditSuccess] = useState(false);
   
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (customer) {
+      setEditFormData({
+        first_name: customer.first_name || '',
+        last_name: customer.last_name || '',
+        phone_number: customer.phone_number || '',
+        address: customer.address || '',
+        vehicle_number: customer.vehicle_number || ''
+      });
+    }
+  }, [customer]);
+
+  const handleEditClick = () => {
+    setOpenEditDialog(true);
+  };
+
+  const handleEditClose = () => {
+    setOpenEditDialog(false);
+    setEditError(null);
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const formatCurrency = (amount) => {
+    return amount ? `₹${amount.toLocaleString()}` : 'N/A';
+  };
+
+  const renderStatusIcon = (status) => (
+    status ? <VerifiedIcon color="success" /> : <ErrorOutlineIcon color="error" />
+  );
+  const handleEditSubmit = async () => {
+    setEditLoading(true);
+    setEditError(null);
+
+    try {
+      const formData = new URLSearchParams();
+      Object.entries(editFormData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const response = await axios.put(
+        `https://api.tophaventvs.com:8000/rto/customers/${customerId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setEditSuccess(true);
+        // Update the local customer state with new data
+        setCustomer(prev => ({
+          ...prev,
+          ...editFormData
+        }));
+        handleEditClose();
+        
+        // Refresh the customer data
+        const updatedCustomerResponse = await axios.get(
+          `https://api.tophaventvs.com:8000/rto/${customerId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+        );
+        setCustomer(updatedCustomerResponse.data);
+      }
+    } catch (error) {
+      setEditError(error.response?.data?.detail || 'Failed to update customer details');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+  const EditDialog = () => (
+    <Dialog open={openEditDialog} onClose={handleEditClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        Edit Customer Details
+        <IconButton
+          aria-label="close"
+          onClick={handleEditClose}
+          sx={{ position: 'absolute', right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="first_name"
+              label="First Name"
+              fullWidth
+              value={editFormData.first_name}
+              onChange={handleEditInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="last_name"
+              label="Last Name"
+              fullWidth
+              value={editFormData.last_name}
+              onChange={handleEditInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="phone_number"
+              label="Phone Number"
+              fullWidth
+              value={editFormData.phone_number}
+              onChange={handleEditInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="address"
+              label="Address"
+              fullWidth
+              multiline
+              rows={2}
+              value={editFormData.address}
+              onChange={handleEditInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="vehicle_number"
+              label="Vehicle Number"
+              fullWidth
+              value={editFormData.vehicle_number}
+              onChange={handleEditInputChange}
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleEditClose}>Cancel</Button>
+        <Button 
+          onClick={handleEditSubmit} 
+          variant="contained" 
+          color="primary"
+          disabled={editLoading}
+        >
+          {editLoading ? <CircularProgress size={24} /> : 'Save Changes'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   
   useEffect(() => {
@@ -368,151 +547,292 @@ const handleDownloadImages = async () => {
   const statusIcon = (status) => (
     status ? <VerifiedIcon color="success" /> : <ErrorOutlineIcon color="error" />
   );
+  
 
   return (
     <div className="rto-details-container">
-      <Card className="rto-card" variant="outlined">
-        <CardContent>
-          <Typography variant="h4" gutterBottom>
-            Customer Details
-          </Typography>
-          <Divider />
 
-          {customer && (
-            <Grid container spacing={2} className="customer-details-grid">
-              {/* Customer Details */}
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6"><PersonIcon /> {customer.first_name} {customer.last_name}</Typography>
-                <Typography><PhoneIcon /> {customer.phone_number}</Typography>
-                <Typography><strong>Address:</strong> {customer.address}, {customer.pin_code}</Typography>
-                <Typography><strong>Date of Birth:</strong> {customer.dob}</Typography>
-                <Typography><strong>Nominee:</strong> {customer.nominee} ({customer.relation})</Typography>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6"><DirectionsCarIcon /> {customer.vehicle_name} - {customer.vehicle_variant}</Typography>
-                <Typography><strong>Color:</strong> {customer.vehicle_color}</Typography>
-                <Typography><strong>Ex-showroom Price:</strong> ₹{customer.ex_showroom_price}</Typography>
-                <Typography><strong>Tax:</strong> ₹{customer.tax}</Typography>
-                <Typography><strong>Status:</strong> {customer.status}</Typography>
-              </Grid>
-
-              {/* Verification Status */}
-              <Grid item xs={12}>
-                <Typography variant="h6">Verification Status</Typography>
-                <Typography><strong>Sales Verified:</strong> {statusIcon(customer.sales_verified)}</Typography>
-                <Typography><strong>Accounts Verified:</strong> {statusIcon(customer.accounts_verified)}</Typography>
-                <Typography><strong>RTO Verified:</strong> {statusIcon(customer.rto_verified)}</Typography>
-              </Grid>
-
-              {/* Image Preview */}
-              <Grid item xs={12}>
-  <Typography variant="h6">Images</Typography>
-  <Grid container spacing={2}>
-    <Grid item xs={4}>
-      <Avatar variant="rounded" src={customer.photo_adhaar_combined} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_adhaar_combined)} />
-    </Grid>
-    <Grid item xs={4}>
-      <Avatar variant="rounded" src={customer.photo_passport} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_passport)} />
-    </Grid>
-    <Grid item xs={4}>
-      <Avatar variant="rounded" src={customer.customer_sign} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign)} />
-    </Grid>
-    {/* New Image for customer_sign_copy */}
-    <Grid item xs={4}>
-      <Avatar variant="rounded" src={customer.customer_sign_copy} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign_copy)} />
-    </Grid>
-  </Grid>
-</Grid>
-            </Grid>
-          )}
-        </CardContent>
-        <Button onClick={handleVerifyCustomer} variant="contained" color="primary" disabled={submitting}>
-          {submitting ? <CircularProgress size={24} /> : 'Verify Customer'}
-        </Button>
-        <Button onClick={handleDownloadImages} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
-          Download Images
-        </Button>
-
-        <Snackbar open={submissionSuccess} autoHideDuration={6000} onClose={() => setSubmissionSuccess(false)}>
-          <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
-            Customer verified successfully!
-          </Alert>
-        </Snackbar>
-
-        <Snackbar open={Boolean(submissionError)} autoHideDuration={6000} onClose={() => setSubmissionError(null)}>
-          <Alert onClose={() => setSubmissionError(null)} severity="error">
-            {submissionError}
-          </Alert>
-        </Snackbar>
-
-        {/* Image Dialog */}
-        {openImage && (
-          <Dialog open={Boolean(openImage)} onClose={handleCloseImage}>
-            <IconButton onClick={handleCloseImage} sx={{ position: 'absolute', right: 8, top: 8 }} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-            <img src={openImage} alt="Document" style={{ width: '100%', height: 'auto' }} />
-          </Dialog>
-        )}
-      </Card>
-      <Card className="chassis-search-card" variant="outlined" style={{ marginTop: '20px' }}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Chassis Image Search
-          </Typography>
-          <Divider />
+  <Card className="rto-card" variant="outlined">
+    <CardContent>
+      <Typography variant="h4" gutterBottom>
+        Customer Details
+        <Button
+              startIcon={<EditIcon />}
+              variant="outlined"
+              color="primary"
+              onClick={handleEditClick}
+              sx={{ ml: 2 }}
+            >
+              Edit Details
+            </Button>
+      </Typography>
+      <Divider />
+      <EditDialog />
+      <Snackbar 
+            open={editSuccess} 
+            autoHideDuration={6000} 
+            onClose={() => setEditSuccess(false)}
+          >
+            <Alert severity="success" onClose={() => setEditSuccess(false)}>
+              Customer details updated successfully!
+            </Alert>
+          </Snackbar>
           
-          <Grid container spacing={2} alignItems="center" style={{ marginTop: '10px' }}>
-            <Grid item xs={12} sm={6}>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <input
-                  type="text"
-                  placeholder="Enter Chassis Number"
-                  value={chassisSearchNumber}
-                  onChange={(e) => setChassisSearchNumber(e.target.value)}
-                  style={{
-                    padding: '8px',
-                    borderRadius: '4px',
-                    border: '1px solid #ccc',
-                    flexGrow: 1
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleChassisSearch}
-                  disabled={loadingChassisImage}
-                >
-                  {loadingChassisImage ? <CircularProgress size={24} /> : 'Search'}
-                </Button>
-              </div>
-              {chassisError && (
-                <Typography color="error" style={{ marginTop: '8px' }}>
-                  {chassisError}
-                </Typography>
-              )}
-            </Grid>
-            
-            {chassisImageUrl && (
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>
-                  Chassis Image:
-                </Typography>
-                <img
-                  src={chassisImageUrl}
-                  alt="Chassis"
-                  style={{
-                    maxWidth: '100%',
-                    height: 'auto',
-                    borderRadius: '4px'
-                  }}
+          <Snackbar 
+            open={Boolean(editError)} 
+            autoHideDuration={6000} 
+            onClose={() => setEditError(null)}
+          >
+            <Alert severity="error" onClose={() => setEditError(null)}>
+              {editError}
+            </Alert>
+          </Snackbar>
+
+      {customer && (
+        <Grid container spacing={2} className="customer-details-grid">
+          {/* Customer Details */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6">
+              <PersonIcon /> {customer.first_name} {customer.last_name}
+            </Typography>
+            <Typography>
+              <PhoneIcon /> {customer.phone_number}
+            </Typography>
+            <Typography>
+              <strong>Alternate Phone:</strong> {customer.alternate_phone_number}
+            </Typography>
+            <Typography>
+              <strong>Address:</strong> {customer.address}, {customer.pin_code}
+            </Typography>
+            <Typography>
+              <strong>Date of Birth:</strong> {customer.dob}
+            </Typography>
+            <Typography>
+              <strong>Nominee:</strong> {customer.nominee} ({customer.relation})
+            </Typography>
+            <Typography>
+              <strong>Branch ID:</strong> {customer.branch_id}
+            </Typography>
+          </Grid>
+
+          {/* Vehicle Details */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6">
+              <DirectionsCarIcon /> {customer.vehicle_name} - {customer.vehicle_variant}
+            </Typography>
+            <Typography>
+              <strong>Color:</strong> {customer.vehicle_color}
+            </Typography>
+            <Typography>
+              <strong>Ex-showroom Price:</strong> ₹{customer.ex_showroom_price}
+            </Typography>
+            <Typography>
+              <strong>Tax:</strong> ₹{customer.tax}
+            </Typography>
+            <Typography>
+              <strong>Insurance:</strong> ₹{customer.insurance}
+            </Typography>
+            <Typography>
+              <strong>TP Registration:</strong> ₹{customer.tp_registration}
+            </Typography>
+            <Typography>
+              <strong>Mandatory Accessories:</strong> ₹{customer.man_accessories}
+            </Typography>
+            <Typography>
+              <strong>Optional Accessories:</strong> ₹{customer.optional_accessories}
+            </Typography>
+            <Typography>
+              <strong>Amount Paid:</strong> ₹{customer.amount_paid}
+            </Typography>
+            <Typography>
+              <strong>Balance Amount:</strong> ₹{customer.balance_amount}
+            </Typography>
+            <Typography>
+              <strong>Total Price:</strong> ₹{customer.total_price}
+            </Typography>
+            <Typography>
+              <strong>Status:</strong> {customer.status}
+            </Typography>
+          </Grid>
+
+          {/* Verification Status */}
+          <Grid item xs={12}>
+            <Typography variant="h6">Verification Status</Typography>
+            <Typography>
+              <strong>Sales Verified:</strong> {statusIcon(customer.sales_verified)}
+            </Typography>
+            <Typography>
+              <strong>Accounts Verified:</strong> {statusIcon(customer.accounts_verified)}
+            </Typography>
+            <Typography>
+              <strong>RTO Verified:</strong> {statusIcon(customer.rto_verified)}
+            </Typography>
+          </Grid>
+
+          {/* Image Preview */}
+          <Grid item xs={12}>
+            <Typography variant="h6">Images</Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <p>Adhar combined</p>
+                <Avatar
+                  
+                  variant="rounded"
+                  src={customer.photo_adhaar_combined}
+                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
+                  onClick={() => handleImageClick(customer.photo_adhaar_combined)}
                 />
               </Grid>
+              <Grid item xs={4}>
+              <p>Passport  size</p>
+
+                <Avatar
+                  variant="rounded"
+                  src={customer.photo_passport}
+                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
+                  onClick={() => handleImageClick(customer.photo_passport)}
+                />
+              </Grid>
+              <Grid item xs={4}>
+              <p>Sign bg removed</p>
+
+                <Avatar
+                
+                  variant="rounded"
+                  src={customer.customer_sign}
+                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
+                  onClick={() => handleImageClick(customer.customer_sign)}
+                />
+              </Grid>
+              {/* New Image for customer_sign_copy */}
+              <Grid item xs={4}>
+              <p>Sign stock</p>
+
+                <Avatar
+                  variant="rounded"
+                  src={customer.customer_sign_copy}
+                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
+                  onClick={() => handleImageClick(customer.customer_sign_copy)}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* Registration & Delivery Details */}
+          <Grid item xs={12}>
+            <Typography variant="h6">Registration Details</Typography>
+            <Typography>
+              <strong>Registered:</strong> {customer.registered ? 'Yes' : 'No'}
+            </Typography>
+            <Typography>
+              <strong>Vehicle Number:</strong> {customer.vehicle_number || 'Not Assigned'}
+            </Typography>
+          </Grid>
+
+          {/* Delivery Photo */}
+          <Grid item xs={12}>
+            <Typography variant="h6">Delivery Photo</Typography>
+            {customer.delivery_photo ? (
+              <Avatar
+                variant="rounded"
+                src={customer.delivery_photo}
+                sx={{ width: 150, height: 150, cursor: 'pointer' }}
+                onClick={() => handleImageClick(customer.delivery_photo)}
+              />
+            ) : (
+              <Typography>No Delivery Photo</Typography>
             )}
           </Grid>
-        </CardContent>
-      </Card>
+        </Grid>
+      )}
+    </CardContent>
+    <Button onClick={handleVerifyCustomer} variant="contained" color="primary" disabled={submitting}>
+      {submitting ? <CircularProgress size={24} /> : 'Verify Customer'}
+    </Button>
+    <Button onClick={handleDownloadImages} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
+      Download Images
+    </Button>
+
+    <Snackbar open={submissionSuccess} autoHideDuration={6000} onClose={() => setSubmissionSuccess(false)}>
+      <Alert onClose={() => setSubmissionSuccess(false)} severity="success">
+        Customer verified successfully!
+      </Alert>
+    </Snackbar>
+
+    <Snackbar open={Boolean(submissionError)} autoHideDuration={6000} onClose={() => setSubmissionError(null)}>
+      <Alert onClose={() => setSubmissionError(null)} severity="error">
+        {submissionError}
+      </Alert>
+    </Snackbar>
+
+    {/* Image Dialog */}
+    {openImage && (
+      <Dialog open={Boolean(openImage)} onClose={handleCloseImage}>
+        <IconButton onClick={handleCloseImage} sx={{ position: 'absolute', right: 8, top: 8 }} aria-label="close">
+          <CloseIcon />
+        </IconButton>
+        <img src={openImage} alt="Document" style={{ width: '100%', height: 'auto' }} />
+      </Dialog>
+    )}
+  </Card>
+
+  {/* Chassis Image Search */}
+  <Card className="chassis-search-card" variant="outlined" style={{ marginTop: '20px' }}>
+    <CardContent>
+      <Typography variant="h5" gutterBottom>
+        Chassis Image Search
+      </Typography>
+      <Divider />
+      <Grid container spacing={2} alignItems="center" style={{ marginTop: '10px' }}>
+        <Grid item xs={12} sm={6}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Enter Chassis Number"
+              value={chassisSearchNumber}
+              onChange={(e) => setChassisSearchNumber(e.target.value)}
+              style={{
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                flexGrow: 1,
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleChassisSearch}
+              disabled={loadingChassisImage}
+            >
+              {loadingChassisImage ? <CircularProgress size={24} /> : 'Search'}
+            </Button>
+          </div>
+          {chassisError && (
+            <Typography color="error" style={{ marginTop: '8px' }}>
+              {chassisError}
+            </Typography>
+          )}
+        </Grid>
+
+        {chassisImageUrl && (
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom>
+              Chassis Image:
+            </Typography>
+            <img
+              src={chassisImageUrl}
+              alt="Chassis"
+              style={{
+                maxWidth: '100%',
+                height: 'auto',
+                borderRadius: '4px',
+              }}
+            />
+          </Grid>
+        )}
+      </Grid>
+    </CardContent>
+  </Card>
 
       {/* PDF Editor */}
      {/* PDF Editor */}
