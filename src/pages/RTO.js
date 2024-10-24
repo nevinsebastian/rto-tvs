@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/RTO.css'; // Updated styles
 
 const RTO = () => {
-  const [customers, setCustomers] = useState([]);
+  const [pendingCustomers, setPendingCustomers] = useState([]);
+  const [verifiedCustomers, setVerifiedCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('pending'); // Default active tab
@@ -16,7 +17,8 @@ const RTO = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch('https://api.tophaventvs.com:8000/rto/customer-list', {
+      // Fetch Pending Customers
+      fetch('https://api.tophaventvs.com:8000/rto/pending-customers', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -29,12 +31,33 @@ const RTO = () => {
           return response.json();
         })
         .then((data) => {
-          setCustomers(data);
-          setLoading(false);
+          setPendingCustomers(data);
         })
         .catch((error) => {
           setError(error.message);
-          setLoading(false);
+        });
+
+      // Fetch Verified Customers
+      fetch('https://api.tophaventvs.com:8000/rto/verified-customers', {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setVerifiedCustomers(data);
+        })
+        .catch((error) => {
+          setError(error.message);
+        })
+        .finally(() => {
+          setLoading(false); // Set loading to false after both requests
         });
     }
   }, [token, navigate]);
@@ -48,10 +71,6 @@ const RTO = () => {
   const handleCustomerClick = (customerId) => {
     navigate(`/rto/${customerId}`); // Navigate to RTODetails screen with the customer ID
   };
-
-  // Filter customers based on RTO verification status
-  const pendingCustomers = customers.filter((customer) => customer.rto_verified === false);
-  const verifiedCustomers = customers.filter((customer) => customer.rto_verified === true);
 
   return (
     <div className="rto-container">
