@@ -222,8 +222,6 @@ const CustomerDetails = () => {
       </div>
     );
   };
-
-  // Adding the link rendering
   const renderCustomerLink = () => {
     if (customerData.link) {
       return (
@@ -257,46 +255,61 @@ const CustomerDetails = () => {
           {renderField('Branch ID', 'branch_id')}
         </div>
       </div>
-
-      {/* Render customer form link */}
       {renderCustomerLink()}
+
 
       <div className="customer-section">
         <div className="section-title"><FaCar /> Vehicle Information</div>
         <div className="details-grid">
           {renderField('Vehicle Name', 'vehicle_name')}
-          {renderField('Vehicle Variant', 'vehicle_variant')}
-          {renderField('Vehicle Color', 'vehicle_color')}
-          {renderField('Ex-showroom Price', 'ex_showroom_price')}
-          {renderField('Tax', 'tax')}
-          {renderField('Amount Paid', 'amount_paid')}
-          {renderField('Balance Amount', 'balance_amount')}
+          {renderField('Variant', 'vehicle_variant')}
+          {renderField('Color', 'vehicle_color')}
+          {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
+          {renderField('Tax', 'tax', 'number')}
+          {renderField('Amount Paid', 'amount_paid', 'number')}
+          {renderField('Balance Amount', 'balance_amount', 'number')}
+          {renderField('Optional Accessories', 'optional_accessories', 'number')}
+          {renderField('Man Accessories', 'man_accessories', 'number')}
+          {renderField('TP Registration', 'tp_registration', 'number')}
+          {renderField('Insurance', 'insurance', 'number')}
+          {renderField('Vehicle Number', 'vehicle_number')}
+        </div>
+      </div>
+
+      <div className="customer-section">
+        <div className="section-title"><FaIdCard /> Documents</div>
+        <div className="details-grid">
+          {renderField('Aadhaar Combined', 'photo_adhaar_combined')}
+          {renderField('Passport Photo', 'photo_passport')}
+          {renderField('Customer Signature', 'customer_sign')}
         </div>
       </div>
 
       {renderDeliveryPhotoUpload()}
 
-      <div className="customer-section">
-        <div className="section-title"><FaIdCard /> Verification Status</div>
-        {renderVerificationStatus('Sales Verified', 'sales_verified')}
-        {renderVerificationStatus('Accounts Verified', 'accounts_verified')}
-        {renderVerificationStatus('RTO Verified', 'rto_verified')}
+      <div className="button-group">
+        {editMode ? (
+          <>
+            <button className="save-button" onClick={handleSaveClick}>
+              <FaSave /> Save
+            </button>
+            <button className="cancel-button" onClick={handleCancelClick}>
+              <FaTimes /> Cancel
+            </button>
+          </>
+        ) : (
+          <button className="edit-button" onClick={handleEditClick}>
+            <FaEdit /> Edit
+          </button>
+        )}
       </div>
 
-      {editMode ? (
-        <div className="action-buttons">
-          <button onClick={handleSaveClick}><FaSave /> Save</button>
-          <button onClick={handleCancelClick}><FaTimes /> Cancel</button>
-        </div>
-      ) : (
-        <button onClick={handleEditClick}><FaEdit /> Edit</button>
-      )}
-
-      {!customerData.sales_verified && (
+      <div className="verify-container">
+        {renderVerificationStatus('Sales Verification', 'sales_verified')}
         <button className="verify-button" onClick={handleVerifyClick}>
-          <FaCheckCircle /> Swipe to Verify
+          <FaCheckCircle /> Verify Sales
         </button>
-      )}
+      </div>
     </div>
   );
 };
