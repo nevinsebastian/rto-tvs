@@ -170,6 +170,7 @@ const CustomerForm = () => {
               required
               className="form-input"
             />
+            <h3>Date of birth</h3>
             <input
               type="date"
               name="dob"

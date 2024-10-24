@@ -129,7 +129,10 @@ const CustomerDetails = () => {
 
   const renderField = (label, field, type = 'text') => {
     const isImageField = field.startsWith('photo_') || field === 'customer_sign';
-
+    
+    
+    
+    
     return (
       <div className="field-container">
         <strong>{label}:</strong>
@@ -156,26 +159,53 @@ const CustomerDetails = () => {
       </div>
     );
   };
+  
 
   const renderDeliveryPhotoUpload = () => {
-    if (customerData && customerData.registered) {
-      return (
-        <div className="field-container">
-          <strong>Delivery Photo:</strong>
-          {editMode ? (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])}
-            />
-          ) : (
+    return (
+      <div className="field-container">
+        <strong>Delivery Photo:</strong>
+        {editMode ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])}
+          />
+        ) : (
+          customerData.delivery_photo && (
             <img src={customerData.delivery_photo} alt="Delivery" className="document-image" />
-          )}
-        </div>
-      );
-    }
-    return null;
+          )
+        )}
+  
+        <strong>Number Plate Front:</strong>
+        {editMode ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange('number_plate_front', e.target.files[0])}
+          />
+        ) : (
+          customerData.number_plate_front && (
+            <img src={customerData.number_plate_front} alt="Number Plate Front" className="document-image" />
+          )
+        )}
+  
+        <strong>Number Plate Back:</strong>
+        {editMode ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange('number_plate_back', e.target.files[0])}
+          />
+        ) : (
+          customerData.number_plate_back && (
+            <img src={customerData.number_plate_back} alt="Number Plate Back" className="document-image" />
+          )
+        )}
+      </div>
+    );
   };
+  
 
   const renderStatusAlert = () => {
     const { status, sales_verified } = customerData;
