@@ -50,11 +50,17 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
   const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
   
+  const [chassisSearchNumber, setChassisSearchNumber] = useState('');
+  const [chassisImageUrl, setChassisImageUrl] = useState('');
+  const [chassisError, setChassisError] = useState('');
+  const [loadingChassisImage, setLoadingChassisImage] = useState(false);
   
   
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
+
+  
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -88,6 +94,34 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
 
   const handleCloseImage = () => {
     setOpenImage(null);
+  };
+  const handleChassisSearch = async () => {
+    if (!chassisSearchNumber) {
+      setChassisError('Please enter a chassis number.');
+      return;
+    }
+
+    setLoadingChassisImage(true);
+    setChassisError('');
+
+    try {
+      const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisSearchNumber}`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setChassisImageUrl(response.data.image_url);
+        setChasisNumberPic(response.data.image_url); // Automatically set the chassis image for the inspection letter
+      }
+    } catch (err) {
+      setChassisError('Error: ' + (err.response?.data?.detail || 'Failed to fetch chassis image'));
+      setChassisImageUrl('');
+    } finally {
+      setLoadingChassisImage(false);
+    }
   };
 
   // PDF Editor Functions
@@ -421,6 +455,63 @@ const handleDownloadImages = async () => {
             <img src={openImage} alt="Document" style={{ width: '100%', height: 'auto' }} />
           </Dialog>
         )}
+      </Card>
+      <Card className="chassis-search-card" variant="outlined" style={{ marginTop: '20px' }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Chassis Image Search
+          </Typography>
+          <Divider />
+          
+          <Grid container spacing={2} alignItems="center" style={{ marginTop: '10px' }}>
+            <Grid item xs={12} sm={6}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Enter Chassis Number"
+                  value={chassisSearchNumber}
+                  onChange={(e) => setChassisSearchNumber(e.target.value)}
+                  style={{
+                    padding: '8px',
+                    borderRadius: '4px',
+                    border: '1px solid #ccc',
+                    flexGrow: 1
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleChassisSearch}
+                  disabled={loadingChassisImage}
+                >
+                  {loadingChassisImage ? <CircularProgress size={24} /> : 'Search'}
+                </Button>
+              </div>
+              {chassisError && (
+                <Typography color="error" style={{ marginTop: '8px' }}>
+                  {chassisError}
+                </Typography>
+              )}
+            </Grid>
+            
+            {chassisImageUrl && (
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                  Chassis Image:
+                </Typography>
+                <img
+                  src={chassisImageUrl}
+                  alt="Chassis"
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    borderRadius: '4px'
+                  }}
+                />
+              </Grid>
+            )}
+          </Grid>
+        </CardContent>
       </Card>
 
       {/* PDF Editor */}
