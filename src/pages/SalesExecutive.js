@@ -166,37 +166,47 @@ const SalesExecutive = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/sales/create-customer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setGeneratedLink(data.customer_link);
-        fetchCustomers();
-        toast.success("Customer created successfully!", {
-          position: "top-right",
-          autoClose: 3000,
+        const response = await fetch('https://api.tophaventvs.com:8000/sales/create-customer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
         });
-      } else {
-        toast.error(data.message || "Failed to create customer. Try again.", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      }
+
+        const data = await response.json();
+
+        if (response.ok) {
+            setGeneratedLink(data.customer_link);
+            fetchCustomers();
+            toast.success("Customer created successfully!", {
+                position: "top-center",  // Positioning to the top-center
+                className: 'toast-center-mobile',  // Custom class for mobile
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } else {
+            toast.error(data.message || "Failed to create customer. Try again.", {
+                position: "top-center",
+                className: 'toast-center-mobile',
+                autoClose: 3000,
+                hideProgressBar: true,
+            });
+        }
     } catch (error) {
-      toast.error("An error occurred. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+        toast.error("An error occurred. Please try again.", {
+            position: "top-center",
+            className: 'toast-center-mobile',
+            autoClose: 3000,
+            hideProgressBar: true,
+        });
     }
-  };
+};
+
 
   const handleCustomerClick = (customerId) => {
     navigate(`/customer-details/${customerId}`);
