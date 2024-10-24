@@ -244,8 +244,8 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
         {customerLink && (
           <div className="customer-link" style={{ textAlign: 'center', marginTop: '20px' }}>
             <p>Customer Created! View here: <a href={customerLink} target="_blank" rel="noopener noreferrer">{customerLink}</a></p>
-            <button onClick={copyToClipboard} className="copy-button">Copy Link</button>
-            <button onClick={shareOnWhatsApp} className="whatsapp-button">
+            <button type='button' onClick={copyToClipboard} className="copy-button">Copy Link</button>
+            <button type='button' onClick={shareOnWhatsApp} className="whatsapp-button">
               <FaWhatsapp /> Share on WhatsApp
             </button>
           </div>
