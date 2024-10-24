@@ -286,6 +286,8 @@ const handleDownloadImages = async () => {
         { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
         { name: 'passport.jpg', url: customer.photo_passport },
         { name: 'customer_signature.png', url: customer.customer_sign },
+        { name: 'customer_signature_copy.png', url: customer.customer_sign_copy }, // New entry
+
     ];
 
     try {
@@ -362,19 +364,23 @@ const handleDownloadImages = async () => {
 
               {/* Image Preview */}
               <Grid item xs={12}>
-                <Typography variant="h6">Images</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={4}>
-                    <Avatar variant="rounded" src={customer.photo_adhaar_combined} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_adhaar_combined)} />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Avatar variant="rounded" src={customer.photo_passport} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_passport)} />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Avatar variant="rounded" src={customer.customer_sign} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign)} />
-                  </Grid>
-                </Grid>
-              </Grid>
+  <Typography variant="h6">Images</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={4}>
+      <Avatar variant="rounded" src={customer.photo_adhaar_combined} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_adhaar_combined)} />
+    </Grid>
+    <Grid item xs={4}>
+      <Avatar variant="rounded" src={customer.photo_passport} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.photo_passport)} />
+    </Grid>
+    <Grid item xs={4}>
+      <Avatar variant="rounded" src={customer.customer_sign} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign)} />
+    </Grid>
+    {/* New Image for customer_sign_copy */}
+    <Grid item xs={4}>
+      <Avatar variant="rounded" src={customer.customer_sign_copy} sx={{ width: 150, height: 150, cursor: 'pointer' }} onClick={() => handleImageClick(customer.customer_sign_copy)} />
+    </Grid>
+  </Grid>
+</Grid>
             </Grid>
           )}
         </CardContent>
