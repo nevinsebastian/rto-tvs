@@ -22,6 +22,12 @@ const RTODetails = () => {
   const [submissionError, setSubmissionError] = useState(null);
   const [openImage, setOpenImage] = useState(null);
 
+const [customerName, setCustomerName] = useState('');
+const [chassisNumber, setChassisNumber] = useState('');
+const [date, setDate] = useState('');
+const [helmetCertPDF, setHelmetCertPDF] = useState(null);
+const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
+
   // PDF Editor State
   const [form21Pdf, setForm21Pdf] = useState(null);
   const [form20Pdf, setForm20Pdf] = useState(null);
@@ -42,8 +48,8 @@ const RTODetails = () => {
   const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
   const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
-  const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
+  
   
   
   const token = localStorage.getItem('token');
@@ -152,19 +158,22 @@ const handleDisclaimerSubmit = async () => {
 };
 
 const handleHelmetCertSubmit = async () => {
-  if (!helmetCertPdf || !helmetCertSignature) return;
-
   const formData = new FormData();
-  formData.append('pdf', helmetCertPdf);
-  formData.append('signature', helmetCertSignature);
+  formData.append('customer_name', customerName);
+  formData.append('chasis_number', chassisNumber);
+  formData.append('date', date);
+  formData.append('pdf', helmetCertPDF);
+  formData.append('signature', signature);
 
   try {
-    const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/helmetcert', formData, {
-      responseType: 'blob',
+    const response = await fetch('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', {
+      method: 'POST',
+      body: formData,
     });
-    setProcessedHelmetCert(URL.createObjectURL(response.data));
+    const data = await response.json();
+    setProcessedHelmetCert(data); // Assuming the response contains the link to the processed PDF
   } catch (error) {
-    console.error('Error processing helmet certificate:', error);
+    console.error('Error submitting helmet certification:', error);
   }
 };
 
@@ -415,66 +424,104 @@ const handleDownloadImages = async () => {
       </Card>
 
       {/* PDF Editor */}
-      <Card className="pdf-editor-card" variant="outlined">
-        <CardContent>
-          <Typography variant="h5">PDF Editor</Typography>
-          <Divider />
+     {/* PDF Editor */}
+<Card className="pdf-editor-card" variant="outlined">
+  <CardContent>
+    <Typography variant="h5">PDF Editor</Typography>
+    <Divider />
 
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Typography>Upload Form 21 PDF:</Typography>
-              <input type="file" accept="application/pdf" onChange={handleForm21Change} />
-              <Button onClick={handleForm21Submit} variant="contained" color="primary">Submit Form 21</Button>
-              {processedForm21 && <a href={processedForm21} target="_blank" rel="noopener noreferrer">Download Processed Form 21</a>}
-            </Grid>
+    <Grid container spacing={2}>
 
-            <Grid item xs={12} md={6}>
-              <Typography>Upload Form 20 PDF:</Typography>
-              <input type="file" accept="application/pdf" onChange={handleForm20Change} />
-              <input type="file" accept="image/*" onChange={handleSignatureChange} />
-              <select value={financeCompany} onChange={handleFinanceCompanyChange}>
-                <option value="idfc">IDFC</option>
-                <option value="hdfc">HDFC</option>
-                <option value="other">Other</option>
-              </select>
-              <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
-              {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
-            </Grid>
+      {/* Form 21 Section */}
+      <Grid item xs={12} className='form-item'>
+        <Typography>Upload Form 21 PDF:</Typography>
+        <input type="file" accept="application/pdf" onChange={handleForm21Change} />
+        <Button onClick={handleForm21Submit} variant="contained" color="primary">Submit Form 21</Button>
+        {processedForm21 && <a href={processedForm21} target="_blank" rel="noopener noreferrer">Download Processed Form 21</a>}
+      </Grid>
 
-            <Grid item xs={12}>
-              <Typography>Upload Invoice PDF:</Typography>
-              <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
-              <input type="file" accept="image/*" onChange={handleBuyerSignatureChange} />
-              <Button onClick={handleInvoiceSubmit} variant="contained" color="primary">Submit Invoice</Button>
-              {processedInvoice && <a href={processedInvoice} target="_blank" rel="noopener noreferrer">Download Processed Invoice</a>}
-            </Grid>
-            <Grid item xs={12} md={6}>
-  <Typography>Upload Disclaimer PDF:</Typography>
-  <input type="file" accept="application/pdf" onChange={handleDisclaimerChange} />
-  <input type="file" accept="image/*" onChange={handleDisclaimerSignatureChange} />
-  <Button onClick={handleDisclaimerSubmit} variant="contained" color="primary">Submit Disclaimer</Button>
-  {processedDisclaimer && <a href={processedDisclaimer} target="_blank" rel="noopener noreferrer">Download Processed Disclaimer</a>}
-</Grid>
+      {/* Form 20 Section */}
+      <Grid item xs={12} className='form-item'>
+        <Typography>Upload Form 20 PDF:</Typography>
+        <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+        <Typography>Upload Signature:</Typography>
+        <input type="file" accept="image/*" onChange={handleSignatureChange} />
+        <Typography>Finance Company:</Typography>
+        <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+          <option value="idfc">IDFC</option>
+          <option value="hdfc">HDFC</option>
+          <option value="tvscredit">tvscredit</option>
+          <option value="sreeramcheng">sreeramcheng</option>
+          <option value="tatacap">tatacap</option>
+          <option value="hdb">hdb</option>
+          <option value="indus">indus</option>
+          <option value="kotak">kotak</option>
+          <option value="sreeramalp">sreeramalp</option>
+          <option value="bajajalp">bajajalp</option>
 
-<Grid item xs={12} md={6}>
+
+        </select>
+        <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
+        {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
+      </Grid>
+
+      {/* Invoice Section */}
+      <Grid item xs={12} className='form-item'>
+        <Typography>Upload Invoice PDF:</Typography>
+        <input type="file" accept="application/pdf" onChange={handleInvoiceChange} />
+        <Typography>Upload Buyer Signature:</Typography>
+        <input type="file" accept="image/*" onChange={handleBuyerSignatureChange} />
+        <Button onClick={handleInvoiceSubmit} variant="contained" color="primary">Submit Invoice</Button>
+        {processedInvoice && <a href={processedInvoice} target="_blank" rel="noopener noreferrer">Download Processed Invoice</a>}
+      </Grid>
+
+      {/* Disclaimer Section */}
+      <Grid item xs={12} className='form-item'>
+        <Typography>Upload Disclaimer PDF:</Typography>
+        <input type="file" accept="application/pdf" onChange={handleDisclaimerChange} />
+        <Typography>Upload Disclaimer Signature:</Typography>
+        <input type="file" accept="image/*" onChange={handleDisclaimerSignatureChange} />
+        <Button onClick={handleDisclaimerSubmit} variant="contained" color="primary">Submit Disclaimer</Button>
+        {processedDisclaimer && <a href={processedDisclaimer} target="_blank" rel="noopener noreferrer">Download Processed Disclaimer</a>}
+      </Grid>
+
+      {/* Helmet Certification Section */}
+      <Grid item xs={12} className="form-item">
   <Typography>Upload Helmet Certificate PDF:</Typography>
   <input type="file" accept="application/pdf" onChange={handleHelmetCertChange} />
+  
+  <Typography>Customer Name:</Typography>
+  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+  
+  <Typography>Chassis Number:</Typography>
+  <input type="text" value={chassisNumber} onChange={(e) => setChassisNumber(e.target.value)} />
+  
+  <Typography>Date:</Typography>
+  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+  
+  <Typography>Upload Helmet Certification Signature:</Typography>
   <input type="file" accept="image/*" onChange={handleHelmetCertSignatureChange} />
-  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certificate</Button>
+  
+  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certification</Button>
+  
   {processedHelmetCert && <a href={processedHelmetCert} target="_blank" rel="noopener noreferrer">Download Processed Helmet Certificate</a>}
 </Grid>
 
-<Grid item xs={12} md={6}>
-  <Typography>Upload Inspection Letter PDF:</Typography>
-  <input type="file" accept="application/pdf" onChange={handleInspectionLetterChange} />
-  <input type="file" accept="image/*" onChange={handleChasisNumberPicChange} />
-  <Button onClick={handleInspectionLetterSubmit} variant="contained" color="primary">Submit Inspection Letter</Button>
-  {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
-</Grid>
 
-          </Grid>
-        </CardContent>
-      </Card>
+      {/* Inspection Letter Section */}
+      <Grid item xs={12} className='form-item'>
+        <Typography>Upload Inspection Letter PDF:</Typography>
+        <input type="file" accept="application/pdf" onChange={handleInspectionLetterChange} />
+        <Typography>Upload Chassis Number Picture:</Typography>
+        <input type="file" accept="image/*" onChange={handleChasisNumberPicChange} />
+        <Button onClick={handleInspectionLetterSubmit} variant="contained" color="primary">Submit Inspection Letter</Button>
+        {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
+      </Grid>
+
+    </Grid>
+  </CardContent>
+</Card>
+
     </div>
   );
 };
