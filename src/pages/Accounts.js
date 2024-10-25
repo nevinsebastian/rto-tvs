@@ -1,5 +1,4 @@
-// src/pages/Accounts.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Accounts.css'; // CSS for styling
 import NavBar from '../components/NavBar'; // Import the new NavBar component
@@ -14,34 +13,37 @@ const Accounts = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
 
-  const fetchCustomers = (status) => {
-    setLoading(true);
-    const url =
-      status === 'verified'
-        ? 'https://api.tophaventvs.com:8000/accounts/customers/verified'
-        : 'https://api.tophaventvs.com:8000/accounts/customers/pending';
+  const fetchCustomers = useCallback(
+    (status) => {
+      setLoading(true);
+      const url =
+        status === 'verified'
+          ? 'https://api.tophaventvs.com:8000/accounts/customers/verified'
+          : 'https://api.tophaventvs.com:8000/accounts/customers/pending';
 
-    fetch(url, {
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        return response.json();
+      fetch(url, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .then((data) => {
-        setCustomers(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
-  };
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setCustomers(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    },
+    [token]
+  );
 
   useEffect(() => {
     if (!token) {
@@ -49,8 +51,7 @@ const Accounts = () => {
     } else {
       fetchCustomers(filter);
     }
-  }, [token, navigate, filter]);
-  
+  }, [token, navigate, filter, fetchCustomers]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');

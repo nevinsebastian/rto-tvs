@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FaPlus, FaUserTie, FaUsers, FaChartLine, FaCashRegister, FaEdit, FaSave } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaSave } from 'react-icons/fa';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -14,9 +14,7 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
 
 const Admin = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -40,6 +38,7 @@ const Admin = () => {
     role_id: '',
     branch_id: ''
   });
+
   const handleNewEmployeeChange = (e) => {
     const { name, value } = e.target;
     setNewEmployee(prevState => ({
@@ -47,6 +46,7 @@ const Admin = () => {
       [name]: value
     }));
   };
+
   const handleAddEmployee = async () => {
     const token = localStorage.getItem('token');
   
@@ -63,7 +63,6 @@ const Admin = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Employee added:', data);
-        // Optionally, refresh employee data after adding the new employee
         fetchEmployeeData();
       } else {
         const data = await response.json();
@@ -73,13 +72,12 @@ const Admin = () => {
       console.error('Error:', error);
     }
   };
+
   const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
 
   const handleAddEmployeeClick = () => {
     setShowAddEmployeeForm(true);
   };
-  
-  
 
   const [employeeData, setEmployeeData] = useState({
     totalEmployees: 0,
@@ -88,6 +86,7 @@ const Admin = () => {
     accountsCount: 0,
     totalCustomers: 0
   });
+
   const [customerData, setCustomerData] = useState({
     labels: [],
     datasets: [
@@ -113,7 +112,7 @@ const Admin = () => {
       const response = await fetch('https://api.tophaventvs.com:8000/admin/', {
         method: 'GET',
         headers: {
-          'accept': 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -130,7 +129,7 @@ const Admin = () => {
       const response = await fetch(`https://api.tophaventvs.com:8000/admin/${branchId}`, {
         method: 'GET',
         headers: {
-          'accept': 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -142,13 +141,13 @@ const Admin = () => {
     }
   };
 
-  const fetchEmployeeData = async () => {
+  const fetchEmployeeData = useCallback(async () => {
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('https://api.tophaventvs.com:8000/admin/users', {
         method: 'GET',
         headers: {
-          'accept': 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -170,7 +169,7 @@ const Admin = () => {
       const customerResponse = await fetch('https://api.tophaventvs.com:8000/admin/customers', {
         method: 'GET',
         headers: {
-          'accept': 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -187,7 +186,7 @@ const Admin = () => {
     } catch (error) {
       console.error('Error fetching employee data:', error);
     }
-  };
+  }, []); // UseCallback to avoid re-creation on every render
 
   const fetchCustomerData = async () => {
     const token = localStorage.getItem('token');
@@ -201,7 +200,7 @@ const Admin = () => {
       if (month < 1) {
         months.push({ month: 12 + month, year: year - 1 });
       } else {
-        months .push({ month, year });
+        months.push({ month, year });
       }
     }
 
@@ -213,7 +212,7 @@ const Admin = () => {
         const response = await fetch(`https://api.tophaventvs.com:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
           method: 'GET',
           headers: {
-            'accept': 'application/json',
+            accept: 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
@@ -240,7 +239,7 @@ const Admin = () => {
   useEffect(() => {
     fetchBranches();
     fetchEmployeeData();
-  }, []);
+  }, [fetchEmployeeData]);
 
   useEffect(() => {
     if (selectedBranch) {
@@ -275,7 +274,7 @@ const Admin = () => {
       const response = await fetch(`https://api.tophaventvs.com:8000/admin/${selectedBranch}`, {
         method: 'PUT',
         headers: {
-          'accept': 'application/json',
+          accept: 'application/json',
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
@@ -306,156 +305,64 @@ const Admin = () => {
   return (
     <div className="admin-dashboard">
       <nav className="navbar">
-        <h2 className="logo" onClick={() => window.location.reload()} style={{ cursor: 'pointer' }}>
-          Admin Dashboard
-        </h2>
-        <div className="navbar-right">
-          <span className="username">Welcome, {user?.first_name} {user?.last_name}</span>
-          <div className="branch-dropdown">
-            <button className="dropdown-button">Branches</button>
-            <div className="dropdown-content">
-              {branches.map((branch) => (
-                <p key={branch.branch_id} onClick={() => handleBranchClick(branch.branch_id)}>
-                  {branch.name}
-                </p>
-              ))}
-            </div>
-          </div>
-          <FaPlus className="add-employee-icon" onClick={handleAddEmployeeClick} />
-          {showAddEmployeeForm && (
-  <div className="add-employee-form">
-    <h3>Add New Employee</h3>
-    <input 
-      type="text" 
-      name="first_name" 
-      placeholder="First Name" 
-      value={newEmployee.first_name} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <input 
-      type="text" 
-      name="last_name" 
-      placeholder="Last Name" 
-      value={newEmployee.last_name} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <input 
-      type="email" 
-      name="email" 
-      placeholder="Email" 
-      value={newEmployee.email} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <input 
-      type="password" 
-      name="password" 
-      placeholder="Password" 
-      value={newEmployee.password} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <input 
-      type="number" 
-      name="role_id" 
-      placeholder="Role ID" 
-      value={newEmployee.role_id} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <input 
-      type="number" 
-      name="branch_id" 
-      placeholder="Branch ID" 
-      value={newEmployee.branch_id} 
-      onChange={handleNewEmployeeChange} 
-    />
-    <button onClick={handleAddEmployee}>Add Employee</button>
-    <button onClick={() => setShowAddEmployeeForm(false)}>Cancel</button>
-  </div>
-)}
-
-          <button className="logout-button" onClick={handleLogout}>Logout</button>
+        <h2 className="logo" onClick={() => window.location.reload()}>Admin Dashboard</h2>
+        <div className="user-info">
+          <span>Welcome, {user?.username}</span>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
-      {selectedBranch && branchDetails && (
-        <div className="branch-details">
-          <h3>Branch Details: {branchDetails.name}</h3>
-          {isEditing ? (
-            <>
-              <input
-                type="text"
-                name="name"
-                value={editableBranchDetails.name}
-                onChange={handleInputChange}
-                placeholder="Branch Name"
-              />
-              <input
-                type="text"
-                name="address"
-                value={editableBranchDetails.address}
-                onChange={handleInputChange}
-                placeholder="Address"
-              />
-              <input
-                type="text"
-                name="branch_manager"
-                value={editableBranchDetails.branch_manager}
-                onChange={handleInputChange}
-                placeholder="Branch Manager"
-              />
-              <input
-                type="text"
-                name="phone_number"
-                value={editableBranchDetails.phone_number}
-                onChange={handleInputChange}
-                placeholder="Phone Number"
-              />
-              <FaSave className="edit-icon" onClick={handleSaveClick} />
-            </>
-          ) : (
-            <>
-              <p><strong>Address:</strong> {branchDetails.address}</p>
-              <p><strong>Branch Manager:</strong> {branchDetails.branch_manager}</p>
-              <p><strong>Phone Number:</strong> {branchDetails.phone_number}</p>
-              <FaEdit className="edit-icon" onClick={handleEditClick} />
-            </>
-          )}
-        </div>
-      )}
+      <div className="branch-list">
+        <h3>Branches</h3>
+        <ul>
+          {branches.map(branch => (
+            <li key={branch.id} onClick={() => handleBranchClick(branch.id)}>
+              {branch.name}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <div className="employee-insights">
-        <div className="employee-stats">
-          <div className="stat-box glowing-box">
-            <FaUsers className="insight-icon" />
-            <h3>Total Customers</h3>
-            <p>{employeeData.totalCustomers}</p>
+      <div className="branch-details">
+        {branchDetails && (
+          <div>
+            <h3>Branch Details</h3>
+            <p><strong>Address:</strong> {isEditing ? <input name="address" value={editableBranchDetails.address} onChange={handleInputChange} /> : branchDetails.address}</p>
+            <p><strong>Branch Manager:</strong> {isEditing ? <input name="branch_manager" value={editableBranchDetails.branch_manager} onChange={handleInputChange} /> : branchDetails.branch_manager}</p>
+            <p><strong>Phone Number:</strong> {isEditing ? <input name="phone_number" value={editableBranchDetails.phone_number} onChange={handleInputChange} /> : branchDetails.phone_number}</p>
+            {isEditing ? <button onClick={handleSaveClick}><FaSave /> Save</button> : <button onClick={handleEditClick}><FaEdit /> Edit</button>}
           </div>
-          <div className="stat-box glowing-box">
-            <FaUsers className="insight-icon" />
-            <h3>Total Employees</h3>
-            <p>{employeeData.totalEmployees}</p>
-          </div>
-          <div className="stat-box glowing-box">
-            <FaUserTie className="insight-icon" />
-            <h3>Sales Employees</h3>
-            <p>{employeeData.salesCount}</p>
-          </div>
-          <div className="stat-box glowing-box">
-            <FaChartLine className="insight-icon" />
-            <h3>RTO Employees</h3>
-            <p>{employeeData.rtoCount}</p>
-          </div>
-          <div className="stat-box glowing-box">
-            <FaCashRegister className="insight-icon" />
-            <h3>Accounts Employees</h3>
-            <p>{employeeData.accountsCount}</p>
-          </div>
-        </div>
-        <div className="customer-graph">
-          <div className='customer-graph'>
-            {customerData.labels.length > 0 && <Line data={customerData} />}
-            </div>
-          </div>
+        )}
+      </div>
 
+      <div className="employee-data">
+        <h3>Employee Stats</h3>
+        <p>Total Employees: {employeeData.totalEmployees}</p>
+        <p>Sales: {employeeData.salesCount}</p>
+        <p>RTO: {employeeData.rtoCount}</p>
+        <p>Accounts: {employeeData.accountsCount}</p>
+        <p>Total Customers: {employeeData.totalCustomers}</p>
+      </div>
+
+      <div className="add-employee-form">
+        {showAddEmployeeForm && (
+          <div>
+            <h3>Add New Employee</h3>
+            <input name="first_name" value={newEmployee.first_name} onChange={handleNewEmployeeChange} placeholder="First Name" />
+            <input name="last_name" value={newEmployee.last_name} onChange={handleNewEmployeeChange} placeholder="Last Name" />
+            <input name="email" value={newEmployee.email} onChange={handleNewEmployeeChange} placeholder="Email" />
+            <input name="password" value={newEmployee.password} onChange={handleNewEmployeeChange} placeholder="Password" />
+            <input name="role_id" value={newEmployee.role_id} onChange={handleNewEmployeeChange} placeholder="Role ID" />
+            <input name="branch_id" value={newEmployee.branch_id} onChange={handleNewEmployeeChange} placeholder="Branch ID" />
+            <button onClick={handleAddEmployee}>Add Employee</button>
+          </div>
+        )}
+        <button onClick={handleAddEmployeeClick}><FaPlus /> Add Employee</button>
+      </div>
+
+      <div className="customer-chart">
+        <h3>Customer Growth</h3>
+        <Line data={customerData} />
       </div>
     </div>
   );
