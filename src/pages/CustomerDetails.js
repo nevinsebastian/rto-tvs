@@ -1,28 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  FaUser,
-  FaCar,
-  FaIdCard,
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaSyncAlt,
-  FaEdit,
-  FaSave,
-  FaTimes,
-  FaTimesCircle,
-} from 'react-icons/fa';
-import '../styles/CustomerDetailsModern.css';
+import { FaFileUpload, FaTimes } from 'react-icons/fa';
+import '../styles/CustomerDetailsModern.css'; // Updated styles
 
 const CustomerDetails = () => {
   const { customerId } = useParams();
   const [customerData, setCustomerData] = useState(null);
-  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    delivery_photo: null,
     number_plate_front: null,
     number_plate_back: null,
+    delivery_photo: null,
   });
+  const [addDeliveryPhotoMode, setAddDeliveryPhotoMode] = useState(false);
+  const [previews, setPreviews] = useState({
+    number_plate_front: null,
+    number_plate_back: null,
+    delivery_photo: null,
+  });
+  const [uploadStatus, setUploadStatus] = useState('');
 
   useEffect(() => {
     const fetchCustomerById = async () => {
@@ -44,35 +39,56 @@ const CustomerDetails = () => {
     fetchCustomerById();
   }, [customerId]);
 
-  const handleInputChange = (field, value) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
-  };
-
   const handleFileChange = (field, file) => {
-    setFormData({
-      ...formData,
-      [field]: file,
-    });
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: file,
+      }));
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setPreviews(prev => ({
+        ...prev,
+        [field]: previewUrl,
+      }));
+    }
   };
 
-  const handleEditClick = () => {
-    setEditMode(true);
+  const handleCancelClick = () => {
+    setAddDeliveryPhotoMode(false);
+    setFormData({
+      number_plate_front: null,
+      number_plate_back: null,
+      delivery_photo: null,
+    });
+    
+    // Clean up preview URLs
+    Object.values(previews).forEach(url => {
+      if (url) URL.revokeObjectURL(url);
+    });
+    
+    setPreviews({
+      number_plate_front: null,
+      number_plate_back: null,
+      delivery_photo: null,
+    });
+    setUploadStatus('');
   };
 
   const handleSaveClick = async () => {
+    setUploadStatus('uploading');
     const formDataToSubmit = new FormData();
-    if (formData.number_plate_front) {
-      formDataToSubmit.append('number_plate_front', formData.number_plate_front);
+
+    if (!formData.number_plate_front || !formData.number_plate_back || !formData.delivery_photo) {
+      setUploadStatus('Please upload all required photos');
+      return;
     }
-    if (formData.number_plate_back) {
-      formDataToSubmit.append('number_plate_back', formData.number_plate_back);
-    }
-    if (formData.delivery_photo) {
-      formDataToSubmit.append('delivery_photo', formData.delivery_photo);
-    }
+
+    // Append files to FormData
+    formDataToSubmit.append('number_plate_front', formData.number_plate_front);
+    formDataToSubmit.append('number_plate_back', formData.number_plate_back);
+    formDataToSubmit.append('delivery_photo', formData.delivery_photo);
 
     try {
       const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`, {
@@ -86,260 +102,181 @@ const CustomerDetails = () => {
       if (response.ok) {
         const updatedData = await response.json();
         setCustomerData(updatedData);
-        setEditMode(false);
+        setUploadStatus('success');
+        setTimeout(handleCancelClick, 1500);
       } else {
         const errorData = await response.json();
         console.error('Failed to update delivery details:', errorData);
+        setUploadStatus('Failed to upload photos. Please try again.');
       }
     } catch (error) {
       console.error('Error updating delivery details:', error);
+      setUploadStatus('Error uploading photos. Please check your connection.');
     }
   };
 
-  const handleCancelClick = () => {
-    setEditMode(false);
+  
+
+  const renderImage = (url, alt) => {
+    if (!url) return <div className="no-image">No image available</div>;
+    return (
+      <div className="image-container">
+        <img src={url} alt={alt} className="document-image" />
+      </div>
+    );
   };
 
-  const handleVerifyClick = async () => {
+  const handleVerifyCustomer = async () => {
     try {
       const response = await fetch(`https://api.tophaventvs.com:8000/sales/verify/${customerId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
       if (response.ok) {
-        const result = await response.json();
-        alert(result.message);
+        const responseData = await response.json();
+        alert(responseData.message); // You can use a toast or modal for a better user experience
       } else {
-        const error = await response.json();
-        console.error('Verification error:', error);
-        alert('Failed to verify customer sales.');
+        const errorData = await response.json();
+        console.error('Failed to verify customer:', errorData);
+        alert('Failed to verify customer. Please try again.');
       }
     } catch (error) {
-      console.error('Error verifying customer sales:', error);
+      console.error('Error verifying customer:', error);
+      alert('Error verifying customer. Please check your connection.');
     }
   };
+
+
+  const renderField = (label, value) => (
+    <div className="field-container">
+      <label className="field-label">{label}:</label>
+      <div className="field-content">
+        {value ? <span className="field-value">{value}</span> : <span className="field-value">Not provided</span>}
+      </div>
+    </div>
+  );
 
   if (!customerData) {
     return <div className="loading">Loading customer details...</div>;
   }
 
-  const renderField = (label, field, type = 'text') => {
-    const isImageField = field.startsWith('photo_') || field === 'customer_sign';
-    
-    
-    
-    
-    return (
-      <div className="field-container">
-        <strong>{label}:</strong>
-        {editMode ? (
-          isImageField ? (
-            <input
-              type="text"
-              value={formData[field] || ''}
-              onChange={(e) => handleInputChange(field, e.target.value)}
-              placeholder="Enter image URL"
+  const UploadModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg w-full max-w-md">
+        <div className="p-4 border-b">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Upload Delivery Photos</h3>
+            <button 
+              onClick={handleCancelClick}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <FaTimes />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Front Number Plate Upload */}
+          <div className="upload-section">
+            <label className="block">Front Number Plate:</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => handleFileChange('number_plate_front', e.target.files[0])} 
             />
-          ) : (
-            <input
-              type={type}
-              value={formData[field] || ''}
-              onChange={(e) => handleInputChange(field, e.target.value)}
+            {previews.number_plate_front && <img src={previews.number_plate_front} alt="Front Number Plate Preview" className="preview-image" />}
+          </div>
+
+          {/* Back Number Plate Upload */}
+          <div className="upload-section">
+            <label className="block">Back Number Plate:</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => handleFileChange('number_plate_back', e.target.files[0])} 
             />
-          )
-        ) : isImageField ? (
-          <img src={customerData[field]} alt={label} className="document-image" />
-        ) : (
-          <span>{customerData[field] || 'Not provided'}</span>
-        )}
-      </div>
-    );
-  };
-  
+            {previews.number_plate_back && <img src={previews.number_plate_back} alt="Back Number Plate Preview" className="preview-image" />}
+          </div>
 
-  const renderDeliveryPhotoUpload = () => {
-    return (
-      <div className="field-container">
-        <strong>Delivery Photo:</strong>
-        {editMode ? (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])}
-          />
-        ) : (
-          customerData.delivery_photo && (
-            <img src={customerData.delivery_photo} alt="Delivery" className="document-image" />
-          )
-        )}
-  
-        <strong>Number Plate Front:</strong>
-        {editMode ? (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange('number_plate_front', e.target.files[0])}
-          />
-        ) : (
-          customerData.number_plate_front && (
-            <img src={customerData.number_plate_front} alt="Number Plate Front" className="document-image" />
-          )
-        )}
-  
-        <strong>Number Plate Back:</strong>
-        {editMode ? (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange('number_plate_back', e.target.files[0])}
-          />
-        ) : (
-          customerData.number_plate_back && (
-            <img src={customerData.number_plate_back} alt="Number Plate Back" className="document-image" />
-          )
-        )}
-      </div>
-    );
-  };
-  
+          {/* Delivery Photo Upload */}
+          <div className="upload-section">
+            <label className="block">Delivery Photo:</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])} 
+            />
+            {previews.delivery_photo && <img src={previews.delivery_photo} alt="Delivery Photo Preview" className="preview-image" />}
+          </div>
+        </div>
 
-  const renderStatusAlert = () => {
-    const { status, sales_verified } = customerData;
-    if (status === 'Submitted') {
-      return sales_verified ? (
-        <div className="status-alert verified">
-          <FaCheckCircle /> Verified
+        <div className="p-4 border-t">
+          {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
+          <div className="flex justify-between">
+            <button onClick={handleSaveClick} className="btn btn-primary">Save</button>
+            <button onClick={handleCancelClick} className="btn btn-secondary">Cancel</button>
+          </div>
         </div>
-      ) : (
-        <div className="status-alert verification-pending">
-          <FaExclamationCircle /> Verification Pending
-        </div>
-      );
-    } else if (status === 'Pending') {
-      return (
-        <div className="status-alert pending">
-          <FaSyncAlt /> Waiting for customer's data
-        </div>
-      );
-    } else if (status === 'Verified') {
-      return (
-        <div className="status-alert verified">
-          <FaCheckCircle /> Customer Verified
-        </div>
-      );
-    } else {
-      return (
-        <div className="status-alert not-verified">
-          <FaTimes /> Status: {status}
-        </div>
-      );
-    }
-  };
-
-  const renderVerificationStatus = (label, field) => {
-    return (
-      <div className="verification-status">
-        <strong>{label}:</strong>
-        {customerData[field] ? (
-          <FaCheckCircle style={{ color: 'green' }} />
-        ) : (
-          <FaTimesCircle style={{ color: 'red' }} />
-        )}
       </div>
-    );
-  };
-  const renderCustomerLink = () => {
-    if (customerData.link) {
-      return (
-        <div className="field-container">
-          <strong>Customer Form Link:</strong>
-          <a href={customerData.link} target="_blank" rel="noopener noreferrer">
-            {customerData.link}
-          </a>
-        </div>
-      );
-    }
-    return null;
-  };
+    </div>
+  );
 
   return (
-    <div className="customer-details-modern">
-      {renderStatusAlert()}
+    <div className="customer-details">
+      <h1 className="title">Customer Details</h1>
+      <button 
+        onClick={() => setAddDeliveryPhotoMode(true)} 
+        className="btn btn-add-delivery"
+      >
+        Add Delivery Photos <FaFileUpload />
+      </button>
 
-      <div className="customer-section">
-        <div className="section-title"><FaUser /> Personal Information</div>
-        <div className="details-grid">
-          {renderField('First Name', 'first_name')}
-          {renderField('Last Name', 'last_name')}
-          {renderField('Phone Number', 'phone_number')}
-          {renderField('Alternate Phone', 'alternate_phone_number')}
-          {renderField('Address', 'address')}
-          {renderField('Pin Code', 'pin_code')}
-          {renderField('Date of Birth', 'dob', 'date')}
-          {renderField('Nominee', 'nominee')}
-          {renderField('Relation with Nominee', 'relation')}
-          {renderField('Branch ID', 'branch_id')}
-        </div>
-      </div>
-      {renderCustomerLink()}
-
-
-      <div className="customer-section">
-        <div className="section-title"><FaCar /> Vehicle Information</div>
-        <div className="details-grid">
-          {renderField('Vehicle Name', 'vehicle_name')}
-          {renderField('Variant', 'vehicle_variant')}
-          {renderField('Color', 'vehicle_color')}
-          {renderField('Ex-showroom Price', 'ex_showroom_price', 'number')}
-          {renderField('Tax', 'tax', 'number')}
-          {renderField('Amount Paid', 'amount_paid', 'number')}
-          {renderField('Balance Amount', 'balance_amount', 'number')}
-          {renderField('Optional Accessories', 'optional_accessories', 'number')}
-          {renderField('Man Accessories', 'man_accessories', 'number')}
-          {renderField('TP Registration', 'tp_registration', 'number')}
-          {renderField('Insurance', 'insurance', 'number')}
-          {renderField('Vehicle Number', 'vehicle_number')}
-        </div>
-      </div>
-
-      <div className="customer-section">
-        <div className="section-title"><FaIdCard /> Documents</div>
-        <div className="details-grid">
-          {renderField('Aadhaar Combined', 'photo_adhaar_combined')}
-          {renderField('Passport Photo', 'photo_passport')}
-          {renderField('Customer Signature', 'customer_sign')}
-        </div>
-      </div>
-
-      {renderDeliveryPhotoUpload()}
-
-      <div className="button-group">
-        {editMode ? (
-          <>
-            <button className="save-button" onClick={handleSaveClick}>
-              <FaSave /> Save
-            </button>
-            <button className="cancel-button" onClick={handleCancelClick}>
-              <FaTimes /> Cancel
-            </button>
-          </>
-        ) : (
-          <button className="edit-button" onClick={handleEditClick}>
-            <FaEdit /> Edit
-          </button>
-        )}
-      </div>
-
-      <div className="verify-container">
-        {renderVerificationStatus('Sales Verification', 'sales_verified')}
-        <button className="verify-button" onClick={handleVerifyClick}>
-          <FaCheckCircle /> Verify Sales
+      <div className="customer-info">
+        {renderField('Customer ID', customerData.customer_id)}
+        {renderField('Name', customerData.name)}
+        {renderField('First Name', customerData.first_name)}
+        {renderField('Last Name', customerData.last_name)}
+        {renderField('Address', customerData.address)}
+        {renderField('Pin Code', customerData.pin_code)}
+        {renderField('Phone Number', customerData.phone_number)}
+        {renderField('Alternate Phone Number', customerData.alternate_phone_number)}
+        {renderField('Date of Birth', customerData.dob)}
+        {renderField('Nominee', customerData.nominee)}
+        {renderField('Relation', customerData.relation)}
+        {renderField('Status', customerData.status)}
+        {renderField('Vehicle Name', customerData.vehicle_name)}
+        {renderField('Vehicle Variant', customerData.vehicle_variant)}
+        {renderField('Vehicle Color', customerData.vehicle_color)}
+        {renderField('Ex Showroom Price', customerData.ex_showroom_price)}
+        {renderField('Tax', customerData.tax)}
+        {renderField('Amount Paid', customerData.amount_paid)}
+        {renderField('Balance Amount', customerData.balance_amount)}
+        {renderField('Total Price', customerData.total_price)}
+        {renderField('Optional Accessories', customerData.optional_accessories)}
+        {renderField('Mandatory Accessories', customerData.man_accessories)}
+        {renderField('TP Registration', customerData.tp_registration)}
+        {renderField('Insurance', customerData.insurance)}
+        {renderField('Vehicle Number', customerData.vehicle_number)}
+        {renderField('Aadhar Combined Photo', renderImage(customerData.photo_adhaar_combined, "Aadhar Combined Photo"))}
+        {renderField('Passport Photo', renderImage(customerData.photo_passport, "Passport Photo"))}
+        {renderField('Customer Signature', renderImage(customerData.customer_sign, "Customer Signature"))}
+        {renderField('Customer Signature Copy', renderImage(customerData.customer_sign_copy, "Customer Signature Copy"))}
+        {renderField('Front Number Plate', renderImage(customerData.number_plate_front, "Front Number Plate"))}
+        {renderField('Back Number Plate', renderImage(customerData.number_plate_back, "Back Number Plate"))}
+        {renderField('Delivery Photo', renderImage(customerData.delivery_photo, "Delivery Photo"))}
+        <div className="flex justify-center mt-4">
+        <button onClick={handleVerifyCustomer} className="btn btn-verify">
+          Verify Customer
         </button>
       </div>
+      </div>
+
+      {addDeliveryPhotoMode && <UploadModal />}
+     
     </div>
   );
 };

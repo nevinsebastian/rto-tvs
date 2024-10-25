@@ -10,6 +10,7 @@ import CustomerForm from '../components/CustomerForm';
 import GeneratedLink from '../components/GeneratedLink';
 import '../styles/SalesExecutive.css';
 
+
 const SalesExecutive = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
