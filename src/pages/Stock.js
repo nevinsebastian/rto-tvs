@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Stock = () => {
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user')));
+  const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
   const [chassisNumber, setChassisNumber] = useState('');
   const [chassisPhoto, setChassisPhoto] = useState(null);
   const navigate = useNavigate();
@@ -211,19 +211,5 @@ const styles = {
 };
 
 // Media queries for responsiveness
-const mediaQueries = `
-  @media (max-width: 768px) {
-    .header {
-      flex-direction: column;
-    }
-    .userSection {
-      justify-content: space-between;
-      width: 100%;
-    }
-    .input {
-      font-size: 14px;
-    }
-  }
-`;
 
 export default Stock;

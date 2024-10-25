@@ -210,7 +210,7 @@ const CustomerDetails = () => {
               accept="image/*" 
               onChange={(e) => handleFileChange('delivery_photo', e.target.files[0])} 
             />
-            {previews.delivery_photo && <img src={previews.delivery_photo} alt="Delivery Photo Preview" className="preview-image" />}
+            {previews.delivery_photo && <img src={previews.delivery_photo} alt="Delivery" className="preview-image" />}
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import '../styles/WebcamCapture.css';  // Assuming you have a CSS file for styli
 const WebcamCapture = ({ type, onCapture }) => {
   const webcamRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [isRetake, setIsRetake] = useState(false);
+  const [ setIsRetake] = useState(false);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();

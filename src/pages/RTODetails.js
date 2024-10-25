@@ -1,4 +1,4 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Grid, Avatar, Divider, Button, CircularProgress, Snackbar, Alert, Dialog, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
@@ -34,7 +34,7 @@ const RTODetails = () => {
 const [customerName, setCustomerName] = useState('');
 const [chassisNumber, setChassisNumber] = useState('');
 const [date, setDate] = useState('');
-const [helmetCertPDF, setHelmetCertPDF] = useState(null);
+const [helmetCertPDF] = useState(null);
 const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
 
   // PDF Editor State
@@ -52,8 +52,8 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   
   const [disclaimerPdf, setDisclaimerPdf] = useState(null);
   const [disclaimerSignature, setDisclaimerSignature] = useState(null);
-  const [helmetCertPdf, setHelmetCertPdf] = useState(null);
-  const [helmetCertSignature, setHelmetCertSignature] = useState(null);
+  const [ setHelmetCertPdf] = useState(null);
+  const [ setHelmetCertSignature] = useState(null);
   const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
   const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
@@ -108,13 +108,8 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
     }));
   };
 
-  const formatCurrency = (amount) => {
-    return amount ? `₹${amount.toLocaleString()}` : 'N/A';
-  };
 
-  const renderStatusIcon = (status) => (
-    status ? <VerifiedIcon color="success" /> : <ErrorOutlineIcon color="error" />
-  );
+ 
   const handleEditSubmit = async () => {
     setEditLoading(true);
     setEditError(null);
