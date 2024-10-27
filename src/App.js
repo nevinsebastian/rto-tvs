@@ -16,6 +16,7 @@ import Chassis from './pages/Chassis';
 import NotFound from './pages/NotFound';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme/theme';
+import HelmetCertForm from './pages/HelmetCertForm';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} />
           <Route path="/stock" element={token ? <Stock /> : <Navigate to="/login" />} />
           <Route path="/chassis" element={<Chassis />} />
+          <Route path='/hell' element={<HelmetCertForm/>}/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
