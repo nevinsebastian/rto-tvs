@@ -1,31 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Stock = () => {
   const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
   const [chassisNumber, setChassisNumber] = useState('');
   const [chassisPhoto, setChassisPhoto] = useState(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
   const navigate = useNavigate();
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     if (!user) {
-      navigate('/login'); // Redirect to login if user is not found
+      navigate('/login');
     }
   }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    navigate('/login'); // Redirect to login on logout
+    navigate('/login');
   };
 
-  const handleFileChange = (event) => {
-    setChassisPhoto(event.target.files[0]);
+  const startCamera = async () => {
+    setIsCameraActive(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      alert("Could not access the camera. Please check permissions.");
+    }
+  };
+
+  const captureImage = () => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+  
+    const targetWidth = video.videoWidth * 0.5; // Narrow the width to 50% of the video
+    const targetHeight = video.videoHeight; // Keep the full height for a vertical rectangle
+  
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+  
+    const context = canvas.getContext('2d');
+    context.drawImage(
+      video,
+      (video.videoWidth - targetWidth) / 2, // Center the cropped area
+      0, // Start from the top of the frame
+      targetWidth,
+      targetHeight,
+      0,
+      0,
+      targetWidth,
+      targetHeight
+    );
+  
+    canvas.toBlob((blob) => {
+      setChassisPhoto(blob); // Set the Blob object for the photo
+      setPreviewImage(URL.createObjectURL(blob));
+    });
+    setIsCameraActive(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Ensure both fields are filled
     if (!chassisNumber || !chassisPhoto) {
       alert('Please provide both chassis number and photo.');
       return;
@@ -33,7 +78,7 @@ const Stock = () => {
 
     const formData = new FormData();
     formData.append('chassis_number', chassisNumber);
-    formData.append('chassis_photo', chassisPhoto);
+    formData.append('chassis_photo', chassisPhoto); // Ensure this is the Blob
 
     try {
       const response = await fetch('https://api.tophaventvs.com:8000/chasis/upload', {
@@ -45,16 +90,16 @@ const Stock = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload chassis data');
+        const errorData = await response.json(); // Capture error details
+        console.error('Error response:', errorData); // Log the error details
+        throw new Error('Failed to upload chassis data: ' + errorData.detail);
       }
 
       const data = await response.json();
-      console.log('Upload successful:', data);
       alert(`Chassis uploaded successfully! Chassis Photo URL: ${data.chassis_photo_url}`);
-      
-      // Reset the form after submission
       setChassisNumber('');
       setChassisPhoto(null);
+      setPreviewImage(null);
     } catch (error) {
       console.error('Error:', error);
       alert('There was an error uploading the chassis data. Please try again.');
@@ -85,16 +130,26 @@ const Stock = () => {
             placeholder="Enter chassis number"
           />
         </div>
-        
+
         <div style={styles.formGroup}>
           <label style={styles.label}>Chassis Photo:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            required
-            style={styles.input}
-          />
+          {isCameraActive ? (
+            <div style={styles.cameraContainer}>
+              <video ref={videoRef} style={styles.video}></video>
+              <button type="button" onClick={captureImage} style={styles.captureButton}>
+                Capture Image
+              </button>
+            </div>
+          ) : (
+            <button type="button" onClick={startCamera} style={styles.cameraButton}>
+              Open Camera
+            </button>
+          )}
+          {previewImage && (
+            <div style={styles.previewContainer}>
+              <img src={previewImage} alt="Captured preview" style={styles.previewImage} />
+            </div>
+          )}
         </div>
         
         <button type="submit" style={styles.submitButton}>Upload</button>
@@ -103,6 +158,8 @@ const Stock = () => {
       <footer style={styles.footer}>
         <p style={styles.footerText}>© {new Date().getFullYear()} Hogspot. All rights reserved.</p>
       </footer>
+
+      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
     </div>
   );
 };
@@ -160,9 +217,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
   },
-  logoutButtonHover: {
-    backgroundColor: '#e63939',
-  },
   form: {
     marginTop: '20px',
     width: '100%',
@@ -185,9 +239,6 @@ const styles = {
     fontSize: '16px',
     transition: 'border-color 0.3s ease',
   },
-  inputFocus: {
-    borderColor: '#4a90e2',
-  },
   submitButton: {
     backgroundColor: '#28a745',
     color: '#fff',
@@ -208,8 +259,44 @@ const styles = {
     fontSize: '14px',
     color: '#777',
   },
+  cameraContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  video: {
+    width: '50%',
+    height: '90vh',
+    maxWidth: '300px',
+    borderRadius: '8px',
+    objectFit: 'cover', // This will focus on the central part of the video feed
+  },
+  captureButton: {
+    marginTop: '10px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '5px',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  cameraButton: {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    padding: '8px 12px',
+    cursor: 'pointer',
+  },
+  previewContainer: {
+    marginTop: '10px',
+    textAlign: 'center',
+  },
+  previewImage: {
+    width: '100%',
+    maxWidth: '300px',
+    borderRadius: '8px',
+  },
 };
-
-// Media queries for responsiveness
 
 export default Stock;
