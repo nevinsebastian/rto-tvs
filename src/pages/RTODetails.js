@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-
+import HelmetCertForm from './HelmetCertForm';
 import '../styles/RTODetails.css';
 
 
@@ -31,11 +31,6 @@ const RTODetails = () => {
   const [submissionError, setSubmissionError] = useState(null);
   const [openImage, setOpenImage] = useState(null);
 
-const [customerName, setCustomerName] = useState('');
-const [chassisNumber, setChassisNumber] = useState('');
-const [date, setDate] = useState('');
-const [helmetCertPDF] = useState(null);
-const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
 
   // PDF Editor State
   const [form21Pdf, setForm21Pdf] = useState(null);
@@ -52,8 +47,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   
   const [disclaimerPdf, setDisclaimerPdf] = useState(null);
   const [disclaimerSignature, setDisclaimerSignature] = useState(null);
-  const [ setHelmetCertPdf] = useState(null);
-  const [ setHelmetCertSignature] = useState(null);
+
   const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
   const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
@@ -331,13 +325,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
     setDisclaimerSignature(e.target.files[0]);
   };
 
-  const handleHelmetCertChange = (e) => {
-    setHelmetCertPdf(e.target.files[0]);
-  };
 
-  const handleHelmetCertSignatureChange = (e) => {
-    setHelmetCertSignature(e.target.files[0]);
-  };
 
   const handleInspectionLetterChange = (e) => {
     setInspectionLetterPdf(e.target.files[0]);
@@ -365,25 +353,8 @@ const handleDisclaimerSubmit = async () => {
   }
 };
 
-const handleHelmetCertSubmit = async () => {
-  const formData = new FormData();
-  formData.append('customer_name', customerName);
-  formData.append('chasis_number', chassisNumber);
-  formData.append('date', date);
-  formData.append('pdf', helmetCertPDF);
-  formData.append('signature', signature);
 
-  try {
-    const response = await fetch('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', {
-      method: 'POST',
-      body: formData,
-    });
-    const data = await response.json();
-    setProcessedHelmetCert(data); // Assuming the response contains the link to the processed PDF
-  } catch (error) {
-    console.error('Error submitting helmet certification:', error);
-  }
-};
+
 
 
 
@@ -891,28 +862,6 @@ const handleDownloadImages = async () => {
         {processedDisclaimer && <a href={processedDisclaimer} target="_blank" rel="noopener noreferrer">Download Processed Disclaimer</a>}
       </Grid>
 
-      {/* Helmet Certification Section */}
-      <Grid item xs={12} className="form-item">
-  <Typography>Upload Helmet Certificate PDF:</Typography>
-  <input type="file" accept="application/pdf" onChange={handleHelmetCertChange} />
-  
-  <Typography>Customer Name:</Typography>
-  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-  
-  <Typography>Chassis Number:</Typography>
-  <input type="text" value={chassisNumber} onChange={(e) => setChassisNumber(e.target.value)} />
-  
-  <Typography>Date:</Typography>
-  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-  
-  <Typography>Upload Helmet Certification Signature:</Typography>
-  <input type="file" accept="image/*" onChange={handleHelmetCertSignatureChange} />
-  
-  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certification</Button>
-  
-  {processedHelmetCert && <a href={processedHelmetCert} target="_blank" rel="noopener noreferrer">Download Processed Helmet Certificate</a>}
-</Grid>
-
 
       {/* Inspection Letter Section */}
       <Grid item xs={12} className='form-item'>
@@ -924,6 +873,9 @@ const handleDownloadImages = async () => {
         {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
       </Grid>
 
+      <Grid item xs={12} className='form-item'>
+        <HelmetCertForm/>
+      </Grid>
     </Grid>
   </CardContent>
 </Card>
