@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Cropper } from 'react-cropper';
@@ -7,7 +8,7 @@ const Chassis = () => {
   const [chassisNumber, setChassisNumber] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
-  const [croppedImage, setCroppedImage] = useState(null);
+  const [, setCroppedImage] = useState(null);
   const cropperRef = useRef(null);
 
   const handleChassisChange = (event) => {
