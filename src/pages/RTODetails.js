@@ -16,9 +16,9 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-import HelmetCertForm from './HelmetCertForm';
+
 import '../styles/RTODetails.css';
-import Chassis from './Chassis';
+
 
 
 const RTODetails = () => {
@@ -31,6 +31,11 @@ const RTODetails = () => {
   const [submissionError, setSubmissionError] = useState(null);
   const [openImage, setOpenImage] = useState(null);
 
+const [customerName, setCustomerName] = useState('');
+const [chassisNumber, setChassisNumber] = useState('');
+const [date, setDate] = useState('');
+const [helmetCertPDF] = useState(null);
+const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
 
   // PDF Editor State
   const [form21Pdf, setForm21Pdf] = useState(null);
@@ -47,12 +52,17 @@ const RTODetails = () => {
   
   const [disclaimerPdf, setDisclaimerPdf] = useState(null);
   const [disclaimerSignature, setDisclaimerSignature] = useState(null);
-
+  const [ setHelmetCertPdf] = useState(null);
+  const [ setHelmetCertSignature] = useState(null);
   const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
   const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
   const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
   
+  const [chassisSearchNumber, setChassisSearchNumber] = useState('');
+  const [chassisImageUrl, setChassisImageUrl] = useState('');
+  const [chassisError, setChassisError] = useState('');
+  const [loadingChassisImage, setLoadingChassisImage] = useState(false);
    // Add new state variables for edit functionality
    const [openEditDialog, setOpenEditDialog] = useState(false);
    const [editFormData, setEditFormData] = useState({
@@ -259,9 +269,34 @@ const RTODetails = () => {
   const handleCloseImage = () => {
     setOpenImage(null);
   };
-  
+  const handleChassisSearch = async () => {
+    if (!chassisSearchNumber) {
+      setChassisError('Please enter a chassis number.');
+      return;
+    }
 
+    setLoadingChassisImage(true);
+    setChassisError('');
 
+    try {
+      const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisSearchNumber}`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setChassisImageUrl(response.data.image_url);
+        setChasisNumberPic(response.data.image_url); // Automatically set the chassis image for the inspection letter
+      }
+    } catch (err) {
+      setChassisError('Error: ' + (err.response?.data?.detail || 'Failed to fetch chassis image'));
+      setChassisImageUrl('');
+    } finally {
+      setLoadingChassisImage(false);
+    }
+  };
 
   // PDF Editor Functions
   const handleForm21Change = (e) => {
@@ -296,7 +331,13 @@ const RTODetails = () => {
     setDisclaimerSignature(e.target.files[0]);
   };
 
+  const handleHelmetCertChange = (e) => {
+    setHelmetCertPdf(e.target.files[0]);
+  };
 
+  const handleHelmetCertSignatureChange = (e) => {
+    setHelmetCertSignature(e.target.files[0]);
+  };
 
   const handleInspectionLetterChange = (e) => {
     setInspectionLetterPdf(e.target.files[0]);
@@ -324,8 +365,25 @@ const handleDisclaimerSubmit = async () => {
   }
 };
 
+const handleHelmetCertSubmit = async () => {
+  const formData = new FormData();
+  formData.append('customer_name', customerName);
+  formData.append('chasis_number', chassisNumber);
+  formData.append('date', date);
+  formData.append('pdf', helmetCertPDF);
+  formData.append('signature', signature);
 
-
+  try {
+    const response = await fetch('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
+    setProcessedHelmetCert(data); // Assuming the response contains the link to the processed PDF
+  } catch (error) {
+    console.error('Error submitting helmet certification:', error);
+  }
+};
 
 
 
@@ -548,7 +606,7 @@ const handleDownloadImages = async () => {
               <strong>Nominee:</strong> {customer.nominee} ({customer.relation})
             </Typography>
             <Typography>
-              <strong>Branch ID:</strong> {customer.branch_id}
+              <strong>taluk :</strong> {customer.taluk}
             </Typography>
           </Grid>
 
@@ -714,12 +772,62 @@ const handleDownloadImages = async () => {
   </Card>
 
   {/* Chassis Image Search */}
-
   <Card className="chassis-search-card" variant="outlined" style={{ marginTop: '20px' }}>
-    <Chassis/>
+    <CardContent>
+      <Typography variant="h5" gutterBottom>
+        Chassis Image Search
+      </Typography>
+      <Divider />
+      <Grid container spacing={2} alignItems="center" style={{ marginTop: '10px' }}>
+        <Grid item xs={12} sm={6}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Enter Chassis Number"
+              value={chassisSearchNumber}
+              onChange={(e) => setChassisSearchNumber(e.target.value)}
+              style={{
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                flexGrow: 1,
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleChassisSearch}
+              disabled={loadingChassisImage}
+            >
+              {loadingChassisImage ? <CircularProgress size={24} /> : 'Search'}
+            </Button>
+          </div>
+          {chassisError && (
+            <Typography color="error" style={{ marginTop: '8px' }}>
+              {chassisError}
+            </Typography>
+          )}
+        </Grid>
+
+        {chassisImageUrl && (
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom>
+              Chassis Image:
+            </Typography>
+            <img
+              src={chassisImageUrl}
+              alt="Chassis"
+              style={{
+                maxWidth: '100%',
+                height: 'auto',
+                borderRadius: '4px',
+              }}
+            />
+          </Grid>
+        )}
+      </Grid>
+    </CardContent>
   </Card>
-
-
 
       {/* PDF Editor */}
      {/* PDF Editor */}
@@ -783,6 +891,28 @@ const handleDownloadImages = async () => {
         {processedDisclaimer && <a href={processedDisclaimer} target="_blank" rel="noopener noreferrer">Download Processed Disclaimer</a>}
       </Grid>
 
+      {/* Helmet Certification Section */}
+      <Grid item xs={12} className="form-item">
+  <Typography>Upload Helmet Certificate PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleHelmetCertChange} />
+  
+  <Typography>Customer Name:</Typography>
+  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+  
+  <Typography>Chassis Number:</Typography>
+  <input type="text" value={chassisNumber} onChange={(e) => setChassisNumber(e.target.value)} />
+  
+  <Typography>Date:</Typography>
+  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+  
+  <Typography>Upload Helmet Certification Signature:</Typography>
+  <input type="file" accept="image/*" onChange={handleHelmetCertSignatureChange} />
+  
+  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certification</Button>
+  
+  {processedHelmetCert && <a href={processedHelmetCert} target="_blank" rel="noopener noreferrer">Download Processed Helmet Certificate</a>}
+</Grid>
+
 
       {/* Inspection Letter Section */}
       <Grid item xs={12} className='form-item'>
@@ -794,9 +924,6 @@ const handleDownloadImages = async () => {
         {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
       </Grid>
 
-      <Grid item xs={12} className='form-item'>
-        <HelmetCertForm/>
-      </Grid>
     </Grid>
   </CardContent>
 </Card>
