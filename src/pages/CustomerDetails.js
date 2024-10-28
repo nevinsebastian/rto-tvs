@@ -247,7 +247,12 @@ const CustomerDetails = () => {
         {renderField('Date of Birth', customerData.dob)}
         {renderField('Nominee', customerData.nominee)}
         {renderField('Relation', customerData.relation)}
-        {renderField('Status', customerData.status)}
+        {renderField('Taluk', customerData.taluk)}
+        {renderField(
+  'Customer Link', 
+  <a href={customerData.link} target="_blank" rel="noopener noreferrer">{customerData.link}</a>
+)}
+
         {renderField('Vehicle Name', customerData.vehicle_name)}
         {renderField('Vehicle Variant', customerData.vehicle_variant)}
         {renderField('Vehicle Color', customerData.vehicle_color)}
