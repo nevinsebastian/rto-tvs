@@ -89,12 +89,7 @@ const Chassis = () => {
           </button>
         </div>
       )}
-      {croppedImage && (
-        <div style={styles.previewContainer}>
-          <h2>Cropped Image Preview:</h2>
-          <img src={croppedImage} alt="Cropped Preview" style={styles.croppedImage} />
-        </div>
-      )}
+     
     </div>
   );
 };
@@ -122,6 +117,10 @@ const styles = {
   imageContainer: {
     marginTop: '20px',
     textAlign: 'center',
+    width: '80%',      // Increase width of the container to 80% of the parent container
+    maxWidth: '800px',  // Set a max-width for larger screens
+    height: '600px',    // Increase the height for more editing space
+    position: 'relative',
   },
   saveButton: {
     padding: '10px 20px',
