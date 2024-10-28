@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
+import { Cropper } from 'react-cropper';
+import 'cropperjs/dist/cropper.css';
 
 const Chassis = () => {
   const [chassisNumber, setChassisNumber] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
+  const [croppedImage, setCroppedImage] = useState(null);
+  const cropperRef = useRef(null);
 
   const handleChassisChange = (event) => {
     setChassisNumber(event.target.value);
@@ -18,15 +22,12 @@ const Chassis = () => {
 
     try {
       const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisNumber}`, {
-        headers: {
-          accept: 'application/json',
-        },
+        headers: { accept: 'application/json' },
       });
 
-      // Assuming the response structure provided in your request
       if (response.status === 200) {
         setImageUrl(response.data.image_url);
-        setError(''); // Clear any previous error
+        setError('');
       }
     } catch (err) {
       if (err.response) {
@@ -34,9 +35,28 @@ const Chassis = () => {
       } else {
         setError('Error: Network Error');
       }
-      setImageUrl(''); // Clear the image URL on error
+      setImageUrl('');
     }
   };
+
+  const handleSaveCroppedImage = useCallback(() => {
+    const cropper = cropperRef.current?.cropper;
+    if (cropper) {
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        const croppedUrl = URL.createObjectURL(blob);
+        setCroppedImage(croppedUrl);
+
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = croppedUrl;
+        link.download = `cropped-chassis-${chassisNumber}.jpg`;
+        link.click();
+
+        // Clean up
+        URL.revokeObjectURL(croppedUrl);
+      }, 'image/jpeg');
+    }
+  }, [chassisNumber]);
 
   return (
     <div style={styles.container}>
@@ -52,8 +72,27 @@ const Chassis = () => {
       {error && <p style={styles.error}>{error}</p>}
       {imageUrl && (
         <div style={styles.imageContainer}>
-          <h2>Chassis Image:</h2>
-          <img src={imageUrl} alt={`Chassis ${chassisNumber}`} style={styles.image} />
+          <Cropper
+            src={imageUrl}
+            style={{ height: 400, width: '100%' }}
+            initialAspectRatio={0.5}
+            aspectRatio={NaN} // Allows free cropping
+            guides={true}
+            ref={cropperRef}
+            cropBoxMovable={true}
+            cropBoxResizable={true}
+            viewMode={1}
+            dragMode="move"
+          />
+          <button onClick={handleSaveCroppedImage} style={styles.saveButton}>
+            Save Cropped Image
+          </button>
+        </div>
+      )}
+      {croppedImage && (
+        <div style={styles.previewContainer}>
+          <h2>Cropped Image Preview:</h2>
+          <img src={croppedImage} alt="Cropped Preview" style={styles.croppedImage} />
         </div>
       )}
     </div>
@@ -84,7 +123,16 @@ const styles = {
     marginTop: '20px',
     textAlign: 'center',
   },
-  image: {
+  saveButton: {
+    padding: '10px 20px',
+    marginTop: '10px',
+    cursor: 'pointer',
+  },
+  previewContainer: {
+    marginTop: '20px',
+    textAlign: 'center',
+  },
+  croppedImage: {
     maxWidth: '100%',
     height: 'auto',
   },
