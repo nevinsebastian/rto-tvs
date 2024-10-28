@@ -106,6 +106,18 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
             onChange={onInputChange}
           />
         </div>
+        <div className="form-group">
+  <label htmlFor="taluk">Taluk</label>
+  <input
+    type="text"
+    id="taluk"
+    name="taluk"
+    value={formData.taluk || ''}
+    onChange={onInputChange}
+    required
+  />
+</div>
+
 
         {/* Vehicle Information */}
         <div className="form-group">
