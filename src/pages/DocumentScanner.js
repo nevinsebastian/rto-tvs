@@ -26,27 +26,29 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           throw new Error('Camera API is not supported in this browser.');
         }
-    
+
+        // Requesting higher resolution video
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }, // Use back camera
+          video: { 
+            facingMode: 'environment', // Use back camera
+            width: { ideal: 1280 }, // Set ideal width
+            height: { ideal: 720 } // Set ideal height
+          },
         });
-    
+
         streamRef.current = mediaStream;
         videoRef.current.srcObject = mediaStream;
-    
+
         // Wait for video to be ready before playing
         videoRef.current.onloadedmetadata = () => {
           videoRef.current.play();
         };
-    
+
       } catch (error) {
         console.error('Camera access error:', error);
         alert(error.message); // Show the error message to the user
       }
     };
-    
-
-    
 
     startCamera();
 
@@ -62,12 +64,9 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
     const context = canvas.getContext('2d');
     const video = videoRef.current;
 
+    // Use the video dimensions directly
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-
-    // Calculate scaling factors
-    const scaleX = videoWidth / video.clientWidth;
-    const scaleY = videoHeight / video.clientHeight;
 
     // Set canvas dimensions to match the bounding box
     canvas.width = boundingBox.width;
@@ -76,20 +75,30 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
     // Draw the video frame onto the canvas
     context.drawImage(
       video,
-      0, // Start drawing from the top-left corner of the video
-      0,
-      boundingBox.width * scaleX, // Use scaled width
-      boundingBox.height * scaleY, // Use scaled height
-      0, // X position on canvas
-      0, // Y position on canvas
-      boundingBox.width, // Width to draw on canvas
-      boundingBox.height // Height to draw on canvas
+      0, 0, // Start drawing from the top-left corner of the video
+      videoWidth, videoHeight, // Use full video dimensions
+      0, 0, // X position on canvas
+      boundingBox.width, boundingBox.height // Width and height on canvas
     );
 
     // Convert the canvas to a blob (JPEG)
     canvas.toBlob((blob) => {
       onCapture(blob); // Trigger the parent callback with the captured image blob
-    }, 'image/jpeg');
+    }, 'image/jpeg', 1.0); // Ensure quality is set to 1.0 for maximum quality
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Convert the file to a blob and pass it to the onCapture callback
+        fetch(reader.result)
+          .then(res => res.blob())
+          .then(blob => onCapture(blob));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -131,6 +140,15 @@ const DocumentScanner = ({ onCapture, onClose, photoType }) => {
       </div>
 
       <button type="button" onClick={captureImage}>Capture</button>
+
+      {/* File input for uploading images */}
+      <input 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileUpload} 
+        style={{ marginTop: '10px' }} 
+      />
+
       <div className="button-container">
         <button type="button" onClick={onClose}>
           Close Camera

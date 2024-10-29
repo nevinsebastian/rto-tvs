@@ -1,26 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {
-  Box, Button, TextField, Typography, Paper, Checkbox, FormControlLabel, Container, createTheme, ThemeProvider, CssBaseline
-} from '@mui/material';
-
-// Create the dark theme with the bluish gradient
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    background: {
-      default: 'linear-gradient(135deg, #1f1f2e, #282846)', // Dark bluish gradient background
-    },
-    primary: {
-      main: '#1db954', // Green button color
-    },
-    text: {
-      primary: '#eaeaea',
-      secondary: '#aaa',
-    },
-  },
-});
 
 export default function Login({ setToken }) {
   const [username, setUsername] = useState('');
@@ -30,8 +10,8 @@ export default function Login({ setToken }) {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent form submission from reloading the page
-    setIsLoading(true); // Start loading
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       const params = new URLSearchParams();
@@ -53,13 +33,11 @@ export default function Login({ setToken }) {
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Update the token in App.js state
         setToken(access_token);
 
-        // Add a small delay to ensure token is saved before navigation
         setTimeout(() => {
           navigateToRole(user.role_name);
-        }, 100); // 100 ms delay to ensure the token is set
+        }, 100);
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -67,7 +45,7 @@ export default function Login({ setToken }) {
       console.error('Error logging in:', error);
       setError('Login failed. Please check your credentials.');
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
@@ -97,86 +75,90 @@ export default function Login({ setToken }) {
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Box
-        sx={{
-          backgroundColor: 'transparent',
-          backgroundImage: 'linear-gradient(135deg, #1f1f2e, #282846)', // Dark bluish gradient
-          minHeight: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Container maxWidth="sm">
-          <Paper
-            elevation={6}
-            sx={{
-              padding: 4,
-              borderRadius: 4,
-              backgroundColor: '#161b22',
-              boxShadow: '0px 4px 12px rgba(0,0,0,0.5)',
-              transition: 'background-color 0.3s ease-in-out',
-            }}
-          >
-            <Typography variant="h5" align="center">
-              TVS Top Haven
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-              Welcome back
-            </Typography>
+    <div style={{
+      backgroundImage: 'linear-gradient(135deg, #1f1f2e, #282846)',
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      color: '#eaeaea',
+    }}>
+      <div style={{
+        maxWidth: '500px',
+        width: '100%',
+        padding: '30px',
+        backgroundColor: '#161b22',
+        borderRadius: '8px',
+        boxShadow: '0px 4px 12px rgba(0,0,0,0.5)',
+      }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>TVS Top Haven</h2>
+        <p style={{ textAlign: 'center', color: '#aaa' }}>Welcome back</p>
 
-            <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 3 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Email"
-                name="username"
-                autoComplete="email"
-                autoFocus
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {error && <Typography color="error">{error}</Typography>}
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={isLoading} // Disable button while loading
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: '#1db954',
-                  '&:hover': {
-                    backgroundColor: '#1db954a3',
-                  },
-                }}
-              >
-                {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
-              </Button>
-            </Box>
-          </Paper>
-        </Container>
-      </Box>
-    </ThemeProvider>
+        <form onSubmit={handleLogin} style={{ marginTop: '20px' }}>
+          <label htmlFor="username" style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginBottom: '15px',
+              borderRadius: '4px',
+              border: '1px solid #333',
+              backgroundColor: '#1f1f2e',
+              color: '#eaeaea'
+            }}
+          />
+
+          <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginBottom: '15px',
+              borderRadius: '4px',
+              border: '1px solid #333',
+              backgroundColor: '#1f1f2e',
+              color: '#eaeaea'
+            }}
+          />
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+            <input type="checkbox" id="remember" style={{ marginRight: '8px' }} />
+            <label htmlFor="remember" style={{ color: '#aaa' }}>Remember me</label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '4px',
+              backgroundColor: '#1db954',
+              border: 'none',
+              color: '#fff',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              transition: 'background-color 0.3s ease',
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#1db954a3'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#1db954'}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

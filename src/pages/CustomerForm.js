@@ -49,34 +49,40 @@ const CustomerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const formDataToSend = new FormData();
-    
+  
     // Loop through formData and add each field
     for (const key in formData) {
       if (formData[key] !== null) {
         formDataToSend.append(key, formData[key]);
+  
+        // Check if it's a photo and log its size
+        if (formData[key] instanceof Blob) {
+          console.log(`${key} size: ${formData[key].size / 1024} KB`);
+        }
       }
     }
-
+  
     try {
       const response = await fetch(`https://api.tophaventvs.com:8000/customer/${link_token}`, {
         method: 'POST',
         body: formDataToSend,
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server response error: ", errorText);
         throw new Error('Failed to submit data');
       }
-
+  
       alert('Data submitted successfully!');
     } catch (err) {
       console.error('Submit error:', err);
       setError(err.message);
     }
   };
+  
 
   const closeCamera = () => {
     setIsCapturingFront(false);
