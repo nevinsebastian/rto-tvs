@@ -21,6 +21,7 @@ import '../styles/RTODetails.css';
 
 import Chassis from './Chassis';
 import HelmetCertForm from './HelmetCertForm';
+import CustomerImages from './CustomerImages';
 
 const RTODetails = () => {
   const { customerId } = useParams();
@@ -620,16 +621,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.photo_adhaar_combined)}
                 />
               </Grid>
-              <Grid item xs={4}>
-              <p>Passport  size</p>
-
-                <Avatar
-                  variant="rounded"
-                  src={customer.photo_passport}
-                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
-                  onClick={() => handleImageClick(customer.photo_passport)}
-                />
-              </Grid>
+              
               <Grid item xs={4}>
               <p>Sign bg removed</p>
 
@@ -641,6 +633,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.customer_sign)}
                 />
               </Grid>
+
               {/* New Image for customer_sign_copy */}
               <Grid item xs={4}>
               <p>Sign stock</p>
@@ -652,6 +645,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.customer_sign_copy)}
                 />
               </Grid>
+              <CustomerImages/>
             </Grid>
           </Grid>
 
