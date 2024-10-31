@@ -444,7 +444,6 @@ const handleDownloadImages = async () => {
     // Prepare the images to be downloaded
     const imageUrls = [
         { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
-        { name: 'passport.jpg', url: customer.photo_passport },
         { name: 'customer_signature.png', url: customer.customer_sign },
         { name: 'customer_signature_copy.png', url: customer.customer_sign_copy }, // New entry
 
