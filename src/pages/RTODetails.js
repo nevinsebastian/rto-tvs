@@ -435,38 +435,35 @@ const handleDisclaimerSubmit = async () => {
     }
   };
 
-const handleDownloadImages = async () => {
+  const handleDownloadImages = async () => {
     if (!customer) return;
 
     const zip = new JSZip();
     const imgFolder = zip.folder('documents'); // Create a folder in the zip
+    const firstName = customer.name.split(' ')[0]; // Get the customer's first name
 
     // Prepare the images to be downloaded
     const imageUrls = [
         { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
         { name: 'customer_signature.png', url: customer.customer_sign },
         { name: 'customer_signature_copy.png', url: customer.customer_sign_copy }, // New entry
-
     ];
 
     try {
         // Add images to the zip
         await Promise.all(
             imageUrls.map(async (image) => {
-                // Log the image URL for debugging
                 console.log(`Fetching image from: ${image.url}`);
-                
                 const imgData = await axios.get(image.url, { responseType: 'arraybuffer' });
                 imgFolder.file(image.name, imgData.data);
             })
         );
 
-        // Generate zip file and trigger download
+        // Generate zip file and trigger download with customer's first name
         zip.generateAsync({ type: 'blob' }).then((content) => {
-            FileSaver.saveAs(content, 'customer_documents.zip');
+            FileSaver.saveAs(content, `${firstName}_documents.zip`);
         });
     } catch (error) {
-        // Handle and log errors
         console.error('Error downloading images:', error);
         alert('An error occurred while downloading images. Please check the console for more details.');
     }
