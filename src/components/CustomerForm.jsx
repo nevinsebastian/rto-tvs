@@ -18,7 +18,7 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
       tp_registration: parseFloat(formData.tp_registration) || 0,
       man_accessories: parseFloat(formData.man_accessories) || 0,
       optional_accessories: parseFloat(formData.optional_accessories) || 0,
-      booking: parseFloat(formData.booking) || 0,
+      booking: 0, // Set booking to 0 directly
       amount_paid: parseFloat(formData.amount_paid) || 0,
     };
 
@@ -223,17 +223,7 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
   />
 </div>
 
-<div className="form-group">
-  <label htmlFor="booking">Booking Amount</label>
-  <input
-    type="number"
-    id="booking"
-    name="booking"
-    value={formData.booking || ''}
-    onChange={onInputChange}
-    required
-  />
-</div>
+
 
 <div className="form-group">
   <label htmlFor="amount_paid">Amount Paid</label>

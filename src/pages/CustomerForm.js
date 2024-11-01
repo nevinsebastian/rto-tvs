@@ -30,6 +30,8 @@ const CustomerForm = () => {
   const [backPreview, setBackPreview] = useState(null);
   const [passportPreview, setPassportPreview] = useState(null);
   const [signPreview, setSignPreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submit button loading
+
 
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -49,6 +51,8 @@ const CustomerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Start loading
+
   
     const formDataToSend = new FormData();
   
@@ -79,7 +83,9 @@ const CustomerForm = () => {
       alert('Data submitted successfully!');
     } catch (err) {
       console.error('Submit error:', err);
-      setError(err.message);
+      setError(err.message);      
+    }finally{
+      setIsSubmitting(false); // Stop loading
     }
   };
   
@@ -353,7 +359,7 @@ const CustomerForm = () => {
               )}
             </div>
 
-            <button type="submit" className="submit-button">Submit</button>
+            <button type="submit" className="submit-button" disabled={isSubmitting}>{isSubmitting ? 'Loading...':'Submit'}</button>
           </form>
         </>
       )}

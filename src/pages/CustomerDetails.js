@@ -266,7 +266,13 @@ const CustomerDetails = () => {
         {renderField('TP Registration', customerData.tp_registration)}
         {renderField('Insurance', customerData.insurance)}
         {renderField('Vehicle Number', customerData.vehicle_number)}
+        
         {renderField('Aadhar Combined Photo', renderImage(customerData.photo_adhaar_combined, "Aadhar Combined Photo"))}
+        
+        {renderField('Aadhar Front Photo', renderImage(customerData.adhaar_front, "Aadhar Front Photo"))}
+        
+        {renderField('Aadhar Back Photo', renderImage(customerData.adhaar_back, "Aadhar Back Photo"))}
+
         {renderField('Passport Photo', renderImage(customerData.photo_passport, "Passport Photo"))}
         {renderField('Customer Signature', renderImage(customerData.customer_sign, "Customer Signature"))}
         {renderField('Customer Signature Copy', renderImage(customerData.customer_sign_copy, "Customer Signature Copy"))}

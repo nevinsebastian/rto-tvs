@@ -89,23 +89,34 @@
 }
 
 /* Image Handling */
+/* Styles for the image container */
 .image-container {
   position: relative;
-  overflow: hidden;
-  border-radius: 8px; /* Rounded corners for images */
-  background: #ffffff; /* White background */
+  overflow: hidden; /* Hide overflow to maintain the aspect ratio */
+  border-radius: 8px; /* Optional: for rounded corners */
+  background: #f8f8f8; /* Light background for visibility */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  max-width: 100%; /* Ensure container does not exceed parent width */
+  margin: 20px auto; /* Center the container */
+  height: 300px; /* Set a fixed height for the container */
 }
 
+/* Styles for the images */
 .document-image {
-  width: 100%;
-  height: auto; /* Maintain aspect ratio */
+  width: 100%; /* Full width of the container */
+  height: 100%; /* Full height of the container */
+  object-fit: cover; /* Scale image to cover the container */
   border-radius: 8px; /* Match image corners */
-  transition: transform 0.3s ease; /* Smooth scaling */
 }
+
+/* Optional: Control the width of the image container */
+.image-container {
+  width: 80%; /* Adjust this percentage as needed (e.g., 80% of the parent) */
+}
+
 
 .document-image:hover {
-  transform: scale(1.05); /* Zoom on hover */
+  transform: scale(2.05); /* Zoom on hover */
 }
 
 .no-image {
@@ -138,6 +149,13 @@
 
   .image-container {
     margin-bottom: 10px; /* Space between images */
+    max-width: 100%; /* Ensure full width on mobile */
+  }
+
+  .document-image {
+    max-width: 100%; /* Full width on mobile */
+    height: auto; /* Maintain aspect ratio */
+    margin: 0 auto; /* Center the image */
   }
 
   .upload-section {
@@ -183,9 +201,13 @@
   }
 
   .document-image {
-    max-height: 200px; /* Adjust image size */
+    width: 100%; /* Full width */
+    max-width: 400px; /* Maximum width you want for the image */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px; /* Match image corners */
+    transition: transform 0.3s ease; /* Smooth scaling */
   }
-
+  
   button {
     display: none; /* Hide buttons */
   }
