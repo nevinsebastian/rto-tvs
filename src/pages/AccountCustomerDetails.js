@@ -252,6 +252,9 @@ const AccountCustomerDetails = () => {
 
 
           
+          {!customer.accounts_verified && (
+  <button onClick={verifyCustomer}>Verify Customer</button>
+)}
 
           {/* Finance Form */}
           {!showFinanceForm && (
