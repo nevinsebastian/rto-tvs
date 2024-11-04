@@ -26,7 +26,7 @@ const AccountCustomerDetails = () => {
   const [financeAmount, setFinanceAmount] = useState('');
   const [financeId, setFinanceId] = useState('');
   const [showFinanceForm, setShowFinanceForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [showEditForm] = useState(false);
   const [editableFields, setEditableFields] = useState({});
 
   useEffect(() => {
@@ -151,35 +151,6 @@ const AccountCustomerDetails = () => {
     }));
   };
 
-  const handleUpdateCustomer = () => {
-    const requestBody = new URLSearchParams(editableFields);
-
-    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}/${customer.finance_id}`, {
-      method: 'PUT',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: requestBody,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => {
-            throw new Error(err.detail || `Error: ${response.status} ${response.statusText}`);
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        alert('Customer updated successfully!');
-        setCustomer(data);
-        setShowEditForm(false);
-      })
-      .catch((error) => {
-        alert(`Failed to update customer: ${error.message}`);
-      });
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;

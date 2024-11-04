@@ -23,6 +23,19 @@ import Chassis from './Chassis';
 import HelmetCertForm from './HelmetCertForm';
 import CustomerImages from './CustomerImages';
 
+const financeOptions = {
+  1: 'IDFC',
+  2: 'HDFC',
+  3: 'TVS Credit',
+  4: 'Sreeramcheng',
+  5: 'Tata Cap',
+  6: 'HDB',
+  7: 'Indus',
+  8: 'Kotak',
+  9: 'Sreeram Alp',
+  10: 'Bajaj Alp'
+};
+
 const RTODetails = () => {
   const { customerId } = useParams();
   const [customer, setCustomer] = useState(null);
@@ -575,6 +588,13 @@ const handleDisclaimerSubmit = async () => {
             <Typography>
               <strong>Optional Accessories:</strong> ₹{customer.optional_accessories}
             </Typography>
+            <Typography>
+              <strong>Finance Amount:</strong> ₹{customer.finance_amount}
+            </Typography>
+            <Typography>
+  <strong>Finance Company:</strong> {financeOptions[customer.finance_id] || 'Not Assigned'}
+</Typography>
+
             <Typography>
               <strong>Amount Paid:</strong> ₹{customer.amount_paid}
             </Typography>
