@@ -225,36 +225,33 @@ const AccountCustomerDetails = () => {
             ))}
           </div>
 
-          {/* Financial Details */}
-          <div className="section financial">
-            <h3><FaMoneyBillWave /> Financial Information</h3>
-            {['tax', 'insurance', 'tp_registration', 'amount_paid', 'balance_amount', 'total_price', 'finance_id', 'finance_amount'].map((field) => (
-              <div key={field} className="detail-item">
-                <span className="label">{field.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}:</span>
-                <input
-                  type="text"
-                  name={field}
-                  value={editableFields[field] || ''}
-                  onChange={handleFieldChange}
-                  disabled={!showEditForm}
-                />
-              </div>
-            ))}
-            <div className="detail-item">
-              <span className="label">Registered:</span>
-              <span className="value">{customer.registered ? 'Yes' : 'No'}</span>
-            </div>
-          </div>
+         {/* Financial Details */}
+<div className="section financial">
+  <h3><FaMoneyBillWave /> Financial Information</h3>
+  {['tax', 'insurance', 'tp_registration', 'amount_paid', 'balance_amount', 'total_price', 'finance_amount'].map((field) => (
+    <div key={field} className="detail-item">
+      <span className="label">{field.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}:</span>
+      <input
+        type="text"
+        name={field}
+        value={editableFields[field] || ''}
+        onChange={handleFieldChange}
+        disabled={!showEditForm}
+      />
+    </div>
+  ))}
+  <div className="detail-item">
+    <span className="label">Finance:</span>
+    <span className="value">{financeOptions[customer.finance_id] || 'Not Assigned'}</span>
+  </div>
+  <div className="detail-item">
+    <span className="label">Registered:</span>
+    <span className="value">{customer.registered ? 'Yes' : 'No'}</span>
+  </div>
+</div>
 
-          {/* Buttons */}
-          <button onClick={() => setShowEditForm((prev) => !prev)}>
-            {showEditForm ? 'Save Changes' : 'Edit Customer'}
-          </button>
-          {showEditForm && (
-            <button onClick={handleUpdateCustomer}>
-              Save
-            </button>
-          )}
+
+          
 
           {/* Finance Form */}
           {!showFinanceForm && (
