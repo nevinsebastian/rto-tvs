@@ -21,53 +21,59 @@ import CustomerImages from './pages/CustomerImages.js';
 
 const App = () => {
   const [token, setToken] = useState(null);
+  const [userRole, setUserRole] = useState(null); // Store user role (e.g., 'rto', 'sales-executive', etc.)
   const [loading, setLoading] = useState(true);
 
-  // Set token from localStorage on mount and validate it
+  // Set token and user role from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      // Optional: Check for token expiration or validity here
-      setToken(storedToken); // Rehydrate token from localStorage if valid
+    const storedRole = localStorage.getItem('role'); // Assuming the role is stored separately
+    if (storedToken && storedRole) {
+      setToken(storedToken);
+      setUserRole(storedRole); // Set the user role (e.g., 'sales-executive', 'rto', etc.)
     }
-    setLoading(false); // Set loading to false after token check
+    setLoading(false);
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Show a loading screen while checking for token
+    return <div>Loading...</div>;
   }
 
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          {/* Redirect based on token existence */}
+          {/* Root Route with Role-based Redirection */}
           <Route 
             path="/" 
-            element={token ? <Navigate to="/sales-executive" replace /> : <Login setToken={setToken} />} 
+            element={token ? 
+              (userRole === 'rto' ? <Navigate to="/rto" replace /> :
+                userRole === 'sales-executive' ? <Navigate to="/sales-executive" replace /> : 
+                <Navigate to="/login" />) 
+              : <Login setToken={setToken} setUserRole={setUserRole} />} 
           />
-          <Route path="/login" element={<Login setToken={setToken} />} />
+          <Route path="/login" element={<Login setToken={setToken} setUserRole={setUserRole} />} />
 
           {/* Protected routes */}
           <Route 
             path="/admin" 
-            element={token ? <Admin /> : <Navigate to="/login" />} 
+            element={token && userRole === 'admin' ? <Admin /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/sales-executive" 
-            element={token ? <SalesExecutive /> : <Navigate to="/login" />} 
+            element={token && userRole === 'sales' ? <SalesExecutive /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/accounts" 
-            element={token ? <Accounts /> : <Navigate to="/login" />} 
+            element={token && userRole === 'accounts' ? <Accounts /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/rto" 
-            element={token ? <RTO /> : <Navigate to="/login" />} 
+            element={token && userRole === 'rto' ? <RTO /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/manager" 
-            element={token ? <Manager /> : <Navigate to="/login" />} 
+            element={token && userRole === 'manager' ? <Manager /> : <Navigate to="/login" />} 
           />
           <Route path="/customer-form/:link_token" element={<CustomerForm />} />
           <Route path="/rto/:customerId" element={<RTODetails />} />
@@ -76,7 +82,7 @@ const App = () => {
           <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} />
           <Route 
             path="/stock" 
-            element={token ? <Stock /> : <Navigate to="/login" />} 
+            element={token && userRole === 'stock' ? <Stock /> : <Navigate to="/login" />} 
           />
           <Route path="/chassis" element={<Chassis />} />
           <Route path="/hell" element={<HelmetCertForm />} />

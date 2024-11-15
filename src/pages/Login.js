@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Login({ setToken }) {
+export default function Login({ setToken, setUserRole }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,13 +30,18 @@ export default function Login({ setToken }) {
 
       if (response.status === 200) {
         const { access_token, user } = response.data;
+
+        // Store the token and user data (including role)
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
+        // Update the app's state for token and user role
         setToken(access_token);
+        setUserRole(user.role_name); // Save the role in the app state
 
+        // Redirect based on user role
         setTimeout(() => {
-          navigateToRole(user.role_name);
+          navigateToRole(user.role_name); // Navigate to the appropriate route based on the role
         }, 100);
       } else {
         setError('Login failed. Please check your credentials.');
