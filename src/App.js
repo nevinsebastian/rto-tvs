@@ -21,71 +21,46 @@ import CustomerImages from './pages/CustomerImages.js';
 
 const App = () => {
   const [token, setToken] = useState(null);
-  const [userRole, setUserRole] = useState(null); // Store user role (e.g., 'rto', 'sales-executive', etc.)
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Set token and user role from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role'); // Assuming the role is stored separately
-    if (storedToken && storedRole) {
+    const storedUser = localStorage.getItem('user');
+    if (storedToken && storedUser) {
       setToken(storedToken);
-      setUserRole(storedRole); // Set the user role (e.g., 'sales-executive', 'rto', etc.)
+      setUserRole(JSON.parse(storedUser).role_name); // assuming the user object contains the role_name
     }
     setLoading(false);
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Show a loading screen while checking for token
   }
 
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          {/* Root Route with Role-based Redirection */}
-          <Route 
-            path="/" 
-            element={token ? 
-              (userRole === 'rto' ? <Navigate to="/rto" replace /> :
-                userRole === 'sales-executive' ? <Navigate to="/sales-executive" replace /> : 
-                <Navigate to="/login" />) 
-              : <Login setToken={setToken} setUserRole={setUserRole} />} 
-          />
+          {/* Redirect based on token existence */}
+          <Route path="/" element={token ? <Navigate to={`/${userRole}`} replace /> : <Login setToken={setToken} setUserRole={setUserRole} />} />
           <Route path="/login" element={<Login setToken={setToken} setUserRole={setUserRole} />} />
 
           {/* Protected routes */}
-          <Route 
-            path="/admin" 
-            element={token && userRole === 'admin' ? <Admin /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/sales-executive" 
-            element={token && userRole === 'sales' ? <SalesExecutive /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/accounts" 
-            element={token && userRole === 'accounts' ? <Accounts /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/rto" 
-            element={token && userRole === 'rto' ? <RTO /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/manager" 
-            element={token && userRole === 'manager' ? <Manager /> : <Navigate to="/login" />} 
-          />
+          <Route path="/admin" element={token ? <Admin /> : <Navigate to="/login" />} />
+          <Route path="/sales-executive" element={token ? <SalesExecutive /> : <Navigate to="/login" />} />
+          <Route path="/accounts" element={token ? <Accounts /> : <Navigate to="/login" />} />
+          <Route path="/rto" element={token ? <RTO /> : <Navigate to="/login" />} />
+          <Route path="/manager" element={token ? <Manager /> : <Navigate to="/login" />} />
           <Route path="/customer-form/:link_token" element={<CustomerForm />} />
           <Route path="/rto/:customerId" element={<RTODetails />} />
           <Route path="/pdf" element={<Pdf />} />
           <Route path="/customer-details/:customerId" element={<CustomerDetails />} />
           <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} />
-          <Route 
-            path="/stock" 
-            element={token && userRole === 'stock' ? <Stock /> : <Navigate to="/login" />} 
-          />
+          <Route path="/stock" element={token ? <Stock /> : <Navigate to="/login" />} />
           <Route path="/chassis" element={<Chassis />} />
-          <Route path="/hell" element={<HelmetCertForm />} />
+          <Route path='/hell' element={<HelmetCertForm/>}/>
           <Route path="/crop/:customerId" element={<CustomerImages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
