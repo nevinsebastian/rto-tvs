@@ -52,7 +52,7 @@ const RTODetails = () => {
   const [form21Pdf, setForm21Pdf] = useState(null);
   const [form20Pdf, setForm20Pdf] = useState(null);
   const [signature, setSignature] = useState(null);
-  const [financeCompany, setFinanceCompany] = useState('idfc');
+  const [financeCompany, setFinanceCompany] = useState('none');
   const [invoicePdf, setInvoicePdf] = useState(null);
   const [buyerSignature, setBuyerSignature] = useState(null);
   const [processedForm21, setProcessedForm21] = useState(null);
