@@ -755,8 +755,8 @@ const handleDisclaimerSubmit = async () => {
         <input type="file" accept="image/*" onChange={handleSignatureChange} />
         <Typography>Finance Company:</Typography>
         <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+        <option value="hdfc">None</option>
           <option value="idfc">IDFC</option>
-          <option value="hdfc">HDFC</option>
           <option value="tvscredit">tvscredit</option>
           <option value="sreeramcheng">sreeramcheng</option>
           <option value="tatacap">tatacap</option>
