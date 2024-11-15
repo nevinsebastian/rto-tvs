@@ -170,7 +170,7 @@ const CustomerForm = () => {
               value={formData.first_name}
               placeholder="First Name"
               onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-              required
+
               className="form-input"
             />
             <input
@@ -179,7 +179,7 @@ const CustomerForm = () => {
               value={formData.last_name}
               placeholder="Last Name"
               onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-              required
+              
               className="form-input"
             />
             <h3>Date of birth</h3>
@@ -188,7 +188,7 @@ const CustomerForm = () => {
               name="dob"
               value={formData.dob}
               onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -197,7 +197,7 @@ const CustomerForm = () => {
               value={formData.email}
               placeholder="Email"
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -206,7 +206,7 @@ const CustomerForm = () => {
               value={formData.address}
               placeholder="Address"
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -215,7 +215,7 @@ const CustomerForm = () => {
               value={formData.pin_code}
               placeholder="Pin Code"
               onChange={(e) => setFormData({ ...formData, pin_code: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -224,7 +224,7 @@ const CustomerForm = () => {
               value={formData.nominee}
               placeholder="Nominee Name"
               onChange={(e) => setFormData({ ...formData, nominee: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -233,7 +233,7 @@ const CustomerForm = () => {
               value={formData.relation}
               placeholder="Relation with Nominee"
               onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
-              required
+              
               className="form-input"
             />
 
