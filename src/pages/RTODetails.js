@@ -22,6 +22,7 @@ import '../styles/RTODetails.css';
 import Chassis from './Chassis';
 import HelmetCertForm from './HelmetCertForm';
 import CustomerImages from './CustomerImages';
+import InspectionLetter from '../components/InspectionLetter';
 
 const financeOptions = {
   1: 'IDFC',
@@ -800,12 +801,7 @@ const handleDisclaimerSubmit = async () => {
 
       {/* Inspection Letter Section */}
       <Grid item xs={12} className='form-item'>
-        <Typography>Upload Inspection Letter PDF:</Typography>
-        <input type="file" accept="application/pdf" onChange={handleInspectionLetterChange} />
-        <Typography>Upload Chassis Number Picture:</Typography>
-        <input type="file" accept="image/*" onChange={handleChasisNumberPicChange} />
-        <Button onClick={handleInspectionLetterSubmit} variant="contained" color="primary">Submit Inspection Letter</Button>
-        {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
+        <InspectionLetter/>
       </Grid>
 
     </Grid>
