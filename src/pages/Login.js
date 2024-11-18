@@ -30,17 +30,19 @@ export default function Login({ setToken, setUserRole }) {
 
       if (response.status === 200) {
         const { access_token, user } = response.data;
-        
-        // Save token and user (including role) in localStorage
+
+        // Store the token and user data (including role)
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Set state with the token and role
+        // Update the app's state for token and user role
         setToken(access_token);
-        setUserRole(user.role_name); // Assuming the user object contains a role_name
+        setUserRole(user.role_name); // Save the role in the app state
 
-        // Redirect based on role
-        navigateToRole(user.role_name);
+        // Redirect based on user role
+        setTimeout(() => {
+          navigateToRole(user.role_name); // Navigate to the appropriate route based on the role
+        }, 100);
       } else {
         setError('Login failed. Please check your credentials.');
       }

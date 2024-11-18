@@ -13,7 +13,7 @@ const NotFound = () => {
         alt="Funny Lost Gif"
         className="not-found-gif"
       />
-      <Link to="/" className="back-home">
+      <Link to="/login" className="back-home">
         Get me back home!
       </Link>
     </div>
