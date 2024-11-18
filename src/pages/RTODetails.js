@@ -64,10 +64,7 @@ const RTODetails = () => {
   
   const [disclaimerPdf, setDisclaimerPdf] = useState(null);
   const [disclaimerSignature, setDisclaimerSignature] = useState(null);
-  const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
-  const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
-  const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
   
    // Add new state variables for edit functionality
    const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -314,13 +311,8 @@ const RTODetails = () => {
 
 
 
-  const handleInspectionLetterChange = (e) => {
-    setInspectionLetterPdf(e.target.files[0]);
-  };
+ 
 
-  const handleChasisNumberPicChange = (e) => {
-    setChasisNumberPic(e.target.files[0]);
-  };
 
 // New PDF submission functions
 const handleDisclaimerSubmit = async () => {
@@ -349,22 +341,6 @@ const handleDisclaimerSubmit = async () => {
   // New PDF submission functions
 
 
-  const handleInspectionLetterSubmit = async () => {
-    if (!inspectionLetterPdf || !chasisNumberPic) return;
-
-    const formData = new FormData();
-    formData.append('pdf', inspectionLetterPdf);
-    formData.append('chasis_number_pic', chasisNumberPic);
-
-    try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/inspection_letter', formData, {
-        responseType: 'blob',
-      });
-      setProcessedInspectionLetter(URL.createObjectURL(response.data));
-    } catch (error) {
-      console.error('Error processing inspection letter:', error);
-    }
-  };
 
 
 
