@@ -425,39 +425,47 @@ const handleDisclaimerSubmit = async () => {
     }
   };
 
+  const fetchWithRetry = async (url, retries = 3) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await axios.get(url, { responseType: 'arraybuffer' });
+        } catch (error) {
+            if (i === retries - 1) throw error; // Only throw if all retries fail
+        }
+    }
+};
+
+
   const handleDownloadImages = async () => {
     if (!customer) return;
 
     const zip = new JSZip();
-    const imgFolder = zip.folder('documents'); // Create a folder in the zip
-    const firstName = customer.name.split(' ')[0]; // Get the customer's first name
+    const imgFolder = zip.folder('documents');
+    const firstName = customer.name.split(' ')[0];
 
-    // Prepare the images to be downloaded
     const imageUrls = [
         { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
         { name: 'customer_signature.png', url: customer.customer_sign },
-        { name: 'customer_signature_copy.png', url: customer.customer_sign_copy }, // New entry
+        { name: 'customer_signature_copy.png', url: customer.customer_sign_copy },
     ];
 
     try {
-        // Add images to the zip
         await Promise.all(
             imageUrls.map(async (image) => {
-                console.log(`Fetching image from: ${image.url}`);
-                const imgData = await axios.get(image.url, { responseType: 'arraybuffer' });
+                const imgData = await fetchWithRetry(image.url);
                 imgFolder.file(image.name, imgData.data);
             })
         );
 
-        // Generate zip file and trigger download with customer's first name
         zip.generateAsync({ type: 'blob' }).then((content) => {
             FileSaver.saveAs(content, `${firstName}_documents.zip`);
         });
     } catch (error) {
         console.error('Error downloading images:', error);
-        alert('An error occurred while downloading images. Please check the console for more details.');
+        alert('An error occurred while downloading images. Check console for details.');
     }
 };
+
 
 
   if (loading) {
