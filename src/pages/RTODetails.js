@@ -369,15 +369,15 @@ const handleDisclaimerSubmit = async () => {
   };
 
   const handleForm20Submit = async () => {
-    if (!form20Pdf || !signature) return;
-
+    if (!form20Pdf || !signature || !date) return;
+  
     const formData = new FormData();
     formData.append('pdf', form20Pdf);
     formData.append('signature', signature);
     formData.append('finance_company', financeCompany);
-
+  
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form20', formData, {
+      const response = await axios.post(`https://api.tophaventvs.com:8000/pdf/process_pdf/form20?date=${date}`, formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -763,37 +763,34 @@ const handleDisclaimerSubmit = async () => {
 
       {/* Form 20 Section */}
       <Grid item xs={12} className='form-item'>
-      <Typography>Date:</Typography>
-        <TextField
-          variant="outlined"
-          fullWidth
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-        <Typography>Upload Form 20 PDF:</Typography>
-        <input type="file" accept="application/pdf" onChange={handleForm20Change} />
-        <Typography>Upload Signature:</Typography>
-        <input type="file" accept="image/*" onChange={handleSignatureChange} />
-        <Typography>Finance Company:</Typography>
-        <select value={financeCompany} onChange={handleFinanceCompanyChange}>
-        <option value="hdfc">None</option>
-          <option value="idfc">IDFC</option>
-          <option value="tvscredit">tvscredit</option>
-          <option value="sreeramcheng">sreeramcheng</option>
-          <option value="tatacap">tatacap</option>
-          <option value="hdb">hdb</option>
-          <option value="indus">indus</option>
-          <option value="kotak">kotak</option>
-          <option value="sreeramalp">sreeramalp</option>
-          <option value="bajajalp">bajajalp</option>
-
-
-        </select>
-        <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
-        {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
-      </Grid>
-
+  <Typography>Date:</Typography>
+  <TextField
+    variant="outlined"
+    fullWidth
+    type="date"
+    value={date}
+    onChange={(e) => setDate(e.target.value)}
+  />
+  <Typography>Upload Form 20 PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+  <Typography>Upload Signature:</Typography>
+  <input type="file" accept="image/*" onChange={handleSignatureChange} />
+  <Typography>Finance Company:</Typography>
+  <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+    <option value="hdfc">None</option>
+    <option value="idfc">IDFC</option>
+    <option value="tvscredit">tvscredit</option>
+    <option value="sreeramcheng">sreeramcheng</option>
+    <option value="tatacap">tatacap</option>
+    <option value="hdb">hdb</option>
+    <option value="indus">indus</option>
+    <option value="kotak">kotak</option>
+    <option value="sreeramalp">sreeramalp</option>
+    <option value="bajajalp">bajajalp</option>
+  </select>
+  <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
+  {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
+</Grid>
       {/* Invoice Section */}
       <Grid item xs={12} className='form-item'>
         <Typography>Upload Invoice PDF:</Typography>
