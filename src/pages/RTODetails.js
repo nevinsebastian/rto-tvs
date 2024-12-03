@@ -8,8 +8,6 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
-import JSZip from 'jszip';
-import FileSaver from 'file-saver';
 import { 
           
   DialogTitle, DialogContent, DialogActions, TextField
@@ -50,6 +48,8 @@ const RTODetails = () => {
 
 
   // PDF Editor State
+  const [date, setDate] = useState('');
+
   const [form21Pdf, setForm21Pdf] = useState(null);
   const [form20Pdf, setForm20Pdf] = useState(null);
   const [signature, setSignature] = useState(null);
@@ -425,46 +425,70 @@ const handleDisclaimerSubmit = async () => {
     }
   };
 
-  const fetchWithRetry = async (url, retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            return await axios.get(url, { responseType: 'arraybuffer' });
-        } catch (error) {
-            if (i === retries - 1) throw error; // Only throw if all retries fail
-        }
-    }
-};
 
-
-  const handleDownloadImages = async () => {
-    if (!customer) return;
-
-    const zip = new JSZip();
-    const imgFolder = zip.folder('documents');
-    const firstName = customer.name.split(' ')[0];
-
-    const imageUrls = [
-        { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
-        { name: 'customer_signature.png', url: customer.customer_sign },
-        { name: 'customer_signature_copy.png', url: customer.customer_sign_copy },
-    ];
-
+  const handleDownloadImages = async (customerId) => {
     try {
-        await Promise.all(
-            imageUrls.map(async (image) => {
-                const imgData = await fetchWithRetry(image.url);
-                imgFolder.file(image.name, imgData.data);
-            })
-        );
-
-        zip.generateAsync({ type: 'blob' }).then((content) => {
-            FileSaver.saveAs(content, `${firstName}_documents.zip`);
-        });
+      // Fetch customer details
+      const customerResponse = await fetch(`https://api.tophaventvs.com:8000/rto/${customerId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+  
+      if (!customerResponse.ok) {
+        throw new Error(`Error fetching customer data: ${customerResponse.statusText}`);
+      }
+  
+      const customerData = await customerResponse.json();
+  
+      // Extract the image URLs needed for download
+      const imageUrls = [
+        { name: 'photo_adhaar_combined', url: customerData.photo_adhaar_combined },
+        { name: 'customer_sign', url: customerData.customer_sign },
+        { name: 'customer_sign_copy', url: customerData.customer_sign_copy }
+      ].filter(img => img.url); // Ensures no undefined URLs are included
+  
+      // Send the image URLs to the download endpoint
+      const downloadResponse = await fetch('https://api.tophaventvs.com:8000/rto/download-images/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          customer_id: customerId,
+          image_urls: imageUrls
+        })
+      });
+  
+      if (!downloadResponse.ok) {
+        throw new Error(`Error downloading images: ${downloadResponse.statusText}`);
+      }
+  
+      // Handle the response blob for download
+      const blob = await downloadResponse.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+  
+      // Extract the filename from content-disposition or default it
+      const contentDisposition = downloadResponse.headers.get('content-disposition');
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : 'customer_documents.zip';
+  
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-        console.error('Error downloading images:', error);
-        alert('An error occurred while downloading images. Check console for details.');
+      console.error('Download failed:', error);
     }
-};
+  };
+  
+  
 
 
 
@@ -681,7 +705,12 @@ const handleDisclaimerSubmit = async () => {
     <Button onClick={handleVerifyCustomer} variant="contained" color="primary" disabled={submitting}>
       {submitting ? <CircularProgress size={24} /> : 'Verify Customer'}
     </Button>
-    <Button onClick={handleDownloadImages} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
+    <Button
+      onClick={() => handleDownloadImages(customerId)}
+      variant="contained"
+      color="secondary"
+      style={{ marginLeft: '10px' }}
+    >
       Download Images
     </Button>
 
@@ -734,6 +763,14 @@ const handleDisclaimerSubmit = async () => {
 
       {/* Form 20 Section */}
       <Grid item xs={12} className='form-item'>
+      <Typography>Date:</Typography>
+        <TextField
+          variant="outlined"
+          fullWidth
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
         <Typography>Upload Form 20 PDF:</Typography>
         <input type="file" accept="application/pdf" onChange={handleForm20Change} />
         <Typography>Upload Signature:</Typography>
