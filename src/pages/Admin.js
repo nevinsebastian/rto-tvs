@@ -51,7 +51,7 @@ const Admin = () => {
     const token = localStorage.getItem('token');
   
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/admin/create_user', {
+      const response = await fetch('http://65.1.180.81:8000/admin/create_user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const Admin = () => {
   const fetchBranches = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/admin/', {
+      const response = await fetch('http://65.1.180.81:8000/admin/', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -126,7 +126,7 @@ const Admin = () => {
   const fetchBranchDetails = async (branchId) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/admin/${branchId}`, {
+      const response = await fetch(`http://65.1.180.81:8000/admin/${branchId}`, {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -144,7 +144,7 @@ const Admin = () => {
   const fetchEmployeeData = useCallback(async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/admin/users', {
+      const response = await fetch('http://65.1.180.81:8000/admin/users', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -166,7 +166,7 @@ const Admin = () => {
         accountsCount
       }));
 
-      const customerResponse = await fetch('https://api.tophaventvs.com:8000/admin/customers', {
+      const customerResponse = await fetch('http://65.1.180.81:8000/admin/customers', {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -209,7 +209,7 @@ const Admin = () => {
 
     for (const month of months) {
       try {
-        const response = await fetch(`https://api.tophaventvs.com:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
+        const response = await fetch(`http://65.1.180.81:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
           method: 'GET',
           headers: {
             accept: 'application/json',
@@ -271,7 +271,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/admin/${selectedBranch}`, {
+      const response = await fetch(`http://65.1.180.81:8000/admin/${selectedBranch}`, {
         method: 'PUT',
         headers: {
           accept: 'application/json',

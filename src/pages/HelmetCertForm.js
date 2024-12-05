@@ -17,7 +17,7 @@ const HelmetCertForm = () => {
 
     try {
       const response = await axios.post(
-        `https://api.tophaventvs.com:8000/pdf/process_pdf/helmetcert`,
+        `http://65.1.180.81:8000/pdf/process_pdf/helmetcert`,
         formData,
         {
           params: {

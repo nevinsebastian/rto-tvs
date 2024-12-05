@@ -36,7 +36,7 @@ const CustomerForm = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`https://api.tophaventvs.com:8000/customer/customer-form/${link_token}`);
+        const response = await fetch(`http://65.1.180.81:8000/customer/customer-form/${link_token}`);
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setCustomerData(data);
@@ -69,7 +69,7 @@ const CustomerForm = () => {
     }
   
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/customer/${link_token}`, {
+      const response = await fetch(`http://65.1.180.81:8000/customer/${link_token}`, {
         method: 'POST',
         body: formDataToSend,
       });
