@@ -40,7 +40,10 @@
   background-color: #28a745; /* Success button color */
   color: white;
 }
-
+.btn-delete {
+  background-color: #c42222; /* Success button color */
+  color: white;
+}
 .btn-verify:hover {
   background-color: #218838; /* Darker shade on hover */
 }

@@ -283,6 +283,9 @@ const CustomerDetails = () => {
         <button onClick={handleVerifyCustomer} className="btn btn-verify">
           Verify Customer
         </button>
+        <button  className="btn btn-delete">
+          Delete Customer
+        </button>
       </div>
       </div>
 
