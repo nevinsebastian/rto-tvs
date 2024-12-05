@@ -19,6 +19,34 @@ const CustomerDetails = () => {
   });
   const [uploadStatus, setUploadStatus] = useState('');
 
+  const handleDeleteCustomer = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this customer?");
+    if (!confirmDelete) return;
+  
+    try {
+      const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/delete/${customerId}`, {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Ensure the token is correctly retrieved
+        },
+      });
+  
+      if (response.ok) {
+        alert("Customer deleted successfully.");
+        // Optional: Redirect or refresh the page
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to delete customer:", errorData);
+        alert("Failed to delete customer. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      alert("Error deleting customer. Please check your connection.");
+    }
+  };
+  
+
   useEffect(() => {
     const fetchCustomerById = async () => {
       try {
@@ -283,9 +311,10 @@ const CustomerDetails = () => {
         <button onClick={handleVerifyCustomer} className="btn btn-verify">
           Verify Customer
         </button>
-        <button  className="btn btn-delete">
-          Delete Customer
-        </button>
+        <button onClick={handleDeleteCustomer} className="btn btn-delete">
+  Delete Customer
+</button>
+
       </div>
       </div>
 
