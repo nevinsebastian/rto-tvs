@@ -18,7 +18,7 @@ const RTO = () => {
       navigate('/login');
     } else {
       // Fetch Pending Customers
-      fetch('http://65.1.180.81:8000/rto/pending-customers', {
+      fetch('https://65.1.180.81:8000/rto/pending-customers', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const RTO = () => {
         });
 
       // Fetch Verified Customers
-      fetch('http://65.1.180.81:8000/rto/verified-customers', {
+      fetch('https://65.1.180.81:8000/rto/verified-customers', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,

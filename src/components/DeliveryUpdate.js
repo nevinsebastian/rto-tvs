@@ -32,7 +32,7 @@ const DeliveryUpdate = ({ isOpen, onClose, customerId, onSuccess }) => {
 
     try {
       const response = await fetch(
-        `http://65.1.180.81:8000/sales/customers/delivery-update/${customerId}`,
+        `https://65.1.180.81:8000/sales/customers/delivery-update/${customerId}`,
         {
           method: 'POST',
           headers: {
