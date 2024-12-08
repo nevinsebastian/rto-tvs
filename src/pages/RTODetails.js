@@ -124,7 +124,7 @@ const RTODetails = () => {
       });
 
       const response = await axios.put(
-        `https://65.1.180.81:8000/rto/customers/${customerId}`,
+        `https://prod.tophaventvs.com/rto/customers/${customerId}`,
         formData,
         {
           headers: {
@@ -145,7 +145,7 @@ const RTODetails = () => {
         
         // Refresh the customer data
         const updatedCustomerResponse = await axios.get(
-          `https://65.1.180.81:8000/rto/${customerId}`,
+          `https://prod.tophaventvs.com/rto/${customerId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -242,7 +242,7 @@ const RTODetails = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`https://65.1.180.81:8000/rto/${customerId}`, {
+      fetch(`https://prod.tophaventvs.com/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -323,7 +323,7 @@ const handleDisclaimerSubmit = async () => {
   formData.append('signature', disclaimerSignature);
 
   try {
-    const response = await axios.post('https://65.1.180.81:8000/pdf/process_pdf/disclaimer', formData, {
+    const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/disclaimer', formData, {
       responseType: 'blob',
     });
     setProcessedDisclaimer(URL.createObjectURL(response.data));
@@ -359,7 +359,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('pdf', form21Pdf);
 
     try {
-      const response = await axios.post('https://65.1.180.81:8000/pdf/process_pdf/form21', formData, {
+      const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/form21', formData, {
         responseType: 'blob',
       });
       setProcessedForm21(URL.createObjectURL(response.data));
@@ -377,7 +377,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('finance_company', financeCompany);
   
     try {
-      const response = await axios.post(`https://65.1.180.81:8000/pdf/process_pdf/form20?date=${date}`, formData, {
+      const response = await axios.post(`https://prod.tophaventvs.com/pdf/process_pdf/form20?date=${date}`, formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -394,7 +394,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('signature', buyerSignature);
 
     try {
-      const response = await axios.post('https://65.1.180.81:8000/pdf/process_pdf/invoice', formData, {
+      const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/invoice', formData, {
         responseType: 'blob',
       });
       setProcessedInvoice(URL.createObjectURL(response.data));
@@ -408,7 +408,7 @@ const handleDisclaimerSubmit = async () => {
     setSubmissionError(null);
 
     try {
-      const response = await axios.post(`https://65.1.180.81:8000/rto/verify/${customerId}`, {}, {
+      const response = await axios.post(`https://prod.tophaventvs.com/rto/verify/${customerId}`, {}, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -429,7 +429,7 @@ const handleDisclaimerSubmit = async () => {
   const handleDownloadImages = async (customerId) => {
     try {
       // Fetch customer details
-      const customerResponse = await fetch(`https://65.1.180.81:8000/rto/${customerId}`, {
+      const customerResponse = await fetch(`https://prod.tophaventvs.com/rto/${customerId}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
@@ -450,7 +450,7 @@ const handleDisclaimerSubmit = async () => {
       ].filter(img => img.url); // Ensures no undefined URLs are included
   
       // Send the image URLs to the download endpoint
-      const downloadResponse = await fetch('https://65.1.180.81:8000/rto/download-images/', {
+      const downloadResponse = await fetch('https://prod.tophaventvs.com/rto/download-images/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

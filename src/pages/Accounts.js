@@ -18,8 +18,8 @@ const Accounts = () => {
       setLoading(true);
       const url =
         status === 'verified'
-          ? 'https://65.1.180.81:8000/accounts/customers/verified'
-          : 'https://65.1.180.81:8000/accounts/customers/pending';
+          ? 'https://prod.tophaventvs.com/accounts/customers/verified'
+          : 'https://prod.tophaventvs.com/accounts/customers/pending';
 
       fetch(url, {
         headers: {

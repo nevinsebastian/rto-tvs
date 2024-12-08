@@ -26,7 +26,7 @@ const InspectionLetter = () => {
     formData.append('pdf', pdfFile);
     formData.append('chasis_number_pic', chassisNumberPic);
 
-    const url = `https://65.1.180.81:8000/pdf/process_pdf/inspection_letter?sale_invoice_no=${saleInvoiceNo}&date=${date}`;
+    const url = `https://prod.tophaventvs.com/pdf/process_pdf/inspection_letter?sale_invoice_no=${saleInvoiceNo}&date=${date}`;
 
     try {
       const response = await fetch(url, {

@@ -35,7 +35,7 @@ const AccountCustomerDetails = () => {
       return;
     }
 
-    fetch(`https://65.1.180.81:8000/accounts/customers/${customerId}`, {
+    fetch(`https://prod.tophaventvs.com/accounts/customers/${customerId}`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ const AccountCustomerDetails = () => {
   };
 
   const verifyCustomer = () => {
-    fetch(`https://65.1.180.81:8000/accounts/verify/${customerId}`, {
+    fetch(`https://prod.tophaventvs.com/accounts/verify/${customerId}`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -112,7 +112,7 @@ const AccountCustomerDetails = () => {
       vehicle_number: editableFields.vehicle_number || '',
     });
 
-    fetch(`https://65.1.180.81:8000/accounts/customers/${customerId}/${financeId}`, {
+    fetch(`https://prod.tophaventvs.com/accounts/customers/${customerId}/${financeId}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',

@@ -81,7 +81,7 @@ const Stock = () => {
     formData.append('chassis_photo', chassisPhoto); // Ensure this is the Blob
 
     try {
-      const response = await fetch('https://65.1.180.81:8000/chasis/upload', {
+      const response = await fetch('https://prod.tophaventvs.com/chasis/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
