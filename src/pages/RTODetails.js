@@ -124,7 +124,7 @@ const RTODetails = () => {
       });
 
       const response = await axios.put(
-        `https://api.tophaventvs.com:8000/rto/customers/${customerId}`,
+        `https://prod.tophaventvs.com/rto/customers/${customerId}`,
         formData,
         {
           headers: {
@@ -145,7 +145,7 @@ const RTODetails = () => {
         
         // Refresh the customer data
         const updatedCustomerResponse = await axios.get(
-          `https://api.tophaventvs.com:8000/rto/${customerId}`,
+          `https://prod.tophaventvs.com/rto/${customerId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -242,7 +242,7 @@ const RTODetails = () => {
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`https://api.tophaventvs.com:8000/rto/${customerId}`, {
+      fetch(`https://prod.tophaventvs.com/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -323,7 +323,7 @@ const handleDisclaimerSubmit = async () => {
   formData.append('signature', disclaimerSignature);
 
   try {
-    const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/disclaimer', formData, {
+    const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/disclaimer', formData, {
       responseType: 'blob',
     });
     setProcessedDisclaimer(URL.createObjectURL(response.data));
@@ -359,7 +359,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('pdf', form21Pdf);
 
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form21', formData, {
+      const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/form21', formData, {
         responseType: 'blob',
       });
       setProcessedForm21(URL.createObjectURL(response.data));
@@ -377,7 +377,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('finance_company', financeCompany);
   
     try {
-      const response = await axios.post(`https://api.tophaventvs.com:8000/pdf/process_pdf/form20?date=${date}`, formData, {
+      const response = await axios.post(`https://prod.tophaventvs.com/pdf/process_pdf/form20?date=${date}`, formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -394,7 +394,7 @@ const handleDisclaimerSubmit = async () => {
     formData.append('signature', buyerSignature);
 
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/invoice', formData, {
+      const response = await axios.post('https://prod.tophaventvs.com/pdf/process_pdf/invoice', formData, {
         responseType: 'blob',
       });
       setProcessedInvoice(URL.createObjectURL(response.data));
@@ -408,7 +408,7 @@ const handleDisclaimerSubmit = async () => {
     setSubmissionError(null);
 
     try {
-      const response = await axios.post(`https://api.tophaventvs.com:8000/rto/verify/${customerId}`, {}, {
+      const response = await axios.post(`https://prod.tophaventvs.com/rto/verify/${customerId}`, {}, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -429,7 +429,7 @@ const handleDisclaimerSubmit = async () => {
   const handleDownloadImages = async (customerId) => {
     try {
       // Fetch customer details
-      const customerResponse = await fetch(`https://api.tophaventvs.com:8000/rto/${customerId}`, {
+      const customerResponse = await fetch(`https://prod.tophaventvs.com/rto/${customerId}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
@@ -445,12 +445,11 @@ const handleDisclaimerSubmit = async () => {
       // Extract the image URLs needed for download
       const imageUrls = [
         { name: 'photo_adhaar_combined', url: customerData.photo_adhaar_combined },
-        { name: 'customer_sign', url: customerData.customer_sign },
-        { name: 'customer_sign_copy', url: customerData.customer_sign_copy }
+        { name: 'customer_sign', url: customerData.customer_sign }
       ].filter(img => img.url); // Ensures no undefined URLs are included
   
       // Send the image URLs to the download endpoint
-      const downloadResponse = await fetch('https://api.tophaventvs.com:8000/rto/download-images/', {
+      const downloadResponse = await fetch('https://prod.tophaventvs.com/rto/download-images/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -648,7 +647,7 @@ const handleDisclaimerSubmit = async () => {
               </Grid>
               
               <Grid item xs={4}>
-              <p>Sign bg removed</p>
+              <p>Sign </p>
 
                 <Avatar
                 
@@ -659,17 +658,7 @@ const handleDisclaimerSubmit = async () => {
                 />
               </Grid>
 
-              {/* New Image for customer_sign_copy */}
-              <Grid item xs={4}>
-              <p>Sign stock</p>
-
-                <Avatar
-                  variant="rounded"
-                  src={customer.customer_sign_copy}
-                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
-                  onClick={() => handleImageClick(customer.customer_sign_copy)}
-                />
-              </Grid>
+            
               <CustomerImages/>
             </Grid>
           </Grid>
