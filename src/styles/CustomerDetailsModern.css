@@ -40,6 +40,9 @@
   background-color: #28a745; /* Success button color */
   color: white;
 }
+.btn-delet {
+  background-color: rgb(167, 49, 49);
+}
 
 .btn-verify:hover {
   background-color: #218838; /* Darker shade on hover */

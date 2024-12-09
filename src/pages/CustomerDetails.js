@@ -39,6 +39,48 @@ const CustomerDetails = () => {
     fetchCustomerById();
   }, [customerId]);
 
+  const handleDelet = async (customerId) => {
+    if (typeof customerId !== 'number' && typeof customerId !== 'string') {
+      console.error('Invalid customerId:', customerId);
+      alert('Invalid customer ID provided. Please try again.');
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem('auth_token'); // Retrieve token from local storage
+      if (!token) {
+        console.error('Authorization token is missing');
+        return;
+      }
+  
+      console.log('Deleting customer with ID:', customerId); // Debug the ID
+  
+      const response = await fetch(
+        `https://prod.tophaventvs.com/sales/customers/delete/${customerId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Customer with ID ${customerId} has been deleted successfully: ${data.message}`);
+      } else {
+        const errorData = await response.json();
+        console.error('Error deleting customer:', errorData);
+        alert(`Failed to delete customer. Details: ${errorData.detail}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred while deleting the customer.');
+    }
+  };
+  
+
   const handleFileChange = (field, file) => {
     if (file) {
       setFormData(prev => ({
@@ -282,7 +324,10 @@ const CustomerDetails = () => {
         <div className="flex justify-center mt-4">
         <button onClick={handleVerifyCustomer} className="btn btn-verify">
           Verify Customer
-        </button>
+        </button><button onClick={() => handleDelet(customerId)} className="btn btn-delet">
+  Delete Customer
+</button>
+
       </div>
       </div>
 
