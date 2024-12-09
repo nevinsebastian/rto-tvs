@@ -23,7 +23,7 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
     };
 
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/sales/create-customer', {
+      const response = await fetch('https://prod.tophaventvs.com/sales/create-customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
