@@ -18,12 +18,12 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
       tp_registration: parseFloat(formData.tp_registration) || 0,
       man_accessories: parseFloat(formData.man_accessories) || 0,
       optional_accessories: parseFloat(formData.optional_accessories) || 0,
-      booking: parseFloat(formData.booking) || 0,
+      booking: 0, // Set booking to 0 directly
       amount_paid: parseFloat(formData.amount_paid) || 0,
     };
 
     try {
-      const response = await fetch('https://api.tophaventvs.com:8000/sales/create-customer', {
+      const response = await fetch('http://prod.tophaventvs.com:8000/sales/create-customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,6 +106,18 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
             onChange={onInputChange}
           />
         </div>
+        <div className="form-group">
+  <label htmlFor="taluk">Taluk</label>
+  <input
+    type="text"
+    id="taluk"
+    name="taluk"
+    value={formData.taluk || ''}
+    onChange={onInputChange}
+    required
+  />
+</div>
+
 
         {/* Vehicle Information */}
         <div className="form-group">
@@ -211,17 +223,7 @@ const CustomerForm = ({ formData, onInputChange, isEditing, token }) => {
   />
 </div>
 
-<div className="form-group">
-  <label htmlFor="booking">Booking Amount</label>
-  <input
-    type="number"
-    id="booking"
-    name="booking"
-    value={formData.booking || ''}
-    onChange={onInputChange}
-    required
-  />
-</div>
+
 
 <div className="form-group">
   <label htmlFor="amount_paid">Amount Paid</label>

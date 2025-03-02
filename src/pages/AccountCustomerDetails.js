@@ -3,6 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaIdCard, FaMotorcycle, FaMoneyBillWave } from 'react-icons/fa';
 import '../styles/AccountCustomerDetails.css';
 
+const financeOptions = {
+  1: 'IDFC',
+  2: 'HDFC',
+  3: 'TVS Credit',
+  4: 'Sreeramcheng',
+  5: 'Tata Cap',
+  6: 'HDB',
+  7: 'Indus',
+  8: 'Kotak',
+  9: 'Sreeram Alp',
+  10: 'Bajaj Alp'
+};
+
 const AccountCustomerDetails = () => {
   const { customerId } = useParams();
   const navigate = useNavigate();
@@ -13,7 +26,7 @@ const AccountCustomerDetails = () => {
   const [financeAmount, setFinanceAmount] = useState('');
   const [financeId, setFinanceId] = useState('');
   const [showFinanceForm, setShowFinanceForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [showEditForm] = useState(false);
   const [editableFields, setEditableFields] = useState({});
 
   useEffect(() => {
@@ -22,7 +35,7 @@ const AccountCustomerDetails = () => {
       return;
     }
 
-    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}`, {
+    fetch(`http://prod.tophaventvs.com:8000/accounts/customers/${customerId}`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${token}`,
@@ -50,7 +63,7 @@ const AccountCustomerDetails = () => {
   };
 
   const verifyCustomer = () => {
-    fetch(`https://api.tophaventvs.com:8000/accounts/verify/${customerId}`, {
+    fetch(`http://prod.tophaventvs.com:8000/accounts/verify/${customerId}`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -99,7 +112,7 @@ const AccountCustomerDetails = () => {
       vehicle_number: editableFields.vehicle_number || '',
     });
 
-    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}/${financeId}`, {
+    fetch(`http://prod.tophaventvs.com:8000/accounts/customers/${customerId}/${financeId}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',
@@ -138,35 +151,6 @@ const AccountCustomerDetails = () => {
     }));
   };
 
-  const handleUpdateCustomer = () => {
-    const requestBody = new URLSearchParams(editableFields);
-
-    fetch(`https://api.tophaventvs.com:8000/accounts/customers/${customerId}/${customer.finance_id}`, {
-      method: 'PUT',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: requestBody,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => {
-            throw new Error(err.detail || `Error: ${response.status} ${response.statusText}`);
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        alert('Customer updated successfully!');
-        setCustomer(data);
-        setShowEditForm(false);
-      })
-      .catch((error) => {
-        alert(`Failed to update customer: ${error.message}`);
-      });
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -212,36 +196,36 @@ const AccountCustomerDetails = () => {
             ))}
           </div>
 
-          {/* Financial Details */}
-          <div className="section financial">
-            <h3><FaMoneyBillWave /> Financial Information</h3>
-            {['tax', 'insurance', 'tp_registration', 'amount_paid', 'balance_amount', 'total_price', 'finance_id', 'finance_amount'].map((field) => (
-              <div key={field} className="detail-item">
-                <span className="label">{field.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}:</span>
-                <input
-                  type="text"
-                  name={field}
-                  value={editableFields[field] || ''}
-                  onChange={handleFieldChange}
-                  disabled={!showEditForm}
-                />
-              </div>
-            ))}
-            <div className="detail-item">
-              <span className="label">Registered:</span>
-              <span className="value">{customer.registered ? 'Yes' : 'No'}</span>
-            </div>
-          </div>
+         {/* Financial Details */}
+<div className="section financial">
+  <h3><FaMoneyBillWave /> Financial Information</h3>
+  {['tax', 'insurance', 'tp_registration', 'amount_paid', 'balance_amount', 'total_price', 'finance_amount'].map((field) => (
+    <div key={field} className="detail-item">
+      <span className="label">{field.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}:</span>
+      <input
+        type="text"
+        name={field}
+        value={editableFields[field] || ''}
+        onChange={handleFieldChange}
+        disabled={!showEditForm}
+      />
+    </div>
+  ))}
+  <div className="detail-item">
+    <span className="label">Finance:</span>
+    <span className="value">{financeOptions[customer.finance_id] || 'Not Assigned'}</span>
+  </div>
+  <div className="detail-item">
+    <span className="label">Registered:</span>
+    <span className="value">{customer.registered ? 'Yes' : 'No'}</span>
+  </div>
+</div>
 
-          {/* Buttons */}
-          <button onClick={() => setShowEditForm((prev) => !prev)}>
-            {showEditForm ? 'Save Changes' : 'Edit Customer'}
-          </button>
-          {showEditForm && (
-            <button onClick={handleUpdateCustomer}>
-              Save
-            </button>
-          )}
+
+          
+          {!customer.accounts_verified && (
+  <button onClick={verifyCustomer}>Verify Customer</button>
+)}
 
           {/* Finance Form */}
           {!showFinanceForm && (
@@ -256,18 +240,21 @@ const AccountCustomerDetails = () => {
                 value={financeAmount}
                 onChange={(e) => setFinanceAmount(e.target.value)}
               />
-              <input
-                type="text"
-                placeholder="Finance ID"
+              <select
                 value={financeId}
                 onChange={(e) => setFinanceId(e.target.value)}
-              />
+              >
+                <option value="">Select Finance</option>
+                {Object.entries(financeOptions).map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </select>
               <button onClick={handleFinanceSubmit}>Submit Finance</button>
               <button onClick={() => setShowFinanceForm(false)}>Cancel</button>
             </div>
           )}
-
-          <button onClick={verifyCustomer}>Verify Customer</button>
         </div>
       )}
     </div>

@@ -19,10 +19,38 @@ const CustomerDetails = () => {
   });
   const [uploadStatus, setUploadStatus] = useState('');
 
+  const handleDeleteCustomer = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this customer?");
+    if (!confirmDelete) return;
+  
+    try {
+      const response = await fetch(`http://prod.tophaventvs.com:8000/sales/customers/delete/${customerId}`, {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Ensure the token is correctly retrieved
+        },
+      });
+  
+      if (response.ok) {
+        alert("Customer deleted successfully.");
+        // Optional: Redirect or refresh the page
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to delete customer:", errorData);
+        alert("Failed to delete customer. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      alert("Error deleting customer. Please check your connection.");
+    }
+  };
+  
+
   useEffect(() => {
     const fetchCustomerById = async () => {
       try {
-        const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/${customerId}`, {
+        const response = await fetch(`http://prod.tophaventvs.com:8000/sales/customers/${customerId}`, {
           method: 'GET',
           headers: {
             accept: 'application/json',
@@ -91,7 +119,7 @@ const CustomerDetails = () => {
     formDataToSubmit.append('delivery_photo', formData.delivery_photo);
 
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`, {
+      const response = await fetch(`http://prod.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -128,7 +156,7 @@ const CustomerDetails = () => {
 
   const handleVerifyCustomer = async () => {
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/sales/verify/${customerId}`, {
+      const response = await fetch(`http://prod.tophaventvs.com:8000/sales/verify/${customerId}`, {
         method: 'POST',
         headers: {
           accept: 'application/json',
@@ -247,7 +275,12 @@ const CustomerDetails = () => {
         {renderField('Date of Birth', customerData.dob)}
         {renderField('Nominee', customerData.nominee)}
         {renderField('Relation', customerData.relation)}
-        {renderField('Status', customerData.status)}
+        {renderField('Taluk', customerData.taluk)}
+        {renderField(
+  'Customer Link', 
+  <a href={customerData.link} target="_blank" rel="noopener noreferrer">{customerData.link}</a>
+)}
+
         {renderField('Vehicle Name', customerData.vehicle_name)}
         {renderField('Vehicle Variant', customerData.vehicle_variant)}
         {renderField('Vehicle Color', customerData.vehicle_color)}
@@ -261,7 +294,13 @@ const CustomerDetails = () => {
         {renderField('TP Registration', customerData.tp_registration)}
         {renderField('Insurance', customerData.insurance)}
         {renderField('Vehicle Number', customerData.vehicle_number)}
+        
         {renderField('Aadhar Combined Photo', renderImage(customerData.photo_adhaar_combined, "Aadhar Combined Photo"))}
+        
+        {renderField('Aadhar Front Photo', renderImage(customerData.adhaar_front, "Aadhar Front Photo"))}
+        
+        {renderField('Aadhar Back Photo', renderImage(customerData.adhaar_back, "Aadhar Back Photo"))}
+
         {renderField('Passport Photo', renderImage(customerData.photo_passport, "Passport Photo"))}
         {renderField('Customer Signature', renderImage(customerData.customer_sign, "Customer Signature"))}
         {renderField('Customer Signature Copy', renderImage(customerData.customer_sign_copy, "Customer Signature Copy"))}
@@ -272,6 +311,10 @@ const CustomerDetails = () => {
         <button onClick={handleVerifyCustomer} className="btn btn-verify">
           Verify Customer
         </button>
+        <button onClick={handleDeleteCustomer} className="btn btn-delete">
+  Delete Customer
+</button>
+
       </div>
       </div>
 

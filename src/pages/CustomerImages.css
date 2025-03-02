@@ -1,0 +1,68 @@
+/* src/pages/CustomerImages.css */
+
+.customer-images {
+  padding: 90px;
+  width: 1000px;
+}
+
+.customer-info {
+  margin-bottom: 20px;
+}
+
+.image-grid {
+  display: flex;
+  justify-content: space-around; /* Space images evenly */
+  margin: 20px 0; /* Spacing above and below the grid */
+}
+.image-container {
+  text-align: center; /* Center content in each container */
+  width: 30%; /* Adjust the width as needed */
+}
+
+.small-image {
+  width: 100%; /* Fit perfectly in the grid */
+  height: auto; /* Maintain aspect ratio */
+  border: 1px solid #ccc; /* Optional border for clarity */
+}
+
+.edit-button {
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.cropper-container {
+  margin-top: 20px;
+}
+
+.cropper-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.download-button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.loading {
+  font-size: 24px;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+.image-title {
+  font-size: 1rem; /* Adjust the size as needed */
+  text-align: center; /* Center the title */
+  margin: 5px 0; /* Add some spacing */
+}

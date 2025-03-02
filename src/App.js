@@ -16,18 +16,23 @@ import Chassis from './pages/Chassis';
 import NotFound from './pages/NotFound';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme/theme';
+import HelmetCertForm from './pages/HelmetCertForm';
+import CustomerImages from './pages/CustomerImages.js';
 
 const App = () => {
   const [token, setToken] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Set token from localStorage on mount
+  // Set token and user role from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken); // Rehydrate token from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUserRole(JSON.parse(storedUser).role_name); // assuming the user object contains the role_name
     }
-    setLoading(false); // Set loading to false after token check
+    setLoading(false);
   }, []);
 
   if (loading) {
@@ -39,8 +44,8 @@ const App = () => {
       <Router>
         <Routes>
           {/* Redirect based on token existence */}
-          <Route path="/" element={token ? <Navigate to="/sales-executive" /> : <Login setToken={setToken} />} />
-          <Route path="/login" element={<Login setToken={setToken} />} />
+          <Route path="/" element={token ? <Navigate to={`/${userRole}`} replace /> : <Login setToken={setToken} setUserRole={setUserRole} />} />
+          <Route path="/login" element={<Login setToken={setToken} setUserRole={setUserRole} />} />
 
           {/* Protected routes */}
           <Route path="/admin" element={token ? <Admin /> : <Navigate to="/login" />} />
@@ -55,6 +60,8 @@ const App = () => {
           <Route path="/account-customer-details/:customerId" element={<AccountCustomerDetails />} />
           <Route path="/stock" element={token ? <Stock /> : <Navigate to="/login" />} />
           <Route path="/chassis" element={<Chassis />} />
+          <Route path='/hell' element={<HelmetCertForm/>}/>
+          <Route path="/crop/:customerId" element={<CustomerImages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

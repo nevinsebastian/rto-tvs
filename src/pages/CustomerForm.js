@@ -30,11 +30,13 @@ const CustomerForm = () => {
   const [backPreview, setBackPreview] = useState(null);
   const [passportPreview, setPassportPreview] = useState(null);
   const [signPreview, setSignPreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submit button loading
+
 
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`https://api.tophaventvs.com:8000/customer/customer-form/${link_token}`);
+        const response = await fetch(`http://prod.tophaventvs.com:8000/customer/customer-form/${link_token}`);
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setCustomerData(data);
@@ -49,34 +51,44 @@ const CustomerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Start loading
 
+  
     const formDataToSend = new FormData();
-    
+  
     // Loop through formData and add each field
     for (const key in formData) {
       if (formData[key] !== null) {
         formDataToSend.append(key, formData[key]);
+  
+        // Check if it's a photo and log its size
+        if (formData[key] instanceof Blob) {
+          console.log(`${key} size: ${formData[key].size / 1024} KB`);
+        }
       }
     }
-
+  
     try {
-      const response = await fetch(`https://api.tophaventvs.com:8000/customer/${link_token}`, {
+      const response = await fetch(`http://prod.tophaventvs.com:8000/customer/${link_token}`, {
         method: 'POST',
         body: formDataToSend,
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server response error: ", errorText);
         throw new Error('Failed to submit data');
       }
-
+  
       alert('Data submitted successfully!');
     } catch (err) {
       console.error('Submit error:', err);
-      setError(err.message);
+      setError(err.message);      
+    }finally{
+      setIsSubmitting(false); // Stop loading
     }
   };
+  
 
   const closeCamera = () => {
     setIsCapturingFront(false);
@@ -158,7 +170,7 @@ const CustomerForm = () => {
               value={formData.first_name}
               placeholder="First Name"
               onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-              required
+
               className="form-input"
             />
             <input
@@ -167,7 +179,7 @@ const CustomerForm = () => {
               value={formData.last_name}
               placeholder="Last Name"
               onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-              required
+              
               className="form-input"
             />
             <h3>Date of birth</h3>
@@ -176,7 +188,7 @@ const CustomerForm = () => {
               name="dob"
               value={formData.dob}
               onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -185,7 +197,7 @@ const CustomerForm = () => {
               value={formData.email}
               placeholder="Email"
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -194,7 +206,7 @@ const CustomerForm = () => {
               value={formData.address}
               placeholder="Address"
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -203,7 +215,7 @@ const CustomerForm = () => {
               value={formData.pin_code}
               placeholder="Pin Code"
               onChange={(e) => setFormData({ ...formData, pin_code: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -212,7 +224,7 @@ const CustomerForm = () => {
               value={formData.nominee}
               placeholder="Nominee Name"
               onChange={(e) => setFormData({ ...formData, nominee: e.target.value })}
-              required
+              
               className="form-input"
             />
             <input
@@ -221,7 +233,7 @@ const CustomerForm = () => {
               value={formData.relation}
               placeholder="Relation with Nominee"
               onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
-              required
+              
               className="form-input"
             />
 
@@ -347,7 +359,7 @@ const CustomerForm = () => {
               )}
             </div>
 
-            <button type="submit" className="submit-button">Submit</button>
+            <button type="submit" className="submit-button" disabled={isSubmitting}>{isSubmitting ? 'Loading...':'Submit'}</button>
           </form>
         </>
       )}

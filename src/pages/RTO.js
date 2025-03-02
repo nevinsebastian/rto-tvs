@@ -18,7 +18,7 @@ const RTO = () => {
       navigate('/login');
     } else {
       // Fetch Pending Customers
-      fetch('https://api.tophaventvs.com:8000/rto/pending-customers', {
+      fetch('http://prod.tophaventvs.com:8000/rto/pending-customers', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const RTO = () => {
         });
 
       // Fetch Verified Customers
-      fetch('https://api.tophaventvs.com:8000/rto/verified-customers', {
+      fetch('http://prod.tophaventvs.com:8000/rto/verified-customers', {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,

@@ -55,11 +55,11 @@ const SalesExecutive = () => {
   // Define fetchCounts using useCallback
   const fetchCounts = useCallback(async () => {
     const [customerResponse, reviewResponse] = await Promise.all([
-      fetch('https://api.tophaventvs.com:8000/sales/customers/count', {
+      fetch('http://prod.tophaventvs.com:8000/sales/customers/count', {
         method: 'GET',
         headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
       }),
-      fetch('https://api.tophaventvs.com:8000/sales/customer-verification/count', {
+      fetch('http://prod.tophaventvs.com:8000/sales/customer-verification/count', {
         method: 'GET',
         headers: { accept: 'application/json', Authorization: `Bearer ${token}` }
       }),
@@ -77,7 +77,7 @@ const SalesExecutive = () => {
 
   // Define fetchCustomers using useCallback
   const fetchCustomers = useCallback(async () => {
-    const response = await fetch('https://api.tophaventvs.com:8000/sales/customers', {
+    const response = await fetch('http://prod.tophaventvs.com:8000/sales/customers', {
       method: 'GET',
       headers: {
         accept: 'application/json',
@@ -167,7 +167,7 @@ const SalesExecutive = () => {
     e.preventDefault();
 
     try {
-        const response = await fetch('https://api.tophaventvs.com:8000/sales/create-customer', {
+        const response = await fetch('http://prod.tophaventvs.com:8000/sales/create-customer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -8,8 +8,6 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
-import JSZip from 'jszip';
-import FileSaver from 'file-saver';
 import { 
           
   DialogTitle, DialogContent, DialogActions, TextField
@@ -19,7 +17,23 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import '../styles/RTODetails.css';
 
+import Chassis from './Chassis';
+import HelmetCertForm from './HelmetCertForm';
+import CustomerImages from './CustomerImages';
+import InspectionLetter from '../components/InspectionLetter';
 
+const financeOptions = {
+  1: 'IDFC',
+  2: 'HDFC',
+  3: 'TVS Credit',
+  4: 'Sreeramcheng',
+  5: 'Tata Cap',
+  6: 'HDB',
+  7: 'Indus',
+  8: 'Kotak',
+  9: 'Sreeram Alp',
+  10: 'Bajaj Alp'
+};
 
 const RTODetails = () => {
   const { customerId } = useParams();
@@ -31,17 +45,15 @@ const RTODetails = () => {
   const [submissionError, setSubmissionError] = useState(null);
   const [openImage, setOpenImage] = useState(null);
 
-const [customerName, setCustomerName] = useState('');
-const [chassisNumber, setChassisNumber] = useState('');
-const [date, setDate] = useState('');
-const [helmetCertPDF] = useState(null);
-const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
+
 
   // PDF Editor State
+  const [date, setDate] = useState('');
+
   const [form21Pdf, setForm21Pdf] = useState(null);
   const [form20Pdf, setForm20Pdf] = useState(null);
   const [signature, setSignature] = useState(null);
-  const [financeCompany, setFinanceCompany] = useState('idfc');
+  const [financeCompany, setFinanceCompany] = useState('none');
   const [invoicePdf, setInvoicePdf] = useState(null);
   const [buyerSignature, setBuyerSignature] = useState(null);
   const [processedForm21, setProcessedForm21] = useState(null);
@@ -52,17 +64,8 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   
   const [disclaimerPdf, setDisclaimerPdf] = useState(null);
   const [disclaimerSignature, setDisclaimerSignature] = useState(null);
-  const [ setHelmetCertPdf] = useState(null);
-  const [ setHelmetCertSignature] = useState(null);
-  const [inspectionLetterPdf, setInspectionLetterPdf] = useState(null);
-  const [chasisNumberPic, setChasisNumberPic] = useState(null);
   const [processedDisclaimer, setProcessedDisclaimer] = useState(null);
-  const [processedInspectionLetter, setProcessedInspectionLetter] = useState(null);
   
-  const [chassisSearchNumber, setChassisSearchNumber] = useState('');
-  const [chassisImageUrl, setChassisImageUrl] = useState('');
-  const [chassisError, setChassisError] = useState('');
-  const [loadingChassisImage, setLoadingChassisImage] = useState(false);
    // Add new state variables for edit functionality
    const [openEditDialog, setOpenEditDialog] = useState(false);
    const [editFormData, setEditFormData] = useState({
@@ -121,7 +124,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
       });
 
       const response = await axios.put(
-        `https://api.tophaventvs.com:8000/rto/customers/${customerId}`,
+        `http://prod.tophaventvs.com:8000/rto/customers/${customerId}`,
         formData,
         {
           headers: {
@@ -142,7 +145,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
         
         // Refresh the customer data
         const updatedCustomerResponse = await axios.get(
-          `https://api.tophaventvs.com:8000/rto/${customerId}`,
+          `http://prod.tophaventvs.com:8000/rto/${customerId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -239,7 +242,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
     if (!token) {
       navigate('/login');
     } else {
-      fetch(`https://api.tophaventvs.com:8000/rto/${customerId}`, {
+      fetch(`http://prod.tophaventvs.com:8000/rto/${customerId}`, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -269,34 +272,7 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
   const handleCloseImage = () => {
     setOpenImage(null);
   };
-  const handleChassisSearch = async () => {
-    if (!chassisSearchNumber) {
-      setChassisError('Please enter a chassis number.');
-      return;
-    }
-
-    setLoadingChassisImage(true);
-    setChassisError('');
-
-    try {
-      const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisSearchNumber}`, {
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200) {
-        setChassisImageUrl(response.data.image_url);
-        setChasisNumberPic(response.data.image_url); // Automatically set the chassis image for the inspection letter
-      }
-    } catch (err) {
-      setChassisError('Error: ' + (err.response?.data?.detail || 'Failed to fetch chassis image'));
-      setChassisImageUrl('');
-    } finally {
-      setLoadingChassisImage(false);
-    }
-  };
+  
 
   // PDF Editor Functions
   const handleForm21Change = (e) => {
@@ -331,21 +307,12 @@ const [processedHelmetCert, setProcessedHelmetCert] = useState(null);
     setDisclaimerSignature(e.target.files[0]);
   };
 
-  const handleHelmetCertChange = (e) => {
-    setHelmetCertPdf(e.target.files[0]);
-  };
 
-  const handleHelmetCertSignatureChange = (e) => {
-    setHelmetCertSignature(e.target.files[0]);
-  };
 
-  const handleInspectionLetterChange = (e) => {
-    setInspectionLetterPdf(e.target.files[0]);
-  };
 
-  const handleChasisNumberPicChange = (e) => {
-    setChasisNumberPic(e.target.files[0]);
-  };
+
+ 
+
 
 // New PDF submission functions
 const handleDisclaimerSubmit = async () => {
@@ -356,7 +323,7 @@ const handleDisclaimerSubmit = async () => {
   formData.append('signature', disclaimerSignature);
 
   try {
-    const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/disclaimer', formData, {
+    const response = await axios.post('http://prod.tophaventvs.com:8000/pdf/process_pdf/disclaimer', formData, {
       responseType: 'blob',
     });
     setProcessedDisclaimer(URL.createObjectURL(response.data));
@@ -365,25 +332,7 @@ const handleDisclaimerSubmit = async () => {
   }
 };
 
-const handleHelmetCertSubmit = async () => {
-  const formData = new FormData();
-  formData.append('customer_name', customerName);
-  formData.append('chasis_number', chassisNumber);
-  formData.append('date', date);
-  formData.append('pdf', helmetCertPDF);
-  formData.append('signature', signature);
 
-  try {
-    const response = await fetch('https://13.127.21.70:8000/pdf/process_pdf/helmetcert', {
-      method: 'POST',
-      body: formData,
-    });
-    const data = await response.json();
-    setProcessedHelmetCert(data); // Assuming the response contains the link to the processed PDF
-  } catch (error) {
-    console.error('Error submitting helmet certification:', error);
-  }
-};
 
 
 
@@ -392,22 +341,6 @@ const handleHelmetCertSubmit = async () => {
   // New PDF submission functions
 
 
-  const handleInspectionLetterSubmit = async () => {
-    if (!inspectionLetterPdf || !chasisNumberPic) return;
-
-    const formData = new FormData();
-    formData.append('pdf', inspectionLetterPdf);
-    formData.append('chasis_number_pic', chasisNumberPic);
-
-    try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/inspection_letter', formData, {
-        responseType: 'blob',
-      });
-      setProcessedInspectionLetter(URL.createObjectURL(response.data));
-    } catch (error) {
-      console.error('Error processing inspection letter:', error);
-    }
-  };
 
 
 
@@ -426,7 +359,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('pdf', form21Pdf);
 
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form21', formData, {
+      const response = await axios.post('http://prod.tophaventvs.com:8000/pdf/process_pdf/form21', formData, {
         responseType: 'blob',
       });
       setProcessedForm21(URL.createObjectURL(response.data));
@@ -436,15 +369,15 @@ const handleHelmetCertSubmit = async () => {
   };
 
   const handleForm20Submit = async () => {
-    if (!form20Pdf || !signature) return;
-
+    if (!form20Pdf || !signature || !date) return;
+  
     const formData = new FormData();
     formData.append('pdf', form20Pdf);
     formData.append('signature', signature);
     formData.append('finance_company', financeCompany);
-
+  
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/form20', formData, {
+      const response = await axios.post(`http://prod.tophaventvs.com:8000/pdf/process_pdf/form20?date=${date}`, formData, {
         responseType: 'blob',
       });
       setProcessedForm20(URL.createObjectURL(response.data));
@@ -461,7 +394,7 @@ const handleHelmetCertSubmit = async () => {
     formData.append('signature', buyerSignature);
 
     try {
-      const response = await axios.post('https://api.tophaventvs.com:8000/pdf/process_pdf/invoice', formData, {
+      const response = await axios.post('http://prod.tophaventvs.com:8000/pdf/process_pdf/invoice', formData, {
         responseType: 'blob',
       });
       setProcessedInvoice(URL.createObjectURL(response.data));
@@ -475,7 +408,7 @@ const handleHelmetCertSubmit = async () => {
     setSubmissionError(null);
 
     try {
-      const response = await axios.post(`https://api.tophaventvs.com:8000/rto/verify/${customerId}`, {}, {
+      const response = await axios.post(`http://prod.tophaventvs.com:8000/rto/verify/${customerId}`, {}, {
         headers: {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
@@ -492,43 +425,71 @@ const handleHelmetCertSubmit = async () => {
     }
   };
 
-const handleDownloadImages = async () => {
-    if (!customer) return;
 
-    const zip = new JSZip();
-    const imgFolder = zip.folder('documents'); // Create a folder in the zip
-
-    // Prepare the images to be downloaded
-    const imageUrls = [
-        { name: 'aadhaar_combined.jpg', url: customer.photo_adhaar_combined },
-        { name: 'passport.jpg', url: customer.photo_passport },
-        { name: 'customer_signature.png', url: customer.customer_sign },
-        { name: 'customer_signature_copy.png', url: customer.customer_sign_copy }, // New entry
-
-    ];
-
+  const handleDownloadImages = async (customerId) => {
     try {
-        // Add images to the zip
-        await Promise.all(
-            imageUrls.map(async (image) => {
-                // Log the image URL for debugging
-                console.log(`Fetching image from: ${image.url}`);
-                
-                const imgData = await axios.get(image.url, { responseType: 'arraybuffer' });
-                imgFolder.file(image.name, imgData.data);
-            })
-        );
-
-        // Generate zip file and trigger download
-        zip.generateAsync({ type: 'blob' }).then((content) => {
-            FileSaver.saveAs(content, 'customer_documents.zip');
-        });
+      // Fetch customer details
+      const customerResponse = await fetch(`http://prod.tophaventvs.com:8000/rto/${customerId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+  
+      if (!customerResponse.ok) {
+        throw new Error(`Error fetching customer data: ${customerResponse.statusText}`);
+      }
+  
+      const customerData = await customerResponse.json();
+  
+      // Extract the image URLs needed for download
+      const imageUrls = [
+        { name: 'photo_adhaar_combined', url: customerData.photo_adhaar_combined },
+        { name: 'customer_sign', url: customerData.customer_sign },
+        { name: 'customer_sign_copy', url: customerData.customer_sign_copy }
+      ].filter(img => img.url); // Ensures no undefined URLs are included
+  
+      // Send the image URLs to the download endpoint
+      const downloadResponse = await fetch('http://prod.tophaventvs.com:8000/rto/download-images/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          customer_id: customerId,
+          image_urls: imageUrls
+        })
+      });
+  
+      if (!downloadResponse.ok) {
+        throw new Error(`Error downloading images: ${downloadResponse.statusText}`);
+      }
+  
+      // Handle the response blob for download
+      const blob = await downloadResponse.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+  
+      // Extract the filename from content-disposition or default it
+      const contentDisposition = downloadResponse.headers.get('content-disposition');
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : 'customer_documents.zip';
+  
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-        // Handle and log errors
-        console.error('Error downloading images:', error);
-        alert('An error occurred while downloading images. Please check the console for more details.');
+      console.error('Download failed:', error);
     }
-};
+  };
+  
+  
+
 
 
   if (loading) {
@@ -606,7 +567,7 @@ const handleDownloadImages = async () => {
               <strong>Nominee:</strong> {customer.nominee} ({customer.relation})
             </Typography>
             <Typography>
-              <strong>Branch ID:</strong> {customer.branch_id}
+              <strong>taluk :</strong> {customer.taluk}
             </Typography>
           </Grid>
 
@@ -636,6 +597,13 @@ const handleDownloadImages = async () => {
             <Typography>
               <strong>Optional Accessories:</strong> ₹{customer.optional_accessories}
             </Typography>
+            <Typography>
+              <strong>Finance Amount:</strong> ₹{customer.finance_amount}
+            </Typography>
+            <Typography>
+  <strong>Finance Company:</strong> {financeOptions[customer.finance_id] || 'Not Assigned'}
+</Typography>
+
             <Typography>
               <strong>Amount Paid:</strong> ₹{customer.amount_paid}
             </Typography>
@@ -678,16 +646,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.photo_adhaar_combined)}
                 />
               </Grid>
-              <Grid item xs={4}>
-              <p>Passport  size</p>
-
-                <Avatar
-                  variant="rounded"
-                  src={customer.photo_passport}
-                  sx={{ width: 350, height: 350, cursor: 'pointer' }}
-                  onClick={() => handleImageClick(customer.photo_passport)}
-                />
-              </Grid>
+              
               <Grid item xs={4}>
               <p>Sign bg removed</p>
 
@@ -699,6 +658,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.customer_sign)}
                 />
               </Grid>
+
               {/* New Image for customer_sign_copy */}
               <Grid item xs={4}>
               <p>Sign stock</p>
@@ -710,6 +670,7 @@ const handleDownloadImages = async () => {
                   onClick={() => handleImageClick(customer.customer_sign_copy)}
                 />
               </Grid>
+              <CustomerImages/>
             </Grid>
           </Grid>
 
@@ -744,7 +705,12 @@ const handleDownloadImages = async () => {
     <Button onClick={handleVerifyCustomer} variant="contained" color="primary" disabled={submitting}>
       {submitting ? <CircularProgress size={24} /> : 'Verify Customer'}
     </Button>
-    <Button onClick={handleDownloadImages} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
+    <Button
+      onClick={() => handleDownloadImages(customerId)}
+      variant="contained"
+      color="secondary"
+      style={{ marginLeft: '10px' }}
+    >
       Download Images
     </Button>
 
@@ -774,58 +740,7 @@ const handleDownloadImages = async () => {
   {/* Chassis Image Search */}
   <Card className="chassis-search-card" variant="outlined" style={{ marginTop: '20px' }}>
     <CardContent>
-      <Typography variant="h5" gutterBottom>
-        Chassis Image Search
-      </Typography>
-      <Divider />
-      <Grid container spacing={2} alignItems="center" style={{ marginTop: '10px' }}>
-        <Grid item xs={12} sm={6}>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <input
-              type="text"
-              placeholder="Enter Chassis Number"
-              value={chassisSearchNumber}
-              onChange={(e) => setChassisSearchNumber(e.target.value)}
-              style={{
-                padding: '8px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-                flexGrow: 1,
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleChassisSearch}
-              disabled={loadingChassisImage}
-            >
-              {loadingChassisImage ? <CircularProgress size={24} /> : 'Search'}
-            </Button>
-          </div>
-          {chassisError && (
-            <Typography color="error" style={{ marginTop: '8px' }}>
-              {chassisError}
-            </Typography>
-          )}
-        </Grid>
-
-        {chassisImageUrl && (
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
-              Chassis Image:
-            </Typography>
-            <img
-              src={chassisImageUrl}
-              alt="Chassis"
-              style={{
-                maxWidth: '100%',
-                height: 'auto',
-                borderRadius: '4px',
-              }}
-            />
-          </Grid>
-        )}
-      </Grid>
+      <Chassis/>
     </CardContent>
   </Card>
 
@@ -848,29 +763,34 @@ const handleDownloadImages = async () => {
 
       {/* Form 20 Section */}
       <Grid item xs={12} className='form-item'>
-        <Typography>Upload Form 20 PDF:</Typography>
-        <input type="file" accept="application/pdf" onChange={handleForm20Change} />
-        <Typography>Upload Signature:</Typography>
-        <input type="file" accept="image/*" onChange={handleSignatureChange} />
-        <Typography>Finance Company:</Typography>
-        <select value={financeCompany} onChange={handleFinanceCompanyChange}>
-          <option value="idfc">IDFC</option>
-          <option value="hdfc">HDFC</option>
-          <option value="tvscredit">tvscredit</option>
-          <option value="sreeramcheng">sreeramcheng</option>
-          <option value="tatacap">tatacap</option>
-          <option value="hdb">hdb</option>
-          <option value="indus">indus</option>
-          <option value="kotak">kotak</option>
-          <option value="sreeramalp">sreeramalp</option>
-          <option value="bajajalp">bajajalp</option>
-
-
-        </select>
-        <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
-        {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
-      </Grid>
-
+  <Typography>Date:</Typography>
+  <TextField
+    variant="outlined"
+    fullWidth
+    type="date"
+    value={date}
+    onChange={(e) => setDate(e.target.value)}
+  />
+  <Typography>Upload Form 20 PDF:</Typography>
+  <input type="file" accept="application/pdf" onChange={handleForm20Change} />
+  <Typography>Upload Signature:</Typography>
+  <input type="file" accept="image/*" onChange={handleSignatureChange} />
+  <Typography>Finance Company:</Typography>
+  <select value={financeCompany} onChange={handleFinanceCompanyChange}>
+    <option value="hdfc">None</option>
+    <option value="idfc">IDFC</option>
+    <option value="tvscredit">tvscredit</option>
+    <option value="sreeramcheng">sreeramcheng</option>
+    <option value="tatacap">tatacap</option>
+    <option value="hdb">hdb</option>
+    <option value="indus">indus</option>
+    <option value="kotak">kotak</option>
+    <option value="sreeramalp">sreeramalp</option>
+    <option value="bajajalp">bajajalp</option>
+  </select>
+  <Button onClick={handleForm20Submit} variant="contained" color="primary">Submit Form 20</Button>
+  {processedForm20 && <a href={processedForm20} target="_blank" rel="noopener noreferrer">Download Processed Form 20</a>}
+</Grid>
       {/* Invoice Section */}
       <Grid item xs={12} className='form-item'>
         <Typography>Upload Invoice PDF:</Typography>
@@ -893,35 +813,13 @@ const handleDownloadImages = async () => {
 
       {/* Helmet Certification Section */}
       <Grid item xs={12} className="form-item">
-  <Typography>Upload Helmet Certificate PDF:</Typography>
-  <input type="file" accept="application/pdf" onChange={handleHelmetCertChange} />
-  
-  <Typography>Customer Name:</Typography>
-  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-  
-  <Typography>Chassis Number:</Typography>
-  <input type="text" value={chassisNumber} onChange={(e) => setChassisNumber(e.target.value)} />
-  
-  <Typography>Date:</Typography>
-  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-  
-  <Typography>Upload Helmet Certification Signature:</Typography>
-  <input type="file" accept="image/*" onChange={handleHelmetCertSignatureChange} />
-  
-  <Button onClick={handleHelmetCertSubmit} variant="contained" color="primary">Submit Helmet Certification</Button>
-  
-  {processedHelmetCert && <a href={processedHelmetCert} target="_blank" rel="noopener noreferrer">Download Processed Helmet Certificate</a>}
-</Grid>
+        <HelmetCertForm/>
+      </Grid>
 
 
       {/* Inspection Letter Section */}
       <Grid item xs={12} className='form-item'>
-        <Typography>Upload Inspection Letter PDF:</Typography>
-        <input type="file" accept="application/pdf" onChange={handleInspectionLetterChange} />
-        <Typography>Upload Chassis Number Picture:</Typography>
-        <input type="file" accept="image/*" onChange={handleChasisNumberPicChange} />
-        <Button onClick={handleInspectionLetterSubmit} variant="contained" color="primary">Submit Inspection Letter</Button>
-        {processedInspectionLetter && <a href={processedInspectionLetter} target="_blank" rel="noopener noreferrer">Download Processed Inspection Letter</a>}
+        <InspectionLetter/>
       </Grid>
 
     </Grid>
