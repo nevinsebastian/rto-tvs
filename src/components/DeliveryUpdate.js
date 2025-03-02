@@ -32,7 +32,7 @@ const DeliveryUpdate = ({ isOpen, onClose, customerId, onSuccess }) => {
 
     try {
       const response = await fetch(
-        `https://api.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`,
+        `http://prod.tophaventvs.com:8000/sales/customers/delivery-update/${customerId}`,
         {
           method: 'POST',
           headers: {

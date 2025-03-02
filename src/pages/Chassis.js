@@ -22,7 +22,7 @@ const Chassis = () => {
     }
 
     try {
-      const response = await axios.get(`https://api.tophaventvs.com:8000/chasisimage/${chassisNumber}`, {
+      const response = await axios.get(`http://prod.tophaventvs.com:8000/chasisimage/${chassisNumber}`, {
         headers: { accept: 'application/json' },
       });
 

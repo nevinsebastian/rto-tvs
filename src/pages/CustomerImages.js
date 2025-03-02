@@ -16,7 +16,7 @@ const CustomerImages = () => {
 
   const fetchCustomerData = useCallback(async () => {
     try {
-      const response = await axios.get(`https://api.tophaventvs.com:8000/rto/${customerId}`);
+      const response = await axios.get(`http://prod.tophaventvs.com:8000/rto/${customerId}`);
       setCustomerData(response.data);
     } catch (err) {
       setError('Could not fetch customer data. Please try again later.');
@@ -94,7 +94,7 @@ const CustomerImages = () => {
   
     try {
       const response = await axios.post(
-        `https://api.tophaventvs.com:8000/rto/combineadhaar/${customerId}`,
+        `http://prod.tophaventvs.com:8000/rto/combineadhaar/${customerId}`,
         formData,
         {
           headers: {
