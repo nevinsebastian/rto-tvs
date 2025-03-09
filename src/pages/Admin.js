@@ -1,104 +1,150 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FaPlus, FaEdit, FaSave } from 'react-icons/fa';
-import { Line } from 'react-chartjs-2';
+import { FiPlus, FiEdit, FiUsers, FiPieChart, FiBriefcase, FiLogOut, FiDownload, FiBell, FiImage, FiBarChart } from 'react-icons/fi';
+import { Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const Admin = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 10;
 
-  const [branches, setBranches] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState(null);
-  const [branchDetails, setBranchDetails] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editableBranchDetails, setEditableBranchDetails] = useState({
-    name: '',
-    address: '',
-    branch_manager: '',
-    phone_number: ''
-  });
-  const [newEmployee, setNewEmployee] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    password: '',
-    role_id: '',
-    branch_id: ''
-  });
+  // Fetch customer data from the API
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token'); // Retrieve token from localStorage
+        if (!token) {
+          throw new Error('No authentication token found. Please log in.');
+        }
 
-  const handleNewEmployeeChange = (e) => {
-    const { name, value } = e.target;
-    setNewEmployee(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+        const response = await fetch('https://prod.tophaventvs.com/admin/customers', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
 
-  const handleAddEmployee = async () => {
-    const token = localStorage.getItem('token');
-  
-    try {
-      const response = await fetch('http://prod.tophaventvs.com:8000/admin/create_user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newEmployee),
-      });
-  
-      if (response.ok) {
+        if (!response.ok) {
+          const errorText = await response.text(); // Get more details from the response
+          throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+        }
+
         const data = await response.json();
-        console.log('Employee added:', data);
-        fetchEmployeeData();
-      } else {
-        const data = await response.json();
-        console.error('Error adding employee:', data);
+        setCustomers(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Fetch error:', err); // Log the full error for debugging
+        setError(err.message);
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+    };
 
-  const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
+    fetchCustomers();
+  }, []);
 
-  const handleAddEmployeeClick = () => {
-    setShowAddEmployeeForm(true);
-  };
-
-  const [employeeData, setEmployeeData] = useState({
-    totalEmployees: 0,
-    salesCount: 0,
-    rtoCount: 0,
-    accountsCount: 0,
-    totalCustomers: 0
-  });
-
-  const [customerData, setCustomerData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: 'Customers per Month',
-        data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-      },
+  // Dummy data for other sections (unchanged)
+  const dummyData = {
+    bookings: [
+      { id: 1, customer: "John Doe", vehicle: "Honda City", status: "Booking", date: "2025-02-20", expectedDelivery: "2025-03-01", executive: "Alice", amount: 15000 },
+      { id: 2, customer: "Jane Smith", vehicle: "Toyota Corolla", status: "Delivery", date: "2025-02-22", expectedDelivery: "2025-02-28", executive: "Bob", amount: 18000 },
+      { id: 3, customer: "Mike Johnson", vehicle: "Hyundai Creta", status: "Completed", date: "2025-02-15", expectedDelivery: "2025-02-25", executive: "Charlie", amount: 20000 },
+      { id: 4, customer: "Sarah Williams", vehicle: "Maruti Swift", status: "RTO", date: "2025-02-18", expectedDelivery: "2025-03-05", executive: "Alice", amount: 12000 },
     ],
+    salesExecutives: [
+      { id: 1, name: "Alice", bookings: 25, pending: 5, conversions: 20, rating: 4.8, branch: "Downtown" },
+      { id: 2, name: "Bob", bookings: 18, pending: 3, conversions: 15, rating: 4.5, branch: "Uptown" },
+      { id: 3, name: "Charlie", bookings: 15, pending: 2, conversions: 13, rating: 4.7, branch: "Downtown" },
+    ],
+    financial: {
+      totalRevenue: 2500000,
+      pendingPayments: 350000,
+      loans: 1200000,
+      taxes: 250000,
+      approvalsPending: [
+        { id: 1, customer: "John Doe", loan: 10000, tax: 1500, total: 15000 },
+        { id: 2, customer: "Sarah Williams", loan: 8000, tax: 1200, total: 12000 },
+      ]
+    },
+    rtoTasks: [
+      { id: 1, vehicle: "Honda City", status: "Pending", customer: "John Doe", days: 5 },
+      { id: 2, vehicle: "Toyota Corolla", status: "Completed", customer: "Jane Smith", days: 3 },
+      { id: 3, vehicle: "Maruti Swift", status: "In Progress", customer: "Sarah Williams", days: 2 },
+    ],
+    feedback: [
+      { id: 1, customer: "John Doe", rating: 5, comment: "Great service!", aspect: "Sales" },
+      { id: 2, customer: "Jane Smith", rating: 4, comment: "Good experience", aspect: "Delivery" },
+      { id: 3, customer: "Mike Johnson", rating: 5, comment: "Excellent support", aspect: "Service" },
+    ],
+    serviceBookings: [
+      { id: 1, customer: "John Doe", status: "Pending", date: "2025-03-01", type: "Regular Maintenance" },
+      { id: 2, customer: "Mike Johnson", status: "In Progress", date: "2025-02-28", type: "Repair" },
+    ],
+    notifications: [
+      { id: 1, message: "Booking confirmed for John Doe", time: "2025-02-20 10:00" },
+      { id: 2, message: "Delivery scheduled for Jane Smith", time: "2025-02-22 14:30" },
+    ],
+    deliveries: [
+      { id: 1, vehicle: "Toyota Corolla", customer: "Jane Smith", status: "On Time", expected: "2025-02-28", actual: "2025-02-27", image: "url1" },
+      { id: 2, vehicle: "Hyundai Creta", customer: "Mike Johnson", status: "Delayed", expected: "2025-02-25", actual: "2025-02-27", image: "url2" },
+    ],
+    employees: [
+      { id: 1, name: "Alice Smith", role: "Sales", branch: "Downtown", status: "Active", performance: 92 },
+      { id: 2, name: "Bob Johnson", role: "RTO", branch: "Uptown", status: "Active", performance: 85 },
+      { id: 3, name: "Charlie Brown", role: "Accounts", branch: "Downtown", status: "Active", performance: 88 },
+    ]
+  };
+
+  const [dashboardData] = useState({
+    totalBookings: dummyData.bookings.length,
+    pendingDeliveries: dummyData.bookings.filter(b => b.status !== "Completed").length,
+    rtoPending: dummyData.rtoTasks.filter(t => t.status === "Pending").length,
+    totalRevenue: dummyData.financial.totalRevenue,
+    customerSatisfaction: dummyData.feedback.reduce((sum, f) => sum + f.rating, 0) / dummyData.feedback.length,
+    onTimeDeliveries: dummyData.deliveries.filter(d => d.status === "On Time").length,
+    serviceCompletionRate: (dummyData.serviceBookings.filter(s => s.status === "Completed").length / dummyData.serviceBookings.length) * 100 || 0
   });
+
+  const salesChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    datasets: [{
+      label: 'Sales Revenue',
+      data: [1200000, 1500000, 1800000, 2500000],
+      backgroundColor: 'rgba(99, 102, 241, 0.2)',
+      borderColor: 'rgba(99, 102, 241, 1)',
+      borderWidth: 2
+    }]
+  };
+
+  const vehiclePieData = {
+    labels: dummyData.bookings.map(b => b.vehicle),
+    datasets: [{
+      data: dummyData.bookings.map(() => Math.floor(Math.random() * 10) + 1),
+      backgroundColor: ['#6366f1', '#14b8a6', '#f97316', '#ef4444']
+    }]
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -106,263 +152,412 @@ const Admin = () => {
     navigate('/login');
   };
 
-  const fetchBranches = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch('http://prod.tophaventvs.com:8000/admin/', {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setBranches(data);
-    } catch (error) {
-      console.error('Error fetching branches:', error);
-    }
-  };
+  const renderDashboard = () => (
+    <div className="dashboard-grid">
+      <div className="stats-card accent-purple"><h3>Total Bookings</h3><span>{dashboardData.totalBookings}</span></div>
+      <div className="stats-card accent-teal"><h3>Pending Deliveries</h3><span>{dashboardData.pendingDeliveries}</span></div>
+      <div className="stats-card accent-purple"><h3>RTO Pending</h3><span>{dashboardData.rtoPending}</span></div>
+      <div className="stats-card accent-teal"><h3>Total Revenue</h3><span>${dashboardData.totalRevenue.toLocaleString()}</span></div>
+      <div className="stats-card accent-purple"><h3>Customer Satisfaction</h3><span>{dashboardData.customerSatisfaction.toFixed(1)}/5</span></div>
+      <div className="stats-card accent-teal"><h3>On-Time Deliveries</h3><span>{dashboardData.onTimeDeliveries}/{dummyData.deliveries.length}</span></div>
+      <div className="chart-container">
+        <h3>Sales Trend</h3>
+        <Line data={salesChartData} options={{ responsive: true, maintainAspectRatio: false }} />
+      </div>
+      <div className="chart-container">
+        <h3>Top Vehicles</h3>
+        <Pie data={vehiclePieData} options={{ responsive: true, maintainAspectRatio: false }} />
+      </div>
+    </div>
+  );
 
-  const fetchBranchDetails = async (branchId) => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch(`http://prod.tophaventvs.com:8000/admin/${branchId}`, {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setBranchDetails(data);
-      setEditableBranchDetails(data);
-    } catch (error) {
-      console.error('Error fetching branch details:', error);
-    }
-  };
-
-  const fetchEmployeeData = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch('http://prod.tophaventvs.com:8000/admin/users', {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-      const totalEmployees = data.length;
-      const salesCount = data.filter(user => user.role_name === 'Sales').length;
-      const rtoCount = data.filter(user => user.role_name === 'RTO').length;
-      const accountsCount = data.filter(user => user.role_name === 'Accounts').length;
-
-      setEmployeeData(prevState => ({
-        ...prevState,
-        totalEmployees,
-        salesCount,
-        rtoCount,
-        accountsCount
-      }));
-
-      const customerResponse = await fetch('http://prod.tophaventvs.com:8000/admin/customers', {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const customerData = await customerResponse.json();
-      const totalCustomers = customerData.length;
-
-      setEmployeeData(prevState => ({
-        ...prevState,
-        totalCustomers
-      }));
-
-      await fetchCustomerData();
-    } catch (error) {
-      console.error('Error fetching employee data:', error);
-    }
-  }, []); // UseCallback to avoid re-creation on every render
-
-  const fetchCustomerData = async () => {
-    const token = localStorage.getItem('token');
-    const date = new Date();
-    const currentMonth = date.getMonth() + 1;
-    const currentYear = date.getFullYear();
-    const months = [];
-      for (let i = 0; i < 5; i++) {
-      const month = currentMonth - i;
-      const year = currentYear;
-      if (month < 1) {
-        months.push({ month: 12 + month, year: year - 1 });
-      } else {
-        months.push({ month, year });
-      }
+  const renderSales = () => {
+    if (loading) {
+      return <div className="loading">Loading customers...</div>;
     }
 
-    const customerData = [];
-    const labels = [];
-
-    for (const month of months) {
-      try {
-        const response = await fetch(`http://prod.tophaventvs.com:8000/admin/monthly-customers?month=${month.month}&year=${month.year}`, {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        customerData.push(data.length);
-        labels.push(`${month.month}/${month.year}`);
-      } catch (error) {
-        console.error('Error fetching customer data:', error);
-      }
+    if (error) {
+      return <div className="error">Error: {error}</div>;
     }
 
-    setCustomerData(prevState => ({
-      ...prevState,
-      labels,
-      datasets: [
-        {
-          ...prevState.datasets[0],
-          data: customerData
-        }
-      ]
-    }));
-  };
+    const filteredCustomers = customers.filter(c => 
+      selectedFilter === 'all' || c.status.toLowerCase() === selectedFilter.toLowerCase()
+    );
 
-  useEffect(() => {
-    fetchBranches();
-    fetchEmployeeData();
-  }, [fetchEmployeeData]);
+    const indexOfLastCustomer = currentPage * customersPerPage;
+    const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+    const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+    const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
 
-  useEffect(() => {
-    if (selectedBranch) {
-      fetchBranchDetails(selectedBranch);
-    }
-  }, [selectedBranch]);
-
-  const handleBranchClick = (branchId) => {
-    setSelectedBranch(branchId);
-  };
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveClick = async () => {
-    const token = localStorage.getItem('token');
-
-    const updatedBranchDetails = {
-      name: editableBranchDetails.name,
-      address: editableBranchDetails.address,
-      branch_manager: editableBranchDetails.branch_manager,
-      phone_number: editableBranchDetails.phone_number,
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
     };
 
-    if (!updatedBranchDetails.name || !updatedBranchDetails.address || !updatedBranchDetails.phone_number || !updatedBranchDetails.branch_manager) {
-      console.error('All fields are required');
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://prod.tophaventvs.com:8000/admin/${selectedBranch}`, {
-        method: 'PUT',
-        headers: {
-          accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedBranchDetails),
-      });
-
-      if (response.ok) {
-        console.log('Branch updated successfully');
-        await fetchBranchDetails(selectedBranch);
-        setIsEditing(false);
-      } else {
-        const data = await response.json();
-        console.error('Error saving branch details:', data);
-      }
-    } catch (error) {
-      console.error('Error saving branch details:', error);
-    }
+    return (
+      <div className="section">
+        <div className="section-header">
+          <h2>Sales Management</h2>
+          <div className="section-controls">
+            <select onChange={(e) => setSelectedFilter(e.target.value)} className="filter-select">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="submitted">Submitted</option>
+            </select>
+            <button className="primary-btn"><FiDownload /> Export</button>
+          </div>
+        </div>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Vehicle</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentCustomers.map(customer => (
+                <tr key={customer.customer_id}>
+                  <td>{customer.name}</td>
+                  <td>{customer.vehicle_name}</td>
+                  <td>₹{customer.total_price.toLocaleString()}</td>
+                  <td>{customer.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="pagination-btn"
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => handlePageChange(i + 1)}
+                className={`pagination-btn ${currentPage === i + 1 ? 'active' : ''}`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="pagination-btn"
+            >
+              Next
+            </button>
+          </div>
+        )}
+        <div className="top-performers">
+          <h3>Top Performers</h3>
+          {dummyData.salesExecutives.map(exec => (
+            <div key={exec.id} className="performer-card">
+              <span>{exec.name} ({exec.branch})</span>
+              <span>Bookings: {exec.bookings}</span>
+              <span>Conv: {exec.conversions}</span>
+              <span>Rating: {exec.rating}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditableBranchDetails(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const renderAccounts = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>Financial Overview</h2>
+        <button className="primary-btn"><FiDownload /> Generate Report</button>
+      </div>
+      <div className="financial-grid">
+        <div className="stats-card"><h3>Total Revenue</h3><span>${dummyData.financial.totalRevenue.toLocaleString()}</span></div>
+        <div className="stats-card"><h3>Pending Payments</h3><span>${dummyData.financial.pendingPayments.toLocaleString()}</span></div>
+        <div className="stats-card"><h3>Loans</h3><span>${dummyData.financial.loans.toLocaleString()}</span></div>
+        <div className="stats-card"><h3>Taxes</h3><span>${dummyData.financial.taxes.toLocaleString()}</span></div>
+      </div>
+      <div className="table-container">
+        <h3>Pending Approvals</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Loan Amount</th>
+              <th>Tax</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.financial.approvalsPending.map(approval => (
+              <tr key={approval.id}>
+                <td>{approval.customer}</td>
+                <td>${approval.loan}</td>
+                <td>${approval.tax}</td>
+                <td>${approval.total}</td>
+                <td><button className="primary-btn small">Approve</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderRTO = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>RTO Management</h2>
+        <button className="primary-btn"><FiBarChart /> Performance Report</button>
+      </div>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Customer</th>
+              <th>Status</th>
+              <th>Days Taken</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.rtoTasks.map(task => (
+              <tr key={task.id}>
+                <td>{task.vehicle}</td>
+                <td>{task.customer}</td>
+                <td>{task.status}</td>
+                <td>{task.days}</td>
+                <td><button className="secondary-btn small">Update</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderFeedback = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>Customer Feedback</h2>
+        <button className="primary-btn"><FiDownload /> Export Trends</button>
+      </div>
+      <div className="feedback-container">
+        {dummyData.feedback.map(fb => (
+          <div key={fb.id} className="feedback-card">
+            <span>{fb.customer}</span>
+            <span>Rating: {fb.rating}/5</span>
+            <span>Aspect: {fb.aspect}</span>
+            <p>{fb.comment}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderServices = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>Service Bookings</h2>
+        <button className="primary-btn"><FiDownload /> Service Report</button>
+      </div>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.serviceBookings.map(service => (
+              <tr key={service.id}>
+                <td>{service.customer}</td>
+                <td>{service.date}</td>
+                <td>{service.type}</td>
+                <td>{service.status}</td>
+                <td><button className="secondary-btn small">View Job Card</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderNotifications = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>Notification Logs</h2>
+        <button className="primary-btn"><FiBell /> Send Manual Notification</button>
+      </div>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Message</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.notifications.map(notif => (
+              <tr key={notif.id}>
+                <td>{notif.message}</td>
+                <td>{notif.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderDeliveries = () => (
+    <div className="section">
+      <div className="section-header">
+        <h2>Delivery Tracking</h2>
+        <button className="primary-btn"><FiDownload /> Delivery Report</button>
+      </div>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Customer</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Status</th>
+              <th>Image</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.deliveries.map(delivery => (
+              <tr key={delivery.id}>
+                <td>{delivery.vehicle}</td>
+                <td>{delivery.customer}</td>
+                <td>{delivery.expected}</td>
+                <td>{delivery.actual}</td>
+                <td>{delivery.status}</td>
+                <td><button className="secondary-btn small"><FiImage /> View</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderEmployees = () => (
+    <div className="employees-section">
+      <div className="section-header">
+        <h2>Employee Management</h2>
+        <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}><FiPlus /> Add Employee</button>
+      </div>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Branch</th>
+              <th>Status</th>
+              <th>Performance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dummyData.employees.map(emp => (
+              <tr key={emp.id}>
+                <td>{emp.name}</td>
+                <td>{emp.role}</td>
+                <td>{emp.branch}</td>
+                <td>{emp.status}</td>
+                <td>{emp.performance}%</td>
+                <td><button className="icon-btn"><FiEdit /></button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {showAddEmployeeModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Add New Employee</h3>
+            <div className="form-grid">
+              <div className="form-group"><label>Name</label><input /></div>
+              <div className="form-group"><label>Role</label>
+                <select>
+                  <option>Sales</option>
+                  <option>RTO</option>
+                  <option>Accounts</option>
+                </select>
+              </div>
+              <div className="form-group"><label>Branch</label>
+                <select>
+                  <option>Downtown</option>
+                  <option>Uptown</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="secondary-btn" onClick={() => setShowAddEmployeeModal(false)}>Cancel</button>
+              <button className="primary-btn">Create</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="admin-dashboard">
-      <nav className="navbar">
-        <h2 className="logo" onClick={() => window.location.reload()}>Admin Dashboard</h2>
-        <div className="user-info">
-          <span>Welcome, {user?.username}</span>
-          <button onClick={handleLogout}>Logout</button>
+    <div className="admin-container">
+      <div className="admin-sidebar">
+        <div className="sidebar-header">
+          <h2>Admin Portal</h2>
+          <div className="user-profile">
+            <div className="avatar">A</div>
+            <div className="user-info">
+              <span className="username">Admin</span>
+              <span className="role">Administrator</span>
+            </div>
+          </div>
         </div>
-      </nav>
-
-      <div className="branch-list">
-        <h3>Branches</h3>
-        <ul>
-          {branches.map(branch => (
-            <li key={branch.id} onClick={() => handleBranchClick(branch.id)}>
-              {branch.name}
-            </li>
-          ))}
-        </ul>
+        <nav className="sidebar-nav">
+          <ul>
+            <li className={activeTab === 'dashboard' ? 'active' : ''} onClick={() => setActiveTab('dashboard')}><FiPieChart /> Dashboard</li>
+            <li className={activeTab === 'sales' ? 'active' : ''} onClick={() => setActiveTab('sales')}><FiBriefcase /> Sales</li>
+            <li className={activeTab === 'accounts' ? 'active' : ''} onClick={() => setActiveTab('accounts')}><FiUsers /> Accounts</li>
+            <li className={activeTab === 'rto' ? 'active' : ''} onClick={() => setActiveTab('rto')}><FiBriefcase /> RTO</li>
+            <li className={activeTab === 'feedback' ? 'active' : ''} onClick={() => setActiveTab('feedback')}><FiUsers /> Feedback</li>
+            <li className={activeTab === 'services' ? 'active' : ''} onClick={() => setActiveTab('services')}><FiBriefcase /> Services</li>
+            <li className={activeTab === 'notifications' ? 'active' : ''} onClick={() => setActiveTab('notifications')}><FiBell /> Notifications</li>
+            <li className={activeTab === 'deliveries' ? 'active' : ''} onClick={() => setActiveTab('deliveries')}><FiImage /> Deliveries</li>
+            <li className={activeTab === 'employees' ? 'active' : ''} onClick={() => setActiveTab('employees')}><FiUsers /> Employees</li>
+          </ul>
+        </nav>
+        <button className="logout-btn" onClick={handleLogout}><FiLogOut /> Logout</button>
       </div>
 
-      <div className="branch-details">
-        {branchDetails && (
-          <div>
-            <h3>Branch Details</h3>
-            <p><strong>Address:</strong> {isEditing ? <input name="address" value={editableBranchDetails.address} onChange={handleInputChange} /> : branchDetails.address}</p>
-            <p><strong>Branch Manager:</strong> {isEditing ? <input name="branch_manager" value={editableBranchDetails.branch_manager} onChange={handleInputChange} /> : branchDetails.branch_manager}</p>
-            <p><strong>Phone Number:</strong> {isEditing ? <input name="phone_number" value={editableBranchDetails.phone_number} onChange={handleInputChange} /> : branchDetails.phone_number}</p>
-            {isEditing ? <button onClick={handleSaveClick}><FaSave /> Save</button> : <button onClick={handleEditClick}><FaEdit /> Edit</button>}
-          </div>
-        )}
-      </div>
-
-      <div className="employee-data">
-        <h3>Employee Stats</h3>
-        <p>Total Employees: {employeeData.totalEmployees}</p>
-        <p>Sales: {employeeData.salesCount}</p>
-        <p>RTO: {employeeData.rtoCount}</p>
-        <p>Accounts: {employeeData.accountsCount}</p>
-        <p>Total Customers: {employeeData.totalCustomers}</p>
-      </div>
-
-      <div className="add-employee-form">
-        {showAddEmployeeForm && (
-          <div>
-            <h3>Add New Employee</h3>
-            <input name="first_name" value={newEmployee.first_name} onChange={handleNewEmployeeChange} placeholder="First Name" />
-            <input name="last_name" value={newEmployee.last_name} onChange={handleNewEmployeeChange} placeholder="Last Name" />
-            <input name="email" value={newEmployee.email} onChange={handleNewEmployeeChange} placeholder="Email" />
-            <input name="password" value={newEmployee.password} onChange={handleNewEmployeeChange} placeholder="Password" />
-            <input name="role_id" value={newEmployee.role_id} onChange={handleNewEmployeeChange} placeholder="Role ID" />
-            <input name="branch_id" value={newEmployee.branch_id} onChange={handleNewEmployeeChange} placeholder="Branch ID" />
-            <button onClick={handleAddEmployee}>Add Employee</button>
-          </div>
-        )}
-        <button onClick={handleAddEmployeeClick}><FaPlus /> Add Employee</button>
-      </div>
-
-      <div className="customer-chart">
-        <h3>Customer Growth</h3>
-        <Line data={customerData} />
+      <div className="admin-main">
+        {activeTab === 'dashboard' && renderDashboard()}
+        {activeTab === 'sales' && renderSales()}
+        {activeTab === 'accounts' && renderAccounts()}
+        {activeTab === 'rto' && renderRTO()}
+        {activeTab === 'feedback' && renderFeedback()}
+        {activeTab === 'services' && renderServices()}
+        {activeTab === 'notifications' && renderNotifications()}
+        {activeTab === 'deliveries' && renderDeliveries()}
+        {activeTab === 'employees' && renderEmployees()}
       </div>
     </div>
   );
