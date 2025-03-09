@@ -292,24 +292,24 @@ const Admin = () => {
     if (loading) {
       return <div className="loading">Loading customers...</div>;
     }
-
+  
     if (error) {
       return <div className="error">Error: {error}</div>;
     }
-
+  
     const filteredCustomers = customers.filter(c => 
       selectedFilter === 'all' || c.status.toLowerCase() === selectedFilter.toLowerCase()
     );
-
+  
     const indexOfLastCustomer = currentPage * customersPerPage;
     const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
     const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
     const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
-
+  
     const handlePageChange = (pageNumber) => {
       setCurrentPage(pageNumber);
     };
-
+  
     const monthNames = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
@@ -317,7 +317,7 @@ const Admin = () => {
     const headerText = selectedDate
       ? `Sales ${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
       : "Sales Management";
-
+  
     return (
       <div className="section">
         <div className="section-header">
@@ -326,10 +326,12 @@ const Admin = () => {
             <select onChange={(e) => setSelectedFilter(e.target.value)} className="filter-select">
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
-              <option value="submitted">Submitted</option>
+              <option value="sales">Sales</option>
+              <option value="accounts">Accounts</option>
+              <option value="rto">RTO</option>
             </select>
             <button className="primary-btn" onClick={() => setShowDatePicker(!showDatePicker)}>
-              <FiFilter />  Month
+              <FiFilter /> Filter
             </button>
             {showDatePicker && (
               <div className="datepicker-container">
@@ -355,8 +357,10 @@ const Admin = () => {
               <tr>
                 <th>Customer Name</th>
                 <th>Vehicle</th>
-                <th>Total Amount</th>
+                <th>Total Price</th>
                 <th>Status</th>
+                <th>Sales Executive</th>
+                <th>Branch</th>
               </tr>
             </thead>
             <tbody>
@@ -366,6 +370,8 @@ const Admin = () => {
                   <td>{customer.vehicle_name}</td>
                   <td>₹{customer.total_price.toLocaleString()}</td>
                   <td>{customer.status}</td>
+                  <td>{customer.sales_executive_name}</td>
+                  <td>{customer.branch_name}</td>
                 </tr>
               ))}
             </tbody>
@@ -412,6 +418,10 @@ const Admin = () => {
       </div>
     );
   };
+
+
+
+
 
   const renderAccounts = () => (
     <div className="section">
