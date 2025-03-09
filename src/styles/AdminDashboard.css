@@ -395,3 +395,36 @@ th {
 .role-section .table-container {
   margin-top: 0;
 }
+
+/* Existing styles remain unchanged, add this at the bottom */
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  z-index: 1000;
+  animation: slideIn 0.5s ease-out;
+}
+
+.toast.success {
+  background-color: #14b8a6;
+}
+
+.toast.error {
+  background-color: #ef4444;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

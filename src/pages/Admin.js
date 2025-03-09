@@ -33,6 +33,7 @@ const Admin = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedRoleFilter, setSelectedRoleFilter] = useState('all');
+  const [toast, setToast] = useState({ message: '', type: '' }); // Toast state
   const customersPerPage = 10;
 
   // Role ID mapping
@@ -44,6 +45,16 @@ const Admin = () => {
     'rto': 4,
     'stock_person': 5
   };
+
+  // New employee form state
+  const [newEmployee, setNewEmployee] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    role_id: 1, // Default to Admin
+    branch_id: 1 // Hardcoded
+  });
 
   // Fetch customer and employee data from the API
   useEffect(() => {
@@ -118,15 +129,23 @@ const Admin = () => {
     };
 
     if (selectedDate) {
-      const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // 01-12
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const year = selectedDate.getFullYear();
       fetchCustomers(month, year);
     } else {
-      fetchCustomers(); // Fetch all customers initially
+      fetchCustomers();
     }
-    fetchEmployees(); // Fetch employees based on role filter
+    fetchEmployees();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedRoleFilter]);
+
+  // Handle toast dismissal
+  useEffect(() => {
+    if (toast.message) {
+      const timer = setTimeout(() => setToast({ message: '', type: '' }), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Dummy data for other sections
   const dummyData = {
@@ -210,6 +229,46 @@ const Admin = () => {
     navigate('/login');
   };
 
+  // Handle input changes in the modal
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewEmployee(prev => ({ ...prev, [name]: name === 'role_id' ? parseInt(value) : value }));
+  };
+
+  // Handle form submission
+  const handleCreateEmployee = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in.');
+      }
+
+      const response = await fetch('https://prod.tophaventvs.com/admin/create_user', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(newEmployee),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      setShowAddEmployeeModal(false);
+      setToast({ message: `Employee ${data.first_name} created and activated successfully`, type: 'success' });
+      setEmployees([...employees, data]); // Add new employee to list
+      setNewEmployee({ first_name: '', last_name: '', email: '', password: '', role_id: 1, branch_id: 1 }); // Reset form
+    } catch (err) {
+      console.error('Create employee error:', err);
+      setToast({ message: `Error creating ${newEmployee.first_name} try again`, type: 'error' });
+    }
+  };
+
   const renderDashboard = () => (
     <div className="dashboard-grid">
       <div className="stats-card accent-purple"><h3>Total Bookings</h3><span>{dashboardData.totalBookings}</span></div>
@@ -270,7 +329,7 @@ const Admin = () => {
               <option value="submitted">Submitted</option>
             </select>
             <button className="primary-btn" onClick={() => setShowDatePicker(!showDatePicker)}>
-              <FiFilter /> Filter by Month
+              <FiFilter />  Month
             </button>
             {showDatePicker && (
               <div className="datepicker-container">
@@ -550,7 +609,6 @@ const Admin = () => {
       return <div className="error">Error: {error}</div>;
     }
 
-    // Define role order and group employees by role
     const roleOrder = ['admin', 'sales', 'accounts', 'rto', 'stock_person'];
     const groupedEmployees = roleOrder.map(role => ({
       role: role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' '),
@@ -559,7 +617,6 @@ const Admin = () => {
         : employees.filter(emp => emp.role_id === roleMap[role])
     }));
 
-    // Function to map branch_id to name
     const getBranchName = (branchId) => {
       return branchId === 1 ? 'Thiruvambady' : (branchId || 'N/A');
     };
@@ -570,7 +627,8 @@ const Admin = () => {
           <h2>Employee Management</h2>
           <div className="section-controls">
             <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}>
-              <FiPlus />Add</button>
+              <FiPlus /> Add 
+            </button>
             <select
               value={selectedRoleFilter}
               onChange={(e) => setSelectedRoleFilter(e.target.value)}
@@ -616,29 +674,84 @@ const Admin = () => {
           )
         ))}
         {showAddEmployeeModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
+          <div className="modal-overlay" onClick={() => setShowAddEmployeeModal(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
               <h3>Add New Employee</h3>
               <div className="form-grid">
-                <div className="form-group"><label>First Name</label><input /></div>
-                <div className="form-group"><label>Last Name</label><input /></div>
-                <div className="form-group"><label>Email</label><input type="email" /></div>
-                <div className="form-group"><label>Role</label>
-                  <select>
-                    <option value="admin">Admin</option>
-                    <option value="sales">Sales</option>
-                    <option value="accounts">Accounts</option>
-                    <option value="rto">RTO</option>
-                    <option value="stock_person">Stock Person</option>
+                <div className="form-group">
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={newEmployee.first_name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={newEmployee.last_name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={newEmployee.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={newEmployee.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Role</label>
+                  <select
+                    name="role_id"
+                    value={newEmployee.role_id}
+                    onChange={handleInputChange}
+                  >
+                    <option value={1}>Admin</option>
+                    <option value={2}>Sales</option>
+                    <option value={3}>Accounts</option>
+                    <option value={4}>RTO</option>
+                    <option value={5}>Stock Person</option>
                   </select>
                 </div>
-                <div className="form-group"><label>Branch ID</label><input type="number" value="1" readOnly /></div>
+                <div className="form-group">
+                  <label>Branch ID</label>
+                  <input
+                    type="number"
+                    name="branch_id"
+                    value={newEmployee.branch_id}
+                    readOnly
+                  />
+                </div>
               </div>
               <div className="modal-actions">
                 <button className="secondary-btn" onClick={() => setShowAddEmployeeModal(false)}>Cancel</button>
-                <button className="primary-btn">Create</button>
+                <button className="primary-btn" onClick={handleCreateEmployee}>Create</button>
               </div>
             </div>
+          </div>
+        )}
+        {toast.message && (
+          <div className={`toast ${toast.type}`}>
+            {toast.message}
           </div>
         )}
       </div>
