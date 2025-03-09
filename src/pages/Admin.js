@@ -5,6 +5,7 @@ import { FiPlus, FiEdit, FiUsers, FiPieChart, FiBriefcase, FiLogOut, FiDownload,
 import { Line, Pie } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import EmployeeDetails from './EmployeeDetails'; // Add this import at the top
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -35,6 +36,7 @@ const Admin = () => {
   const [selectedRoleFilter, setSelectedRoleFilter] = useState('all');
   const [toast, setToast] = useState({ message: '', type: '' }); // Toast state
   const customersPerPage = 10;
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
   // Role ID mapping
   const roleMap = {
@@ -610,15 +612,21 @@ const Admin = () => {
     </div>
   );
 
+
   const renderEmployees = () => {
     if (loading) {
       return <div className="loading">Loading employees...</div>;
     }
-
+  
     if (error) {
       return <div className="error">Error: {error}</div>;
     }
-
+  
+    // If an employee is selected, show their details
+    if (selectedEmployeeId) {
+      return <EmployeeDetails userId={selectedEmployeeId} onBack={() => setSelectedEmployeeId(null)} />;
+    }
+  
     const roleOrder = ['admin', 'sales', 'accounts', 'rto', 'stock_person'];
     const groupedEmployees = roleOrder.map(role => ({
       role: role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' '),
@@ -626,11 +634,11 @@ const Admin = () => {
         ? employees.filter(emp => emp.role_name?.toLowerCase() === role || emp.role_id === roleMap[role])
         : employees.filter(emp => emp.role_id === roleMap[role])
     }));
-
+  
     const getBranchName = (branchId) => {
       return branchId === 1 ? 'Thiruvambady' : (branchId || 'N/A');
     };
-
+  
     return (
       <div className="employees-section">
         <div className="section-header">
@@ -645,6 +653,7 @@ const Admin = () => {
               className="filter-select"
             >
               <option value="all">All Roles</option>
+              <option value="admin">Admin</option>
               <option value="sales">Sales</option>
               <option value="accounts">Accounts</option>
               <option value="rto">RTO</option>
@@ -670,7 +679,12 @@ const Admin = () => {
                   <tbody>
                     {group.employees.map(emp => (
                       <tr key={emp.user_id}>
-                        <td>{`${emp.first_name} ${emp.last_name}`}</td>
+                        <td 
+                          className="clickable-name" 
+                          onClick={() => setSelectedEmployeeId(emp.user_id)}
+                        >
+                          {`${emp.first_name} ${emp.last_name}`}
+                        </td>
                         <td>{emp.role_name || Object.keys(roleMap).find(key => roleMap[key] === emp.role_id)}</td>
                         <td>{getBranchName(emp.branch_id)}</td>
                         <td>{emp.email}</td>
@@ -691,6 +705,7 @@ const Admin = () => {
                 <div className="form-group">
                   <label>First Name</label>
                   <input
+                    type="text"
                     name="first_name"
                     value={newEmployee.first_name}
                     onChange={handleInputChange}
@@ -700,6 +715,7 @@ const Admin = () => {
                 <div className="form-group">
                   <label>Last Name</label>
                   <input
+                    type="text"
                     name="last_name"
                     value={newEmployee.last_name}
                     onChange={handleInputChange}
@@ -719,6 +735,7 @@ const Admin = () => {
                 <div className="form-group">
                   <label>Password</label>
                   <input
+                    type="password"
                     name="password"
                     value={newEmployee.password}
                     onChange={handleInputChange}
@@ -764,6 +781,8 @@ const Admin = () => {
       </div>
     );
   };
+
+
 
   return (
     <div className="admin-container">

@@ -428,3 +428,41 @@ th {
     opacity: 1;
   }
 }
+
+.clickable-name {
+  color: #6366f1;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.clickable-name:hover {
+  color: #4f46e5;
+}
+
+.employee-details {
+  padding: 20px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item label {
+  font-weight: bold;
+  color: #4b5563;
+  margin-bottom: 5px;
+}
+
+.detail-item span {
+  background-color: #4e5c69;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #e5e7eb;
+}
