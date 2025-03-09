@@ -377,36 +377,20 @@ th {
   background-color: #14b8a6;
 }
 
+/* Existing styles remain unchanged, add this at the bottom */
 
-/* Existing styles remain unchanged, ensure these are present */
-
-.datepicker-container {
-  position: absolute;
-  z-index: 1000;
-  margin-top: 5px;
+.role-section {
+  margin-bottom: 20px;
 }
 
-.react-datepicker__month-year-read-view--down-arrow,
-.react-datepicker__navigation-icon::before {
-  border-color: #6366f1;
+.role-section h3 {
+  font-size: 1.5rem;
+  color: #536885;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #6366f1;
+  padding-bottom: 5px;
 }
 
-.react-datepicker {
-  font-family: 'Arial', sans-serif;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-}
-
-.react-datepicker__header {
-  background-color: #6366f1;
-  color: white;
-  border-bottom: none;
-}
-
-.react-datepicker__month-year-option:hover {
-  background-color: #14b8a6;
-}
-
-.react-datepicker__month-year-option--selected {
-  background-color: #14b8a6;
+.role-section .table-container {
+  margin-top: 0;
 }

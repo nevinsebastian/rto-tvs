@@ -26,6 +26,7 @@ const Admin = () => {
   const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [customers, setCustomers] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,12 +34,12 @@ const Admin = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const customersPerPage = 10;
 
-  // Fetch customer data from the API
+  // Fetch customer and employee data from the API
   useEffect(() => {
     const fetchCustomers = async (month = null, year = null) => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token'); // Retrieve token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           throw new Error('No authentication token found. Please log in.');
         }
@@ -65,9 +66,37 @@ const Admin = () => {
         setCustomers(data);
         setLoading(false);
       } catch (err) {
-        console.error('Fetch error:', err);
+        console.error('Fetch customers error:', err);
         setError(err.message);
         setLoading(false);
+      }
+    };
+
+    const fetchEmployees = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No authentication token found. Please log in.');
+        }
+
+        const response = await fetch('https://prod.tophaventvs.com/admin/users', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        setEmployees(data);
+      } catch (err) {
+        console.error('Fetch employees error:', err);
+        setError(err.message);
       }
     };
 
@@ -78,9 +107,10 @@ const Admin = () => {
     } else {
       fetchCustomers(); // Fetch all customers initially
     }
+    fetchEmployees(); // Fetch employees on mount
   }, [selectedDate]);
 
-  // Dummy data for other sections (unchanged)
+  // Dummy data for other sections
   const dummyData = {
     bookings: [
       { id: 1, customer: "John Doe", vehicle: "Honda City", status: "Booking", date: "2025-02-20", expectedDelivery: "2025-03-01", executive: "Alice", amount: 15000 },
@@ -124,11 +154,6 @@ const Admin = () => {
     deliveries: [
       { id: 1, vehicle: "Toyota Corolla", customer: "Jane Smith", status: "On Time", expected: "2025-02-28", actual: "2025-02-27", image: "url1" },
       { id: 2, vehicle: "Hyundai Creta", customer: "Mike Johnson", status: "Delayed", expected: "2025-02-25", actual: "2025-02-27", image: "url2" },
-    ],
-    employees: [
-      { id: 1, name: "Alice Smith", role: "Sales", branch: "Downtown", status: "Active", performance: 92 },
-      { id: 2, name: "Bob Johnson", role: "RTO", branch: "Uptown", status: "Active", performance: 85 },
-      { id: 3, name: "Charlie Brown", role: "Accounts", branch: "Downtown", status: "Active", performance: 88 },
     ]
   };
 
@@ -208,7 +233,6 @@ const Admin = () => {
       setCurrentPage(pageNumber);
     };
 
-    // Format the header based on selectedDate
     const monthNames = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
@@ -228,7 +252,8 @@ const Admin = () => {
               <option value="submitted">Submitted</option>
             </select>
             <button className="primary-btn" onClick={() => setShowDatePicker(!showDatePicker)}>
-              <FiFilter /> Filter</button>
+              <FiFilter /> Filter by Month
+            </button>
             {showDatePicker && (
               <div className="datepicker-container">
                 <DatePicker
@@ -236,7 +261,7 @@ const Admin = () => {
                   onChange={(date) => {
                     setSelectedDate(date);
                     setShowDatePicker(false);
-                    setCurrentPage(1); // Reset to first page when filter changes
+                    setCurrentPage(1);
                   }}
                   dateFormat="MM/yyyy"
                   showMonthYearPicker
@@ -498,67 +523,93 @@ const Admin = () => {
     </div>
   );
 
-  const renderEmployees = () => (
-    <div className="employees-section">
-      <div className="section-header">
-        <h2>Employee Management</h2>
-        <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}><FiPlus /> Add Employee</button>
-      </div>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Branch</th>
-              <th>Status</th>
-              <th>Performance</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyData.employees.map(emp => (
-              <tr key={emp.id}>
-                <td>{emp.name}</td>
-                <td>{emp.role}</td>
-                <td>{emp.branch}</td>
-                <td>{emp.status}</td>
-                <td>{emp.performance}%</td>
-                <td><button className="icon-btn"><FiEdit /></button></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {showAddEmployeeModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Add New Employee</h3>
-            <div className="form-grid">
-              <div className="form-group"><label>Name</label><input /></div>
-              <div className="form-group"><label>Role</label>
-                <select>
-                  <option>Sales</option>
-                  <option>RTO</option>
-                  <option>Accounts</option>
-                </select>
-              </div>
-              <div className="form-group"><label>Branch</label>
-                <select>
-                  <option>Downtown</option>
-                  <option>Uptown</option>
-                </select>
+  const renderEmployees = () => {
+    if (loading) {
+      return <div className="loading">Loading employees...</div>;
+    }
+
+    if (error) {
+      return <div className="error">Error: {error}</div>;
+    }
+
+    // Define role order and group employees by role
+    const roleOrder = ['admin', 'sales', 'accounts', 'rto', 'stock_person'];
+    const groupedEmployees = roleOrder.map(role => ({
+      role: role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' '), // Capitalize and replace underscore
+      employees: employees.filter(emp => emp.role_name.toLowerCase() === role)
+    }));
+
+    // Function to map branch_id to name
+    const getBranchName = (branchId) => {
+      return branchId === 1 ? 'Thiruvambady' : (branchId || 'N/A');
+    };
+
+    return (
+      <div className="employees-section">
+        <div className="section-header">
+          <h2>Employee Management</h2>
+          <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}><FiPlus /> Add Employee</button>
+        </div>
+        {groupedEmployees.map(group => (
+          group.employees.length > 0 && (
+            <div key={group.role} className="role-section">
+              <h3>{group.role}</h3>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Role</th>
+                      <th>Branch</th>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.employees.map(emp => (
+                      <tr key={emp.user_id}>
+                        <td>{`${emp.first_name} ${emp.last_name}`}</td>
+                        <td>{emp.role_name}</td>
+                        <td>{getBranchName(emp.branch_id)}</td>
+                        <td>{emp.email}</td>
+                        <td><button className="icon-btn"><FiEdit /></button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div className="modal-actions">
-              <button className="secondary-btn" onClick={() => setShowAddEmployeeModal(false)}>Cancel</button>
-              <button className="primary-btn">Create</button>
+          )
+        ))}
+        {showAddEmployeeModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Add New Employee</h3>
+              <div className="form-grid">
+                <div className="form-group"><label>First Name</label><input /></div>
+                <div className="form-group"><label>Last Name</label><input /></div>
+                <div className="form-group"><label>Email</label><input type="email" /></div>
+                <div className="form-group"><label>Role</label>
+                  <select>
+                    <option value="admin">Admin</option>
+                    <option value="sales">Sales</option>
+                    <option value="accounts">Accounts</option>
+                    <option value="rto">RTO</option>
+                    <option value="stock_person">Stock Person</option>
+                  </select>
+                </div>
+                <div className="form-group"><label>Branch ID</label><input type="number" /></div>
+              </div>
+              <div className="modal-actions">
+                <button className="secondary-btn" onClick={() => setShowAddEmployeeModal(false)}>Cancel</button>
+                <button className="primary-btn">Create</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="admin-container">
