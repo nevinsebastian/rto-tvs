@@ -681,7 +681,6 @@ const Admin = () => {
                 <div className="form-group">
                   <label>First Name</label>
                   <input
-                    type="text"
                     name="first_name"
                     value={newEmployee.first_name}
                     onChange={handleInputChange}
@@ -691,7 +690,6 @@ const Admin = () => {
                 <div className="form-group">
                   <label>Last Name</label>
                   <input
-                    type="text"
                     name="last_name"
                     value={newEmployee.last_name}
                     onChange={handleInputChange}
@@ -711,7 +709,6 @@ const Admin = () => {
                 <div className="form-group">
                   <label>Password</label>
                   <input
-                    type="password"
                     name="password"
                     value={newEmployee.password}
                     onChange={handleInputChange}
