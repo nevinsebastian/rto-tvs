@@ -375,7 +375,10 @@ th {
 
 .pagination-btn.active {
   background-color: #14b8a6;
-}/* Existing styles remain unchanged, add these at the bottom */
+}
+
+
+/* Existing styles remain unchanged, ensure these are present */
 
 .datepicker-container {
   position: absolute;

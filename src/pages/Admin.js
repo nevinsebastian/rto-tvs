@@ -208,10 +208,19 @@ const Admin = () => {
       setCurrentPage(pageNumber);
     };
 
+    // Format the header based on selectedDate
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const headerText = selectedDate
+      ? `Sales ${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
+      : "Sales Management";
+
     return (
       <div className="section">
         <div className="section-header">
-          <h2>Sales Management</h2>
+          <h2>{headerText}</h2>
           <div className="section-controls">
             <select onChange={(e) => setSelectedFilter(e.target.value)} className="filter-select">
               <option value="all">All Status</option>
@@ -219,8 +228,7 @@ const Admin = () => {
               <option value="submitted">Submitted</option>
             </select>
             <button className="primary-btn" onClick={() => setShowDatePicker(!showDatePicker)}>
-              <FiFilter /> Filter by Month
-            </button>
+              <FiFilter /> Filter</button>
             {showDatePicker && (
               <div className="datepicker-container">
                 <DatePicker
@@ -233,7 +241,6 @@ const Admin = () => {
                   dateFormat="MM/yyyy"
                   showMonthYearPicker
                   placeholderText="Select Month & Year"
-                  inline={false}
                 />
               </div>
             )}
