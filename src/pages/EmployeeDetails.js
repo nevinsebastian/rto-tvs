@@ -41,53 +41,77 @@ const EmployeeDetails = ({ userId, onBack }) => {
     fetchEmployeeDetails();
   }, [userId]);
 
-  if (loading) {
-    return <div className="loading">Loading employee details...</div>;
-  }
-
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
-
   const getBranchName = (branchId) => {
     return branchId === 1 ? 'Thiruvambady' : (branchId || 'N/A');
   };
 
-  return (
-    <div className="section">
-      <div className="section-header">
-        <h2>
-          <button className="icon-btn" onClick={onBack}>
-            <FiArrowLeft />
-          </button>
-          {`${employee.first_name} ${employee.last_name}`}
-        </h2>
+  if (loading) {
+    return (
+      <div className="section animate-fade-in">
+        <div className="section-header flex items-center space-x-4">
+          <div className="skeleton h-8 w-8 rounded-full"></div>
+          <div className="skeleton h-6 w-48 rounded"></div>
+        </div>
+        <div className="employee-details-card mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array(6).fill().map((_, index) => (
+              <div key={index} className="detail-item">
+                <div className="skeleton h-4 w-20 mb-2 rounded"></div>
+                <div className="skeleton h-10 w-full rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="employee-details">
-        <div className="details-grid">
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="section animate-fade-in">
+          <button onClick={onBack}>
+            <FiArrowLeft size={50} />
+          </button>
+          <h2 className="text-xl font-semibold text-red-600">Error</h2>
+        <div className="employee-details-card mt-6 p-6 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="section animate-fade-in">
+      <div className="section-header flex items-center space-x-4">
+  <button className="btn-back" onClick={onBack}>
+    <FiArrowLeft size={20} className="text-gray-700" /> {/* Added explicit color */}
+  </button>
+  <h2 className="text-2xl font-bold text-gray-900">
+    {`${employee.first_name} ${employee.last_name}`}
+  </h2>
+</div>
+      <div className="employee-details-card mt-6 p-6 bg-white shadow-md rounded-lg border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
           <div className="detail-item">
-            <label>User ID:</label>
-            <span>{employee.user_id}</span>
+            <label className="label">First Name</label>
+            <span className="value">{employee.first_name}</span>
           </div>
           <div className="detail-item">
-            <label>First Name:</label>
-            <span>{employee.first_name}</span>
+            <label className="label">Last Name</label>
+            <span className="value">{employee.last_name}</span>
           </div>
           <div className="detail-item">
-            <label>Last Name:</label>
-            <span>{employee.last_name}</span>
+            <label className="label">Email</label>
+            <span className="value">{employee.email}</span>
           </div>
           <div className="detail-item">
-            <label>Email:</label>
-            <span>{employee.email}</span>
+            <label className="label">Role</label>
+            <span className="value capitalize">{employee.role_name}</span>
           </div>
           <div className="detail-item">
-            <label>Role:</label>
-            <span>{employee.role_name}</span>
-          </div>
-          <div className="detail-item">
-            <label>Branch:</label>
-            <span>{getBranchName(employee.branch_id)}</span>
+            <label className="label">Branch</label>
+            <span className="value">{getBranchName(employee.branch_id)}</span>
           </div>
         </div>
       </div>
