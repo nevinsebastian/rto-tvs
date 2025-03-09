@@ -125,6 +125,7 @@ const Admin = () => {
       fetchCustomers(); // Fetch all customers initially
     }
     fetchEmployees(); // Fetch employees based on role filter
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedRoleFilter]);
 
   // Dummy data for other sections
