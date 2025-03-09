@@ -32,7 +32,18 @@ const Admin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedRoleFilter, setSelectedRoleFilter] = useState('all');
   const customersPerPage = 10;
+
+  // Role ID mapping
+  const roleMap = {
+    'all': null,
+    'admin': 1,
+    'sales': 2,
+    'accounts': 3,
+    'rto': 4,
+    'stock_person': 5
+  };
 
   // Fetch customer and employee data from the API
   useEffect(() => {
@@ -79,7 +90,13 @@ const Admin = () => {
           throw new Error('No authentication token found. Please log in.');
         }
 
-        const response = await fetch('https://prod.tophaventvs.com/admin/users', {
+        let url = 'https://prod.tophaventvs.com/admin/users';
+        if (selectedRoleFilter !== 'all') {
+          const roleId = roleMap[selectedRoleFilter];
+          url = `https://prod.tophaventvs.com/admin/branches/1/${roleId}`;
+        }
+
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -107,8 +124,8 @@ const Admin = () => {
     } else {
       fetchCustomers(); // Fetch all customers initially
     }
-    fetchEmployees(); // Fetch employees on mount
-  }, [selectedDate]);
+    fetchEmployees(); // Fetch employees based on role filter
+  }, [selectedDate, selectedRoleFilter]);
 
   // Dummy data for other sections
   const dummyData = {
@@ -535,8 +552,10 @@ const Admin = () => {
     // Define role order and group employees by role
     const roleOrder = ['admin', 'sales', 'accounts', 'rto', 'stock_person'];
     const groupedEmployees = roleOrder.map(role => ({
-      role: role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' '), // Capitalize and replace underscore
-      employees: employees.filter(emp => emp.role_name.toLowerCase() === role)
+      role: role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' '),
+      employees: selectedRoleFilter === 'all' 
+        ? employees.filter(emp => emp.role_name?.toLowerCase() === role || emp.role_id === roleMap[role])
+        : employees.filter(emp => emp.role_id === roleMap[role])
     }));
 
     // Function to map branch_id to name
@@ -548,7 +567,21 @@ const Admin = () => {
       <div className="employees-section">
         <div className="section-header">
           <h2>Employee Management</h2>
-          <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}><FiPlus /> Add Employee</button>
+          <div className="section-controls">
+            <button className="primary-btn" onClick={() => setShowAddEmployeeModal(true)}>
+              <FiPlus />Add</button>
+            <select
+              value={selectedRoleFilter}
+              onChange={(e) => setSelectedRoleFilter(e.target.value)}
+              className="filter-select"
+            >
+              <option value="all">All Roles</option>
+              <option value="sales">Sales</option>
+              <option value="accounts">Accounts</option>
+              <option value="rto">RTO</option>
+              <option value="stock_person">Stock Person</option>
+            </select>
+          </div>
         </div>
         {groupedEmployees.map(group => (
           group.employees.length > 0 && (
@@ -569,7 +602,7 @@ const Admin = () => {
                     {group.employees.map(emp => (
                       <tr key={emp.user_id}>
                         <td>{`${emp.first_name} ${emp.last_name}`}</td>
-                        <td>{emp.role_name}</td>
+                        <td>{emp.role_name || Object.keys(roleMap).find(key => roleMap[key] === emp.role_id)}</td>
                         <td>{getBranchName(emp.branch_id)}</td>
                         <td>{emp.email}</td>
                         <td><button className="icon-btn"><FiEdit /></button></td>
@@ -598,7 +631,7 @@ const Admin = () => {
                     <option value="stock_person">Stock Person</option>
                   </select>
                 </div>
-                <div className="form-group"><label>Branch ID</label><input type="number" /></div>
+                <div className="form-group"><label>Branch ID</label><input type="number" value="1" readOnly /></div>
               </div>
               <div className="modal-actions">
                 <button className="secondary-btn" onClick={() => setShowAddEmployeeModal(false)}>Cancel</button>

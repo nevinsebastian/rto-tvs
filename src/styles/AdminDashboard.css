@@ -193,6 +193,7 @@
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
+  margin-top: 10px;
 }
 
 .primary-btn:hover {
