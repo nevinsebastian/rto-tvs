@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashboard.css';
-import { FiPlus, FiEdit, FiUsers, FiPieChart, FiBriefcase, FiLogOut, FiDownload, FiBell, FiImage, FiBarChart } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiUsers, FiPieChart, FiBriefcase, FiLogOut, FiDownload, FiBell, FiImage, FiBarChart, FiFilter } from 'react-icons/fi';
 import { Line, Pie } from 'react-chartjs-2';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,11 +29,13 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
   const customersPerPage = 10;
 
   // Fetch customer data from the API
   useEffect(() => {
-    const fetchCustomers = async () => {
+    const fetchCustomers = async (month = null, year = null) => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token'); // Retrieve token from localStorage
@@ -39,7 +43,12 @@ const Admin = () => {
           throw new Error('No authentication token found. Please log in.');
         }
 
-        const response = await fetch('https://prod.tophaventvs.com/admin/customers', {
+        let url = 'https://prod.tophaventvs.com/admin/customers';
+        if (month && year) {
+          url = `https://prod.tophaventvs.com/admin/monthly-customers?month=${month}&year=${year}`;
+        }
+
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -48,7 +57,7 @@ const Admin = () => {
         });
 
         if (!response.ok) {
-          const errorText = await response.text(); // Get more details from the response
+          const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
         }
 
@@ -56,14 +65,20 @@ const Admin = () => {
         setCustomers(data);
         setLoading(false);
       } catch (err) {
-        console.error('Fetch error:', err); // Log the full error for debugging
+        console.error('Fetch error:', err);
         setError(err.message);
         setLoading(false);
       }
     };
 
-    fetchCustomers();
-  }, []);
+    if (selectedDate) {
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // 01-12
+      const year = selectedDate.getFullYear();
+      fetchCustomers(month, year);
+    } else {
+      fetchCustomers(); // Fetch all customers initially
+    }
+  }, [selectedDate]);
 
   // Dummy data for other sections (unchanged)
   const dummyData = {
@@ -203,6 +218,25 @@ const Admin = () => {
               <option value="pending">Pending</option>
               <option value="submitted">Submitted</option>
             </select>
+            <button className="primary-btn" onClick={() => setShowDatePicker(!showDatePicker)}>
+              <FiFilter /> Filter by Month
+            </button>
+            {showDatePicker && (
+              <div className="datepicker-container">
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => {
+                    setSelectedDate(date);
+                    setShowDatePicker(false);
+                    setCurrentPage(1); // Reset to first page when filter changes
+                  }}
+                  dateFormat="MM/yyyy"
+                  showMonthYearPicker
+                  placeholderText="Select Month & Year"
+                  inline={false}
+                />
+              </div>
+            )}
             <button className="primary-btn"><FiDownload /> Export</button>
           </div>
         </div>
