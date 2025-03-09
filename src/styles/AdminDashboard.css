@@ -384,6 +384,7 @@ th {
   margin-bottom: 20px;
 }
 
+
 .role-section h3 {
   font-size: 1.5rem;
   color: #536885;
@@ -455,97 +456,3 @@ th {
   }
 }
 
-/* Section Header */
-.section-header {
-  display: flex;
-  align-items: center;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-
-
-.btn-back:hover {
-  background-color: #e5e7eb; /* Slightly darker on hover */
-  color: #1f2937; /* Even darker for hover state */
-  transform: scale(1.05);
-}
-
-/* Ensure the icon inherits the button's color */
-.btn-back svg {
-  color: inherit; /* Ensures FiArrowLeft uses the button's color */
-}
-
-/* Employee Details Card */
-.employee-details-card {
-  background: var(--secondary-bg);
-  transition: transform 0.2s ease-in-out;
-
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
-
-.employee-details-card:hover {
-  transform: translateY(-2px);
-}
-
-/* Detail Item */
-.detail-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.value {
-  font-size: 1rem;
-  color: #1f2937;
-  background-color: #f9fafb;
-  padding: 0.75rem;
-  border-radius: 0.375rem;
-  word-break: break-word;
-}
-
-.value.capitalize {
-  text-transform: capitalize;
-}
-
-/* Skeleton Loader */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 0.375rem;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .employee-details-card {
-    padding: 1rem;
-  }
-  
-  .section-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
