@@ -1,3 +1,4 @@
+/* EmployeeDetails.css */
 .back-button {
   background: linear-gradient(135deg, #6b7280, #4b5563);
   color: white;
@@ -9,6 +10,19 @@
 .back-button:hover {
   background: linear-gradient(135deg, #4b5563, #374151);
   transform: translateX(-2px);
+}
+
+.edit-button {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: scale(1.05);
 }
 
 .employee-card {
@@ -26,41 +40,135 @@
 
 .label {
   font-size: 1.1rem;
-  color: #1f2937;  /* Dark Gray Text */
-  background: #f3f4f6;  /* Light Gray Background */
+  color: #1f2937;
+  background: #f3f4f6;
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid #d1d5db;  /* Light Border */
+  border: 1px solid #d1d5db;
   transition: all 0.2s ease;
 }
 
 .value {
   font-size: 1.1rem;
-  color: #1f2937;  /* Dark Gray Text */
-  background: #f3f4f6;  /* Light Gray Background */
+  color: #1f2937;
+  background: #f3f4f6;
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid #d1d5db;  /* Light Border */
+  border: 1px solid #d1d5db;
   transition: all 0.2s ease;
 }
-
-
 
 .value:hover {
   background: #73859c;
   border-radius: 12px;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #6366f1;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c5dfe6;
+  margin-bottom: 0.5rem;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.2s ease;
+}
+
+.modal-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+.modal-cancel-button {
+  background: #e5e7eb;
+  color: #4b5563;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.modal-cancel-button:hover {
+  background: #d1d5db;
+}
+
+.modal-save-button {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.modal-save-button:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .employee-card {
     padding: 1rem;
   }
-  
   .text-3xl {
     font-size: 1.75rem;
   }
-  
   .grid {
     grid-template-columns: 1fr;
   }
+  .modal-content {
+    width: 90%;
+    padding: 1.5rem;
+  }
+}
+
+.deactivate-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.deactivate-button:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: scale(1.05);
+}.modal-deactivate-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.modal-deactivate-button:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
